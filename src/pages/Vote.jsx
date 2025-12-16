@@ -4,24 +4,17 @@ import { base44 } from '@/api/base44Client';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, CheckCircle2, Loader2, Vote as VoteIcon } from 'lucide-react';
+import { ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import TransactionUploader from '@/components/upload/TransactionUploader';
+import TransactionForm from '@/components/vote/TransactionForm';
 
 export default function Vote() {
   const urlParams = new URLSearchParams(window.location.search);
   const pollId = urlParams.get('pollId');
   const queryClient = useQueryClient();
   
-  const [selectedOption, setSelectedOption] = useState('');
-  const [voterName, setVoterName] = useState('');
-  const [transactionFile, setTransactionFile] = useState(null);
-  const [uploading, setUploading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   
   const { data: poll, isLoading } = useQuery({
@@ -43,19 +36,8 @@ export default function Vote() {
     }
   });
   
-  const handleSubmit = () => {
-    if (!selectedOption || !transactionFile) return;
-    
-    const selectedOptionData = poll.options.find(o => o.id === selectedOption);
-    
-    submitVote.mutate({
-      poll_id: pollId,
-      option_id: selectedOption,
-      option_label: selectedOptionData?.label || '',
-      transaction_file_url: transactionFile,
-      voter_name: voterName,
-      status: 'pending'
-    });
+  const handleSubmit = (voteData) => {
+    submitVote.mutate(voteData);
   };
   
   if (!pollId) {
@@ -157,82 +139,27 @@ export default function Vote() {
                   )}
                 </CardHeader>
                 
-                <CardContent className="p-8 space-y-8">
-                  {/* Voting Options */}
-                  <div className="space-y-3">
-                    <Label className="text-base font-semibold text-slate-900">Select Your Choice</Label>
-                    <RadioGroup value={selectedOption} onValueChange={setSelectedOption}>
-                      {poll?.options?.map((option, index) => (
-                        <motion.div
+                <CardContent className="p-8">
+                  <div className="space-y-4 mb-8">
+                    <h3 className="font-semibold text-lg">Available Options</h3>
+                    <div className="grid gap-3">
+                      {poll?.options?.map((option) => (
+                        <div
                           key={option.id}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.1 }}
+                          className="flex items-center justify-between p-4 rounded-lg bg-slate-50 border border-slate-200"
                         >
-                          <label
-                            className={`
-                              flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all
-                              ${selectedOption === option.id 
-                                ? 'border-indigo-500 bg-indigo-50' 
-                                : 'border-slate-200 hover:border-indigo-200 hover:bg-slate-50'
-                              }
-                            `}
-                          >
-                            <RadioGroupItem value={option.id} className="border-2" />
-                            <span className="font-medium text-slate-900">{option.label}</span>
-                          </label>
-                        </motion.div>
+                          <span className="font-medium text-slate-900">{option.label}</span>
+                          <span className="text-sm text-slate-500 font-mono">ID: {option.id}</span>
+                        </div>
                       ))}
-                    </RadioGroup>
+                    </div>
                   </div>
-                  
-                  {/* Voter Name */}
-                  <div className="space-y-2">
-                    <Label htmlFor="voterName" className="text-base font-semibold text-slate-900">
-                      Your Name <span className="text-slate-400 font-normal">(optional)</span>
-                    </Label>
-                    <Input
-                      id="voterName"
-                      placeholder="Enter your name"
-                      value={voterName}
-                      onChange={(e) => setVoterName(e.target.value)}
-                      className="h-12 rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500"
-                    />
-                  </div>
-                  
-                  {/* Transaction Upload */}
-                  <div className="space-y-3">
-                    <Label className="text-base font-semibold text-slate-900">
-                      Upload Transaction Proof
-                    </Label>
-                    <p className="text-sm text-slate-500 -mt-1">
-                      Upload a screenshot or PDF of your bank transaction to verify your vote
-                    </p>
-                    <TransactionUploader
-                      onUpload={setTransactionFile}
-                      uploading={uploading}
-                      setUploading={setUploading}
-                    />
-                  </div>
-                  
-                  {/* Submit Button */}
-                  <Button
-                    onClick={handleSubmit}
-                    disabled={!selectedOption || !transactionFile || uploading || submitVote.isPending}
-                    className="w-full h-14 text-lg bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-lg shadow-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {submitVote.isPending ? (
-                      <>
-                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                        Submitting Vote...
-                      </>
-                    ) : (
-                      <>
-                        <VoteIcon className="w-5 h-5 mr-2" />
-                        Submit Vote
-                      </>
-                    )}
-                  </Button>
+
+                  <TransactionForm
+                    pollId={pollId}
+                    pollOptions={poll?.options || []}
+                    onSubmit={handleSubmit}
+                  />
                 </CardContent>
               </Card>
             </motion.div>

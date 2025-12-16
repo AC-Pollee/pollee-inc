@@ -23,7 +23,9 @@ export default function Home() {
   const activePolls = polls.filter(p => p.status === 'active');
   
   const getVoteCount = (pollId) => {
-    return votes.filter(v => v.poll_id === pollId && v.status === 'verified').length;
+    const pollVotes = votes.filter(v => v.poll_id === pollId && v.status === 'verified');
+    // Sum up all delegated votes
+    return pollVotes.reduce((sum, vote) => sum + (vote.delegated_votes_count || 1), 0);
   };
   
   return (

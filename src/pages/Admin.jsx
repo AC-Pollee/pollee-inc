@@ -259,6 +259,8 @@ export default function Admin() {
               <div className="space-y-4">
                 {polls.map((poll) => {
                   const pollVotes = votes.filter(v => v.poll_id === poll.id);
+                  const totalVotes = pollVotes.reduce((sum, vote) => sum + (vote.delegated_votes_count || 1), 0);
+                  const verifiedVotes = pollVotes.filter(v => v.status === 'verified').reduce((sum, vote) => sum + (vote.delegated_votes_count || 1), 0);
                   return (
                     <Card key={poll.id} className="border-0 shadow-lg">
                       <CardContent className="p-6">
@@ -275,7 +277,7 @@ export default function Admin() {
                               </Badge>
                             </div>
                             <p className="text-sm text-slate-500">
-                              {pollVotes.length} total votes • {pollVotes.filter(v => v.status === 'verified').length} verified
+                              {totalVotes} total votes • {verifiedVotes} verified • {pollVotes.length} transactions
                             </p>
                           </div>
                           
@@ -343,34 +345,29 @@ export default function Admin() {
                     <Card key={vote.id} className="border-0 shadow-lg overflow-hidden">
                       <CardContent className="p-6">
                         <div className="flex flex-col md:flex-row md:items-start gap-6">
-                          {/* Transaction Preview */}
-                          <div className="w-full md:w-48 h-48 bg-slate-100 rounded-xl overflow-hidden flex-shrink-0">
-                            {vote.transaction_file_url && (
-                              vote.transaction_file_url.toLowerCase().endsWith('.pdf') ? (
-                                <div className="w-full h-full flex items-center justify-center bg-slate-50">
-                                  <div className="text-center">
-                                    <div className="w-12 h-12 rounded-full bg-slate-200 flex items-center justify-center mx-auto mb-2">
-                                      <ExternalLink className="w-6 h-6 text-slate-500" />
-                                    </div>
-                                    <a 
-                                      href={vote.transaction_file_url} 
-                                      target="_blank" 
-                                      rel="noopener noreferrer"
-                                      className="text-sm text-indigo-600 hover:underline"
-                                    >
-                                      View PDF
-                                    </a>
-                                  </div>
-                                </div>
-                              ) : (
-                                <a href={vote.transaction_file_url} target="_blank" rel="noopener noreferrer">
-                                  <img 
-                                    src={vote.transaction_file_url} 
-                                    alt="Transaction" 
-                                    className="w-full h-full object-cover hover:opacity-90 transition-opacity"
-                                  />
-                                </a>
-                              )
+                          {/* Transaction Details */}
+                          <div className="w-full md:w-64 bg-slate-50 rounded-xl p-4 flex-shrink-0 space-y-2 text-sm">
+                            <div>
+                              <p className="text-xs text-slate-500">Transaction Ref</p>
+                              <p className="font-mono text-slate-900">{vote.transaction_reference || 'N/A'}</p>
+                            </div>
+                            {vote.transaction_amount && (
+                              <div>
+                                <p className="text-xs text-slate-500">Amount</p>
+                                <p className="font-semibold text-slate-900">${vote.transaction_amount.toFixed(2)}</p>
+                              </div>
+                            )}
+                            {vote.bank_name && (
+                              <div>
+                                <p className="text-xs text-slate-500">Bank</p>
+                                <p className="text-slate-900">{vote.bank_name}</p>
+                              </div>
+                            )}
+                            {vote.transaction_date && (
+                              <div>
+                                <p className="text-xs text-slate-500">Transaction Date</p>
+                                <p className="text-slate-900">{format(new Date(vote.transaction_date), 'MMM d, h:mm a')}</p>
+                              </div>
                             )}
                           </div>
                           
@@ -393,13 +390,48 @@ export default function Admin() {
                             
                             <div className="space-y-1">
                               <p className="text-sm text-slate-500">Vote</p>
-                              <p className="font-semibold text-indigo-600">{vote.option_label}</p>
+                              <div className="flex items-center gap-2">
+                                <p className="font-semibold text-indigo-600">{vote.option_label}</p>
+                                <Badge variant="outline" className="text-xs">
+                                  ID: {vote.poll_item_id}
+                                </Badge>
+                              </div>
                             </div>
                             
-                            {vote.voter_name && (
+                            <div className="grid grid-cols-2 gap-4">
                               <div className="space-y-1">
                                 <p className="text-sm text-slate-500">Voter</p>
-                                <p className="font-medium text-slate-900">{vote.voter_name}</p>
+                                <p className="font-medium text-slate-900">{vote.voter_name || 'N/A'}</p>
+                              </div>
+                              <div className="space-y-1">
+                                <p className="text-sm text-slate-500">Infomarian ID</p>
+                                <p className="font-medium text-slate-900">{vote.infomarian_id || 'N/A'}</p>
+                              </div>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-1">
+                                <p className="text-sm text-slate-500">Delegation</p>
+                                <Badge className={`${
+                                  vote.delegation_status === 'delegated' 
+                                    ? 'bg-purple-100 text-purple-700' 
+                                    : 'bg-blue-100 text-blue-700'
+                                } w-fit`}>
+                                  {vote.delegation_status || 'direct'}
+                                </Badge>
+                              </div>
+                              <div className="space-y-1">
+                                <p className="text-sm text-slate-500">Delegated Votes</p>
+                                <p className="font-semibold text-slate-900 text-lg">{vote.delegated_votes_count || 1}</p>
+                              </div>
+                            </div>
+                            
+                            {vote.transaction_description && (
+                              <div className="space-y-1">
+                                <p className="text-sm text-slate-500">Transaction Description</p>
+                                <p className="text-xs font-mono text-slate-700 bg-slate-50 p-2 rounded border border-slate-200">
+                                  {vote.transaction_description}
+                                </p>
                               </div>
                             )}
                             

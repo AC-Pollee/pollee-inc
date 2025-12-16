@@ -4,8 +4,10 @@ import { motion } from 'framer-motion';
 export default function ResultsChart({ poll, votes }) {
   const verifiedVotes = votes.filter(v => v.status === 'verified');
   
+  // Count votes including delegated votes
   const optionCounts = poll.options?.reduce((acc, option) => {
-    acc[option.id] = verifiedVotes.filter(v => v.option_id === option.id).length;
+    const optionVotes = verifiedVotes.filter(v => v.poll_item_id === option.id);
+    acc[option.id] = optionVotes.reduce((sum, vote) => sum + (vote.delegated_votes_count || 1), 0);
     return acc;
   }, {}) || {};
   

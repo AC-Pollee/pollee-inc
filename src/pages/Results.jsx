@@ -27,10 +27,13 @@ export default function Results() {
   
   const getVoteStats = (pollId) => {
     const pollVotes = votes.filter(v => v.poll_id === pollId);
+    const verifiedVotes = pollVotes.filter(v => v.status === 'verified');
+    
     return {
-      total: pollVotes.length,
-      verified: pollVotes.filter(v => v.status === 'verified').length,
-      pending: pollVotes.filter(v => v.status === 'pending').length
+      total: pollVotes.reduce((sum, vote) => sum + (vote.delegated_votes_count || 1), 0),
+      verified: verifiedVotes.reduce((sum, vote) => sum + (vote.delegated_votes_count || 1), 0),
+      pending: pollVotes.filter(v => v.status === 'pending').reduce((sum, vote) => sum + (vote.delegated_votes_count || 1), 0),
+      transactions: pollVotes.length
     };
   };
   
@@ -150,7 +153,7 @@ export default function Results() {
                           transition={{ duration: 0.3 }}
                         >
                           <CardContent className="border-t border-slate-100">
-                            <div className="grid md:grid-cols-3 gap-4 mb-6 pt-4">
+                            <div className="grid md:grid-cols-4 gap-4 mb-6 pt-4">
                               <div className="bg-indigo-50 rounded-xl p-4 text-center">
                                 <p className="text-2xl font-bold text-indigo-600">{stats.total}</p>
                                 <p className="text-sm text-slate-500">Total Votes</p>
@@ -162,6 +165,10 @@ export default function Results() {
                               <div className="bg-amber-50 rounded-xl p-4 text-center">
                                 <p className="text-2xl font-bold text-amber-600">{stats.pending}</p>
                                 <p className="text-sm text-slate-500">Pending</p>
+                              </div>
+                              <div className="bg-slate-50 rounded-xl p-4 text-center">
+                                <p className="text-2xl font-bold text-slate-600">{stats.transactions}</p>
+                                <p className="text-sm text-slate-500">Transactions</p>
                               </div>
                             </div>
                             
