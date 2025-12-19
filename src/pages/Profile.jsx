@@ -93,10 +93,12 @@ export default function Profile() {
   const age = calculateAge(user?.date_of_birth);
   const isProfileComplete = user?.last_name && user?.infomarian_id && user?.date_of_birth;
   const isAccountValidated = user?.account_validated || false;
+  const validationInitiatedState = user?.validation_initiated || false;
 
   const handleInitiateValidation = async () => {
-    // In real implementation, this would call an API to generate and send a random deposit
-    // For now, we just mark as initiated
+    // Mark that user has made the 0.55 AUD deposit
+    await base44.auth.updateMe({ validation_initiated: true });
+    queryClient.invalidateQueries(['currentUser']);
     setValidationInitiated(true);
     setValidationError('');
   };
@@ -109,9 +111,21 @@ export default function Profile() {
       return;
     }
 
-    // In real implementation, this would verify the amount matches the sent deposit
-    // and update the user's account_validated status
-    setValidationError('Verification in progress. Please contact admin to complete validation.');
+    // Check if amount matches the validation deposit
+    if (user?.validation_deposit_amount && Math.abs(amount - user.validation_deposit_amount) < 0.01) {
+      // Generate unique voter ID (timestamp + random)
+      const voterId = `V${Date.now()}${Math.floor(Math.random() * 10000)}`;
+      
+      await base44.auth.updateMe({ 
+        account_validated: true,
+        voter_id: voterId
+      });
+      queryClient.invalidateQueries(['currentUser']);
+      setSuccessMessage(`Account validated! Your Voter ID is: ${voterId}`);
+      setValidationError('');
+    } else {
+      setValidationError('The amount entered does not match our records. Please try again or contact support.');
+    }
   };
 
   if (isLoading) {
@@ -400,7 +414,7 @@ export default function Profile() {
             </CardHeader>
 
             <CardContent className="p-8">
-              {!validationInitiated ? (
+              {!validationInitiatedState ? (
                 <div className="space-y-4">
                   <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 mb-4">
                     <h4 className="font-semibold text-blue-900 mb-3">Step 1: Make Your 0.55 AUD Deposit</h4>
@@ -521,6 +535,22 @@ export default function Profile() {
               )}
             </CardContent>
           </Card>
+          )}
+
+          {isAccountValidated && user?.voter_id && (
+            <Card className="border-0 shadow-lg mt-6 bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-200">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
+                    <BadgeCheck className="w-5 h-5 text-emerald-600" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-emerald-900">Account Validated</p>
+                    <p className="text-sm text-emerald-700">Your Voter ID: <span className="font-mono font-bold">{user.voter_id}</span></p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           )}
 
           {age >= 18 && (
