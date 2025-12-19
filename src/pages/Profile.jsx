@@ -26,6 +26,8 @@ export default function Profile() {
   });
   const [successMessage, setSuccessMessage] = useState('');
   const [validationInitiated, setValidationInitiated] = useState(false);
+  const [depositAmount, setDepositAmount] = useState('');
+  const [validationError, setValidationError] = useState('');
 
   const { data: user, isLoading } = useQuery({
     queryKey: ['currentUser'],
@@ -92,8 +94,24 @@ export default function Profile() {
   const isProfileComplete = user?.last_name && user?.infomarian_id && user?.date_of_birth;
   const isAccountValidated = user?.account_validated || false;
 
-  const handleInitiateValidation = () => {
+  const handleInitiateValidation = async () => {
+    // In real implementation, this would call an API to generate and send a random deposit
+    // For now, we just mark as initiated
     setValidationInitiated(true);
+    setValidationError('');
+  };
+
+  const handleVerifyDeposit = async () => {
+    const amount = parseFloat(depositAmount);
+
+    if (!amount || amount <= 0 || amount >= 0.25) {
+      setValidationError('Please enter a valid amount (less than $0.25 AUD)');
+      return;
+    }
+
+    // In real implementation, this would verify the amount matches the sent deposit
+    // and update the user's account_validated status
+    setValidationError('Verification in progress. Please contact admin to complete validation.');
   };
 
   if (isLoading) {
@@ -167,17 +185,17 @@ export default function Profile() {
           )}
 
           {!isAccountValidated && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <Alert className="mb-6 bg-amber-50 border-amber-200">
-              <BadgeCheck className="h-4 w-4 text-amber-600" />
-              <AlertDescription className="text-amber-800">
-                <span className="font-semibold">Account Validation Required:</span> Make a 55c deposit to validate your account. Pollee Inc will send a return transaction to confirm receipt.
-              </AlertDescription>
-            </Alert>
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <Alert className="mb-6 bg-amber-50 border-amber-200">
+                <BadgeCheck className="h-4 w-4 text-amber-600" />
+                <AlertDescription className="text-amber-800">
+                  <span className="font-semibold">Account Validation Required:</span> Request a validation deposit from Pollee Inc (less than $0.25 AUD). Enter the amount you receive to verify your account.
+                </AlertDescription>
+              </Alert>
+            </motion.div>
           )}
 
           {successMessage && (
@@ -385,53 +403,93 @@ export default function Profile() {
               {!validationInitiated ? (
                 <div className="space-y-4">
                   <p className="text-slate-700">
-                    To validate your account and start voting, you need to make a <span className="font-bold">55c deposit</span> to the Pollee Inc bank account.
+                    To validate your account and start voting, request a validation deposit from Pollee Inc. We'll send a <span className="font-bold">random amount (less than $0.25 AUD)</span> to your bank account.
                   </p>
 
                   <div className="bg-slate-50 rounded-lg p-4 space-y-2 text-sm">
-                    <p className="font-semibold text-slate-900">Pollee Inc Bank Details:</p>
-                    <div className="space-y-1">
-                      <div className="flex justify-between">
-                        <span className="text-slate-600">BSB:</span>
-                        <span className="font-mono font-semibold">123-456</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-600">Account Name:</span>
-                        <span className="font-semibold">Pollee Inc</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-600">Amount:</span>
-                        <span className="font-semibold text-amber-600">$0.55 AUD</span>
-                      </div>
+                    <p className="font-semibold text-slate-900">Your Bank Details Required:</p>
+                    <div className="space-y-1 text-slate-600">
+                      <p>Make sure you have entered your BSB and Account Number in the profile form above.</p>
                     </div>
                   </div>
 
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <p className="text-sm text-blue-800">
-                      <span className="font-semibold">Important:</span> Include your email address ({user?.email}) in the transaction description so we can verify your payment.
+                      <span className="font-semibold">How it works:</span> Pollee Inc will send a random deposit (less than $0.25 AUD) to your account. You must enter the exact amount you receive to complete validation.
                     </p>
                   </div>
 
                   <Button
                     onClick={handleInitiateValidation}
-                    className="w-full h-14 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 rounded-lg text-lg"
+                    disabled={!profileData.bsb || !profileData.account_number}
+                    className="w-full h-14 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 rounded-lg text-lg disabled:opacity-50"
                   >
                     <BadgeCheck className="w-5 h-5 mr-2" />
-                    I've Made the 55c Deposit
+                    Request Validation Deposit
                   </Button>
+
+                  {(!profileData.bsb || !profileData.account_number) && (
+                    <p className="text-sm text-red-600 text-center">
+                      Please complete your bank details above before requesting validation
+                    </p>
+                  )}
                 </div>
               ) : (
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
-                    <CheckCircle2 className="w-8 h-8 text-blue-600" />
+                <div className="space-y-6">
+                  <div className="text-center">
+                    <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
+                      <BadgeCheck className="w-8 h-8 text-blue-600" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-slate-900 mb-2">Validation Deposit Sent</h3>
+                    <p className="text-slate-600 mb-4">
+                      We've sent a random amount (less than $0.25 AUD) to your account ending in {profileData.account_number?.slice(-4) || 'XXXX'}.
+                    </p>
                   </div>
-                  <h3 className="text-xl font-semibold text-slate-900 mb-2">Validation Pending</h3>
-                  <p className="text-slate-600 mb-4">
-                    Thank you! We'll process your 55c deposit and send a return transaction to confirm receipt.
-                  </p>
-                  <p className="text-sm text-slate-500">
-                    This usually takes 1-2 business days. You'll receive an email once your account is validated.
-                  </p>
+
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                    <p className="text-sm text-amber-800">
+                      <span className="font-semibold">Next Step:</span> Check your bank account and enter the exact amount you received from Pollee Inc to complete validation.
+                    </p>
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label htmlFor="depositAmount" className="text-base font-semibold">
+                      Enter Deposit Amount Received (AUD)
+                    </Label>
+                    <Input
+                      id="depositAmount"
+                      type="number"
+                      step="0.01"
+                      min="0.01"
+                      max="0.24"
+                      placeholder="0.00"
+                      value={depositAmount}
+                      onChange={(e) => {
+                        setDepositAmount(e.target.value);
+                        setValidationError('');
+                      }}
+                      className="h-12 rounded-lg text-lg font-semibold text-center"
+                    />
+                    <p className="text-xs text-slate-500 text-center">
+                      Enter the exact amount shown in your bank statement (e.g., 0.18)
+                    </p>
+                  </div>
+
+                  {validationError && (
+                    <Alert variant="destructive">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>{validationError}</AlertDescription>
+                    </Alert>
+                  )}
+
+                  <Button
+                    onClick={handleVerifyDeposit}
+                    disabled={!depositAmount}
+                    className="w-full h-14 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-lg disabled:opacity-50"
+                  >
+                    <CheckCircle2 className="w-5 h-5 mr-2" />
+                    Verify Deposit Amount
+                  </Button>
                 </div>
               )}
             </CardContent>
