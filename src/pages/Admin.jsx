@@ -554,7 +554,7 @@ export default function Admin() {
                         id="pollee_account"
                         value={bankDetails.pollee_account}
                         onChange={(e) => setBankDetails({...bankDetails, pollee_account: e.target.value})}
-                        placeholder="12345678"
+                        placeholder="Pollee Inc"
                         className="h-11 rounded-lg"
                       />
                     </div>
