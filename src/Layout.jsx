@@ -18,9 +18,11 @@ export default function Layout({ children, currentPageName }) {
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <Link to={createPageUrl('Home')} className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-                <span className="text-white font-bold text-xl">P</span>
-              </div>
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69415ee66a530550d1e35558/eb8f2b895_pollee.png" 
+                alt="Pollee Inc Logo" 
+                className="w-9 h-9"
+              />
               <span className="font-bold text-xl text-slate-900">Pollee Inc</span>
             </Link>
             
