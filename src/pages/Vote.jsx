@@ -10,6 +10,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ArrowLeft, CheckCircle2, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import TransactionForm from '@/components/vote/TransactionForm';
+import PollDiscussion from '@/components/polls/PollDiscussion';
+import LiveResults from '@/components/polls/LiveResults';
 
 export default function Vote() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -197,7 +199,7 @@ export default function Vote() {
                     <Alert className="bg-blue-50 border-blue-200">
                       <AlertCircle className="h-4 w-4 text-blue-600" />
                       <AlertDescription className="text-blue-800">
-                        Junior Member (Age {age}) - You can view polls and participate in discussions, but cannot cast official votes until you turn 18.
+                        Junior Member (Age {age}) - You can view live results and participate in discussions, but cannot cast official votes until you turn 18.
                       </AlertDescription>
                     </Alert>
                   ) : (
@@ -209,6 +211,30 @@ export default function Vote() {
                   )}
                 </CardContent>
               </Card>
+
+              {/* Live Results - visible to everyone 12+ */}
+              {age >= 12 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="mt-6"
+                >
+                  <LiveResults pollId={pollId} poll={poll} />
+                </motion.div>
+              )}
+
+              {/* Discussion - available to everyone 12+ */}
+              {age >= 12 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="mt-6"
+                >
+                  <PollDiscussion pollId={pollId} currentUser={user} userAge={age} />
+                </motion.div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
