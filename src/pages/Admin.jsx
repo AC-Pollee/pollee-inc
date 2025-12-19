@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { 
   ArrowLeft, Plus, Trash2, Loader2, CheckCircle2, XCircle, 
-  Clock, ExternalLink, Settings, Vote, Eye
+  Clock, ExternalLink, Settings, Vote, Eye, Building2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
@@ -27,6 +27,17 @@ export default function Admin() {
   const [pollDescription, setPollDescription] = useState('');
   const [pollEndDate, setPollEndDate] = useState('');
   const [options, setOptions] = useState([{ id: '1', label: '' }, { id: '2', label: '' }]);
+
+  // Bank Details State
+  const [bankDetails, setBankDetails] = useState({
+    pollee_bsb: '123-456',
+    pollee_account: '12345678',
+    pollee_account_name: 'Pollee Inc',
+    yes_account: '11111111',
+    no_account: '22222222',
+    undecided_account: '33333333'
+  });
+  const [bankSaved, setBankSaved] = useState(false);
   
   const { data: polls = [], isLoading: loadingPolls } = useQuery({
     queryKey: ['polls'],
@@ -96,6 +107,12 @@ export default function Admin() {
     });
   };
   
+  const handleSaveBankDetails = () => {
+    // Save bank details (in real app, this would save to database)
+    setBankSaved(true);
+    setTimeout(() => setBankSaved(false), 3000);
+  };
+
   const pendingVotes = votes.filter(v => v.status === 'pending');
   
   return (
@@ -140,6 +157,13 @@ export default function Admin() {
                   {pendingVotes.length}
                 </span>
               )}
+            </TabsTrigger>
+            <TabsTrigger 
+              value="banking" 
+              className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-6"
+            >
+              <Building2 className="w-4 h-4 mr-2" />
+              Banking
             </TabsTrigger>
           </TabsList>
           
@@ -488,6 +512,141 @@ export default function Admin() {
                 })}
               </div>
             )}
+          </TabsContent>
+
+          {/* Banking Tab */}
+          <TabsContent value="banking">
+            <Card className="border-0 shadow-xl">
+              <CardHeader>
+                <CardTitle>Bank Account Configuration</CardTitle>
+                <p className="text-sm text-slate-500 mt-2">
+                  Configure Pollee Inc bank account and vote destination accounts
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-8">
+                {/* Pollee Inc Account */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Building2 className="w-5 h-5 text-indigo-600" />
+                    <h3 className="text-lg font-semibold text-slate-900">
+                      Pollee Inc Account (For 55c Validation Deposits)
+                    </h3>
+                  </div>
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                    <p className="text-sm text-blue-800">
+                      New users must make a 55c deposit to this account to validate their registration.
+                    </p>
+                  </div>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="pollee_bsb">BSB</Label>
+                      <Input
+                        id="pollee_bsb"
+                        value={bankDetails.pollee_bsb}
+                        onChange={(e) => setBankDetails({...bankDetails, pollee_bsb: e.target.value})}
+                        placeholder="123-456"
+                        className="h-11 rounded-lg"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="pollee_account">Account Number</Label>
+                      <Input
+                        id="pollee_account"
+                        value={bankDetails.pollee_account}
+                        onChange={(e) => setBankDetails({...bankDetails, pollee_account: e.target.value})}
+                        placeholder="12345678"
+                        className="h-11 rounded-lg"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="pollee_account_name">Account Name</Label>
+                      <Input
+                        id="pollee_account_name"
+                        value={bankDetails.pollee_account_name}
+                        onChange={(e) => setBankDetails({...bankDetails, pollee_account_name: e.target.value})}
+                        placeholder="Pollee Inc"
+                        className="h-11 rounded-lg"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Vote Destination Accounts */}
+                <div className="space-y-4 pt-6 border-t border-slate-200">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Vote className="w-5 h-5 text-emerald-600" />
+                    <h3 className="text-lg font-semibold text-slate-900">
+                      Vote Destination Accounts
+                    </h3>
+                  </div>
+                  <p className="text-sm text-slate-600 mb-4">
+                    Vote transactions will be directed to these account numbers based on the vote option
+                  </p>
+                  
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="yes_account" className="text-base">
+                        "Yes" Account Number
+                      </Label>
+                      <Input
+                        id="yes_account"
+                        value={bankDetails.yes_account}
+                        onChange={(e) => setBankDetails({...bankDetails, yes_account: e.target.value})}
+                        placeholder="11111111"
+                        className="h-11 rounded-lg"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="no_account" className="text-base">
+                        "No" Account Number
+                      </Label>
+                      <Input
+                        id="no_account"
+                        value={bankDetails.no_account}
+                        onChange={(e) => setBankDetails({...bankDetails, no_account: e.target.value})}
+                        placeholder="22222222"
+                        className="h-11 rounded-lg"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="undecided_account" className="text-base">
+                        "Undecided" Account Number
+                      </Label>
+                      <Input
+                        id="undecided_account"
+                        value={bankDetails.undecided_account}
+                        onChange={(e) => setBankDetails({...bankDetails, undecided_account: e.target.value})}
+                        placeholder="33333333"
+                        className="h-11 rounded-lg"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {bankSaved && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 flex items-center gap-2"
+                  >
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                    <p className="text-sm text-emerald-800 font-medium">
+                      Bank details saved successfully!
+                    </p>
+                  </motion.div>
+                )}
+
+                <Button
+                  onClick={handleSaveBankDetails}
+                  className="w-full h-14 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-lg"
+                >
+                  <CheckCircle2 className="w-5 h-5 mr-2" />
+                  Save Bank Details
+                </Button>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
