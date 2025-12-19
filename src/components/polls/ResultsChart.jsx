@@ -102,7 +102,7 @@ export default function ResultsChart({ poll, votes }) {
             Total verified votes: <span className="font-semibold text-slate-700">{totalVotes}</span>
           </p>
           <p className="text-slate-500">
-            Required for majority: <span className="font-semibold text-slate-700">{majorityThreshold}</span>
+            Required for Majority: <span className="font-semibold text-slate-700">3 or more</span>
           </p>
         </div>
       </div>
