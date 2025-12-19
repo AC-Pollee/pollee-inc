@@ -10,6 +10,8 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Admin', icon: Settings, label: 'Admin' },
     { name: 'Profile', icon: User, label: 'Profile' },
   ];
+
+  // Note: Infomarian moderation and help features accessible via Profile page
   
   return (
     <div className="min-h-screen bg-slate-50">

@@ -27,6 +27,15 @@ export default function Admin() {
   const [pollDescription, setPollDescription] = useState('');
   const [pollEndDate, setPollEndDate] = useState('');
   const [options, setOptions] = useState([{ id: '1', label: '' }, { id: '2', label: '' }]);
+  const [pollLevel, setPollLevel] = useState('local');
+  const [franchiseId, setFranchiseId] = useState('');
+  const [pollState, setPollState] = useState('');
+  const [pollPostcodes, setPollPostcodes] = useState('');
+
+  const { data: franchises = [] } = useQuery({
+    queryKey: ['franchises'],
+    queryFn: () => base44.entities.Franchise.list()
+  });
 
   // Bank Details State
   const [bankDetails, setBankDetails] = useState({
@@ -92,17 +101,24 @@ export default function Admin() {
   
   const handleCreatePoll = () => {
     const validOptions = options.filter(o => o.label.trim());
-    if (!pollTitle.trim() || validOptions.length < 2) return;
-    
+    if (!pollTitle.trim() || validOptions.length < 2 || !franchiseId) return;
+
     // Calculate end date as 720 hours (30 days) from now
     const endDate = new Date();
     endDate.setHours(endDate.getHours() + 720);
-    
+
+    const postcodes = pollPostcodes.split(',').map(p => p.trim()).filter(p => p);
+
     createPoll.mutate({
       title: pollTitle.trim(),
       description: pollDescription.trim(),
       end_date: endDate.toISOString(),
       options: validOptions,
+      franchise_id: franchiseId,
+      poll_level: pollLevel,
+      state: pollState || undefined,
+      postcodes: postcodes.length > 0 ? postcodes : undefined,
+      assigned_infomarians: [],
       status: 'active'
     });
   };
@@ -166,6 +182,15 @@ export default function Admin() {
               Banking
             </TabsTrigger>
           </TabsList>
+
+          <div className="mb-4">
+            <Link to={createPageUrl('FranchiseAdmin')}>
+              <Button variant="outline" className="border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+                <Building2 className="w-4 h-4 mr-2" />
+                Manage Franchises & Infomarians
+              </Button>
+            </Link>
+          </div>
           
           {/* Create Poll Tab */}
           <TabsContent value="create">
@@ -196,6 +221,63 @@ export default function Admin() {
                   />
                 </div>
                 
+                <div className="space-y-2">
+                  <Label htmlFor="franchise">Franchise</Label>
+                  <select
+                    id="franchise"
+                    value={franchiseId}
+                    onChange={(e) => setFranchiseId(e.target.value)}
+                    className="w-full h-12 px-3 rounded-xl border border-slate-200"
+                  >
+                    <option value="">Select Franchise</option>
+                    {franchises.map((f) => (
+                      <option key={f.id} value={f.id}>
+                        {f.franchise_name} ({f.postcode})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="pollLevel">Poll Level</Label>
+                  <select
+                    id="pollLevel"
+                    value={pollLevel}
+                    onChange={(e) => setPollLevel(e.target.value)}
+                    className="w-full h-12 px-3 rounded-xl border border-slate-200"
+                  >
+                    <option value="local">Local (Specific Postcodes)</option>
+                    <option value="state">State</option>
+                    <option value="federal">Federal</option>
+                  </select>
+                </div>
+
+                {pollLevel === 'local' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="pollPostcodes">Eligible Postcodes (comma-separated)</Label>
+                    <Input
+                      id="pollPostcodes"
+                      value={pollPostcodes}
+                      onChange={(e) => setPollPostcodes(e.target.value)}
+                      placeholder="e.g., 2000, 2001, 2002"
+                      className="h-12 rounded-xl"
+                    />
+                  </div>
+                )}
+
+                {pollLevel === 'state' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="pollState">State/Territory</Label>
+                    <Input
+                      id="pollState"
+                      value={pollState}
+                      onChange={(e) => setPollState(e.target.value)}
+                      placeholder="e.g., NSW"
+                      className="h-12 rounded-xl"
+                    />
+                  </div>
+                )}
+
                 <div className="space-y-2">
                   <Label htmlFor="endDate">Duration</Label>
                   <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
@@ -251,7 +333,7 @@ export default function Admin() {
                 
                 <Button
                   onClick={handleCreatePoll}
-                  disabled={!pollTitle.trim() || options.filter(o => o.label.trim()).length < 2 || createPoll.isPending}
+                  disabled={!pollTitle.trim() || options.filter(o => o.label.trim()).length < 2 || !franchiseId || createPoll.isPending}
                   className="w-full h-14 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-lg"
                 >
                   {createPoll.isPending ? (
