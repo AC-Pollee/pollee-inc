@@ -355,6 +355,7 @@ export default function FranchiseAdmin() {
                     onChange={(e) => setInfomarianData({...infomarianData, moderation_level: e.target.value})}
                     className="w-full h-10 px-3 rounded-md border border-slate-200"
                   >
+                    <option value="all">All Levels</option>
                     <option value="local">Local</option>
                     <option value="state">State</option>
                     <option value="federal">Federal</option>
