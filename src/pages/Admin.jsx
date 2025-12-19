@@ -83,10 +83,14 @@ export default function Admin() {
     const validOptions = options.filter(o => o.label.trim());
     if (!pollTitle.trim() || validOptions.length < 2) return;
     
+    // Calculate end date as 720 hours (30 days) from now
+    const endDate = new Date();
+    endDate.setHours(endDate.getHours() + 720);
+    
     createPoll.mutate({
       title: pollTitle.trim(),
       description: pollDescription.trim(),
-      end_date: pollEndDate || null,
+      end_date: endDate.toISOString(),
       options: validOptions,
       status: 'active'
     });
@@ -169,14 +173,12 @@ export default function Admin() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="endDate">End Date (optional)</Label>
-                  <Input
-                    id="endDate"
-                    type="datetime-local"
-                    value={pollEndDate}
-                    onChange={(e) => setPollEndDate(e.target.value)}
-                    className="h-12 rounded-xl"
-                  />
+                  <Label htmlFor="endDate">Duration</Label>
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <p className="text-sm text-slate-600">
+                      Polls automatically close after <span className="font-semibold text-slate-900">720 hours (30 days)</span> from creation.
+                    </p>
+                  </div>
                 </div>
                 
                 <div className="space-y-3">

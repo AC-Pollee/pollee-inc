@@ -9,7 +9,7 @@ import { MessageCircle, Send, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function PollDiscussion({ pollId, currentUser, userAge }) {
+export default function PollDiscussion({ pollId, currentUser, userAge, isClosed = false }) {
   const [newComment, setNewComment] = useState('');
   const queryClient = useQueryClient();
 
@@ -45,11 +45,16 @@ export default function PollDiscussion({ pollId, currentUser, userAge }) {
         <CardTitle className="flex items-center gap-2">
           <MessageCircle className="w-5 h-5 text-indigo-600" />
           Discussion ({comments.length})
+          {isClosed && (
+            <Badge className="bg-slate-100 text-slate-600 border-slate-200 ml-2">
+              Closed
+            </Badge>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Comment Input */}
-        {currentUser?.date_of_birth && userAge >= 12 && (
+        {!isClosed && currentUser?.date_of_birth && userAge >= 12 && (
           <div className="space-y-3">
             <Textarea
               placeholder="Share your thoughts on this poll..."

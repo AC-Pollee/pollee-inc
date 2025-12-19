@@ -5,12 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart3 } from 'lucide-react';
 import ResultsChart from './ResultsChart';
 
-export default function LiveResults({ pollId, poll }) {
+export default function LiveResults({ pollId, poll, isPollClosed }) {
   const { data: votes = [] } = useQuery({
     queryKey: ['votes', pollId],
     queryFn: () => base44.entities.Vote.filter({ poll_id: pollId }),
     enabled: !!pollId,
-    refetchInterval: 5000 // Refresh every 5 seconds for live updates
+    refetchInterval: isPollClosed ? false : 5000 // Only refresh if poll is open
   });
 
   return (
@@ -18,7 +18,7 @@ export default function LiveResults({ pollId, poll }) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <BarChart3 className="w-5 h-5 text-indigo-600" />
-          Live Results
+          {isPollClosed ? 'Final Results' : 'Live Results'}
         </CardTitle>
       </CardHeader>
       <CardContent>

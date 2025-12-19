@@ -49,6 +49,9 @@ export default function Vote() {
   const age = calculateAge(user?.date_of_birth);
   const canVote = age !== null && age >= 18;
   
+  // Check if poll is closed (past end_date)
+  const isPollClosed = poll?.end_date && new Date(poll.end_date) < new Date();
+  
   const submitVote = useMutation({
     mutationFn: async (voteData) => {
       return await base44.entities.Vote.create(voteData);
@@ -156,10 +159,19 @@ export default function Vote() {
             >
               <Card className="border-0 shadow-xl overflow-hidden">
                 <CardHeader className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white p-8">
-                  <CardTitle className="text-2xl font-bold">{poll?.title}</CardTitle>
-                  {poll?.description && (
-                    <p className="text-indigo-100 mt-2">{poll.description}</p>
-                  )}
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <CardTitle className="text-2xl font-bold">{poll?.title}</CardTitle>
+                      {poll?.description && (
+                        <p className="text-indigo-100 mt-2">{poll.description}</p>
+                      )}
+                    </div>
+                    {isPollClosed && (
+                      <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
+                        <p className="text-white font-semibold text-sm">Poll Closed</p>
+                      </div>
+                    )}
+                  </div>
                 </CardHeader>
                 
                 <CardContent className="p-8">
@@ -178,7 +190,14 @@ export default function Vote() {
                     </div>
                   </div>
 
-                  {!user?.date_of_birth ? (
+                  {isPollClosed ? (
+                    <Alert className="bg-slate-50 border-slate-200">
+                      <AlertCircle className="h-4 w-4 text-slate-600" />
+                      <AlertDescription className="text-slate-800">
+                        <span className="font-semibold">This poll has closed.</span> Voting and discussions are no longer available. View the final results below.
+                      </AlertDescription>
+                    </Alert>
+                  ) : !user?.date_of_birth ? (
                     <Alert className="bg-amber-50 border-amber-200">
                       <AlertCircle className="h-4 w-4 text-amber-600" />
                       <AlertDescription className="text-amber-800">
@@ -212,20 +231,20 @@ export default function Vote() {
                 </CardContent>
               </Card>
 
-              {/* Live Results - visible to everyone 12+ */}
-              {age >= 12 && (
+              {/* Live/Final Results - visible to everyone 12+ or closed polls */}
+              {(age >= 12 || isPollClosed) && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                   className="mt-6"
                 >
-                  <LiveResults pollId={pollId} poll={poll} />
+                  <LiveResults pollId={pollId} poll={poll} isPollClosed={isPollClosed} />
                 </motion.div>
               )}
 
-              {/* Discussion - available to everyone 12+ */}
-              {age >= 12 && (
+              {/* Discussion - available to everyone 12+ only when poll is open */}
+              {age >= 12 && !isPollClosed && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -233,6 +252,18 @@ export default function Vote() {
                   className="mt-6"
                 >
                   <PollDiscussion pollId={pollId} currentUser={user} userAge={age} />
+                </motion.div>
+              )}
+
+              {/* Closed Discussion - viewable but not editable */}
+              {age >= 12 && isPollClosed && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="mt-6"
+                >
+                  <PollDiscussion pollId={pollId} currentUser={user} userAge={age} isClosed={true} />
                 </motion.div>
               )}
             </motion.div>
