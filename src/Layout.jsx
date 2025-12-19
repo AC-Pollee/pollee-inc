@@ -19,7 +19,7 @@ export default function Layout({ children, currentPageName }) {
           <div className="flex items-center justify-between h-16">
             <Link to={createPageUrl('Home')} className="flex items-center gap-2">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-                <Vote className="w-5 h-5 text-white" />
+                <span className="text-white font-bold text-xl">P</span>
               </div>
               <span className="font-bold text-xl text-slate-900">Pollee Inc</span>
             </Link>
