@@ -20,7 +20,7 @@ export default function Layout({ children, currentPageName }) {
             <Link to={createPageUrl('Home')} className="flex items-center gap-2">
               <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center">
                 <img 
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69415ee66a530550d1e35558/eb8f2b895_pollee.png" 
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69415ee66a530550d1e35558/70757a247_pollee.png" 
                   alt="Pollee Inc Logo" 
                   className="w-8 h-8"
                 />
