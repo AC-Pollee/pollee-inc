@@ -549,7 +549,7 @@ export default function Admin() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="pollee_account">Account Number</Label>
+                      <Label htmlFor="pollee_account">Account Name</Label>
                       <Input
                         id="pollee_account"
                         value={bankDetails.pollee_account}
