@@ -17,7 +17,10 @@ export default function Profile() {
     last_name: '',
     email: '',
     infomarian_id: '',
-    phone_number: ''
+    phone_number: '',
+    bsb: '',
+    account_number: '',
+    account_name: ''
   });
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -36,7 +39,10 @@ export default function Profile() {
         last_name: user.last_name || '',
         email: user.email || '',
         infomarian_id: user.infomarian_id || '',
-        phone_number: user.phone_number || ''
+        phone_number: user.phone_number || '',
+        bsb: user.bsb || '',
+        account_number: user.account_number || '',
+        account_name: user.account_name || ''
       });
     }
   }, [user]);
@@ -58,7 +64,10 @@ export default function Profile() {
       full_name: formData.full_name,
       last_name: formData.last_name,
       infomarian_id: formData.infomarian_id,
-      phone_number: formData.phone_number
+      phone_number: formData.phone_number,
+      bsb: formData.bsb,
+      account_number: formData.account_number,
+      account_name: formData.account_name
     });
   };
 
@@ -199,9 +208,55 @@ export default function Profile() {
                   type="tel"
                   value={formData.phone_number}
                   onChange={(e) => setFormData({...formData, phone_number: e.target.value})}
-                  placeholder="+1 (555) 000-0000"
+                  placeholder="+61 400 000 000"
                   className="h-12 rounded-lg"
                 />
+              </div>
+
+              <div className="border-t border-slate-200 pt-6 mt-6">
+                <h3 className="text-lg font-semibold text-slate-900 mb-4">Australian Bank Details</h3>
+                
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="bsb" className="text-base font-semibold">
+                      BSB Number
+                    </Label>
+                    <Input
+                      id="bsb"
+                      value={formData.bsb}
+                      onChange={(e) => setFormData({...formData, bsb: e.target.value})}
+                      placeholder="000-000"
+                      maxLength={7}
+                      className="h-12 rounded-lg"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="account_number" className="text-base font-semibold">
+                      Account Number
+                    </Label>
+                    <Input
+                      id="account_number"
+                      value={formData.account_number}
+                      onChange={(e) => setFormData({...formData, account_number: e.target.value})}
+                      placeholder="12345678"
+                      className="h-12 rounded-lg"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2 mt-6">
+                  <Label htmlFor="account_name" className="text-base font-semibold">
+                    Account Name
+                  </Label>
+                  <Input
+                    id="account_name"
+                    value={formData.account_name}
+                    onChange={(e) => setFormData({...formData, account_name: e.target.value})}
+                    placeholder="Name as it appears on your bank account"
+                    className="h-12 rounded-lg"
+                  />
+                </div>
               </div>
 
               <div className="pt-4">
