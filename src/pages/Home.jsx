@@ -54,8 +54,7 @@ export default function Home() {
             </h1>
             
             <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-              Submit your vote by uploading a bank transaction screenshot. Each vote is verified 
-              to ensure authenticity and transparency.
+              Use your bank account transactions to convey your vote securely and accountably and the cents you spent to support the people who guide the conversations we need to have and who cultivate the information you need to decide - your local Infomarian
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
