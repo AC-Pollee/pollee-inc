@@ -11,6 +11,7 @@ import { motion } from 'framer-motion';
 
 export default function TransactionForm({ pollId, pollOptions, onSubmit }) {
   const [transactionData, setTransactionData] = useState({
+    fullName: '',
     reference: '',
     amount: '',
     date: '',
@@ -22,6 +23,10 @@ export default function TransactionForm({ pollId, pollOptions, onSubmit }) {
   const [error, setError] = useState(null);
 
   const handleExtract = async () => {
+    if (!transactionData.fullName.trim()) {
+      setError('Please enter your full name');
+      return;
+    }
     if (!transactionData.description.trim()) {
       setError('Please enter the transaction description');
       return;
@@ -104,7 +109,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
       poll_id: pollId,
       poll_item_id: extractedData.poll_item_id,
       option_label: extractedData.option_label,
-      voter_name: extractedData.voter_name,
+      voter_name: transactionData.fullName,
       infomarian_id: extractedData.infomarian_id,
       delegation_status: extractedData.delegation_status,
       delegated_votes_count: extractedData.delegated_votes_count,
@@ -169,6 +174,19 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
       </Card>
 
       <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="fullName" className="text-base font-semibold">
+            Full Name <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="fullName"
+            placeholder="Enter your full name"
+            value={transactionData.fullName}
+            onChange={(e) => setTransactionData({...transactionData, fullName: e.target.value})}
+            className="h-11 rounded-lg"
+          />
+        </div>
+
         <div className="grid md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="reference">Transaction Reference</Label>
@@ -237,7 +255,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
 
         <Button
           onClick={handleExtract}
-          disabled={!transactionData.description.trim() || extracting}
+          disabled={!transactionData.fullName.trim() || !transactionData.description.trim() || extracting}
           className="w-full h-12 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 rounded-lg"
         >
           {extracting ? (
@@ -276,7 +294,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
             <div className="grid md:grid-cols-2 gap-4 text-sm">
               <div>
                 <p className="text-emerald-600 font-medium">Voter Name</p>
-                <p className="text-emerald-900 font-semibold">{extractedData.voter_name}</p>
+                <p className="text-emerald-900 font-semibold">{transactionData.fullName}</p>
               </div>
               <div>
                 <p className="text-emerald-600 font-medium">Infomarian ID</p>
