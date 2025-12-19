@@ -16,6 +16,7 @@ export default function Profile() {
     full_name: '',
     last_name: '',
     email: '',
+    date_of_birth: '',
     infomarian_id: '',
     phone_number: '',
     bsb: '',
@@ -38,6 +39,7 @@ export default function Profile() {
         full_name: user.full_name || '',
         last_name: user.last_name || '',
         email: user.email || '',
+        date_of_birth: user.date_of_birth || '',
         infomarian_id: user.infomarian_id || '',
         phone_number: user.phone_number || '',
         bsb: user.bsb || '',
@@ -63,6 +65,7 @@ export default function Profile() {
     updateProfile.mutate({
       full_name: formData.full_name,
       last_name: formData.last_name,
+      date_of_birth: formData.date_of_birth,
       infomarian_id: formData.infomarian_id,
       phone_number: formData.phone_number,
       bsb: formData.bsb,
@@ -71,7 +74,20 @@ export default function Profile() {
     });
   };
 
-  const isProfileComplete = user?.last_name && user?.infomarian_id;
+  const calculateAge = (dob) => {
+    if (!dob) return null;
+    const today = new Date();
+    const birthDate = new Date(dob);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
+  const age = calculateAge(user?.date_of_birth);
+  const isProfileComplete = user?.last_name && user?.infomarian_id && user?.date_of_birth;
 
   if (isLoading) {
     return (
@@ -109,7 +125,35 @@ export default function Profile() {
             <Alert className="mb-6 bg-amber-50 border-amber-200">
               <AlertCircle className="h-4 w-4 text-amber-600" />
               <AlertDescription className="text-amber-800">
-                Please complete your profile to participate in voting. Last Name and Infomarian ID are required.
+                Please complete your profile. Last Name, Date of Birth, and Infomarian ID are required.
+              </AlertDescription>
+            </Alert>
+          </motion.div>
+        )}
+
+        {age !== null && age < 12 && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <Alert className="mb-6 bg-red-50 border-red-200">
+              <AlertCircle className="h-4 w-4 text-red-600" />
+              <AlertDescription className="text-red-800">
+                You must be at least 12 years old to participate in this platform.
+              </AlertDescription>
+            </Alert>
+          </motion.div>
+        )}
+
+        {age !== null && age >= 12 && age < 18 && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <Alert className="mb-6 bg-blue-50 border-blue-200">
+              <AlertCircle className="h-4 w-4 text-blue-600" />
+              <AlertDescription className="text-blue-800">
+                Junior Member (Age {age}) - You can participate in discussions and view running polls, but cannot cast official votes until you turn 18.
               </AlertDescription>
             </Alert>
           </motion.div>
@@ -183,6 +227,28 @@ export default function Profile() {
                   className="h-12 rounded-lg bg-slate-50"
                 />
                 <p className="text-xs text-slate-500">Email cannot be changed</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="date_of_birth" className="text-base font-semibold">
+                  Date of Birth <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="date_of_birth"
+                  type="date"
+                  value={formData.date_of_birth}
+                  onChange={(e) => setFormData({...formData, date_of_birth: e.target.value})}
+                  className="h-12 rounded-lg"
+                  required
+                />
+                {formData.date_of_birth && (
+                  <p className="text-xs text-slate-500">
+                    Age: {calculateAge(formData.date_of_birth)} years
+                    {calculateAge(formData.date_of_birth) >= 18 && ' - Eligible to vote'}
+                    {calculateAge(formData.date_of_birth) >= 12 && calculateAge(formData.date_of_birth) < 18 && ' - Junior member'}
+                    {calculateAge(formData.date_of_birth) < 12 && ' - Too young to participate'}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">

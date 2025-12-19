@@ -6,7 +6,8 @@ import { createPageUrl } from '@/utils';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ArrowLeft, CheckCircle2, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import TransactionForm from '@/components/vote/TransactionForm';
 
@@ -17,6 +18,11 @@ export default function Vote() {
   
   const [submitted, setSubmitted] = useState(false);
   
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me()
+  });
+
   const { data: poll, isLoading } = useQuery({
     queryKey: ['poll', pollId],
     queryFn: async () => {
@@ -25,6 +31,21 @@ export default function Vote() {
     },
     enabled: !!pollId
   });
+
+  const calculateAge = (dob) => {
+    if (!dob) return null;
+    const today = new Date();
+    const birthDate = new Date(dob);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
+  const age = calculateAge(user?.date_of_birth);
+  const canVote = age !== null && age >= 18;
   
   const submitVote = useMutation({
     mutationFn: async (voteData) => {
@@ -155,11 +176,37 @@ export default function Vote() {
                     </div>
                   </div>
 
-                  <TransactionForm
-                    pollId={pollId}
-                    pollOptions={poll?.options || []}
-                    onSubmit={handleSubmit}
-                  />
+                  {!user?.date_of_birth ? (
+                    <Alert className="bg-amber-50 border-amber-200">
+                      <AlertCircle className="h-4 w-4 text-amber-600" />
+                      <AlertDescription className="text-amber-800">
+                        Please complete your profile with your date of birth before voting.{' '}
+                        <Link to={createPageUrl('Profile')} className="underline font-semibold">
+                          Go to Profile
+                        </Link>
+                      </AlertDescription>
+                    </Alert>
+                  ) : age < 12 ? (
+                    <Alert className="bg-red-50 border-red-200">
+                      <AlertCircle className="h-4 w-4 text-red-600" />
+                      <AlertDescription className="text-red-800">
+                        You must be at least 12 years old to participate in this platform.
+                      </AlertDescription>
+                    </Alert>
+                  ) : age < 18 ? (
+                    <Alert className="bg-blue-50 border-blue-200">
+                      <AlertCircle className="h-4 w-4 text-blue-600" />
+                      <AlertDescription className="text-blue-800">
+                        Junior Member (Age {age}) - You can view polls and participate in discussions, but cannot cast official votes until you turn 18.
+                      </AlertDescription>
+                    </Alert>
+                  ) : (
+                    <TransactionForm
+                      pollId={pollId}
+                      pollOptions={poll?.options || []}
+                      onSubmit={handleSubmit}
+                    />
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
