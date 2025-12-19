@@ -558,16 +558,6 @@ export default function Admin() {
                         className="h-11 rounded-lg"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="pollee_account_name">Account Name</Label>
-                      <Input
-                        id="pollee_account_name"
-                        value={bankDetails.pollee_account_name}
-                        onChange={(e) => setBankDetails({...bankDetails, pollee_account_name: e.target.value})}
-                        placeholder="Pollee Inc"
-                        className="h-11 rounded-lg"
-                      />
-                    </div>
                   </div>
                 </div>
 
