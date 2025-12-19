@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
-import { User, Save, CheckCircle2, AlertCircle } from 'lucide-react';
+import { User, Save, CheckCircle2, AlertCircle, BadgeCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import DelegationManager from '@/components/profile/DelegationManager';
 
@@ -25,6 +25,7 @@ export default function Profile() {
     account_name: ''
   });
   const [successMessage, setSuccessMessage] = useState('');
+  const [validationInitiated, setValidationInitiated] = useState(false);
 
   const { data: user, isLoading } = useQuery({
     queryKey: ['currentUser'],
@@ -89,6 +90,11 @@ export default function Profile() {
 
   const age = calculateAge(user?.date_of_birth);
   const isProfileComplete = user?.last_name && user?.infomarian_id && user?.date_of_birth;
+  const isAccountValidated = user?.account_validated || false;
+
+  const handleInitiateValidation = () => {
+    setValidationInitiated(true);
+  };
 
   if (isLoading) {
     return (
@@ -158,9 +164,23 @@ export default function Profile() {
               </AlertDescription>
             </Alert>
           </motion.div>
-        )}
+          )}
 
-        {successMessage && (
+          {!isAccountValidated && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <Alert className="mb-6 bg-amber-50 border-amber-200">
+              <BadgeCheck className="h-4 w-4 text-amber-600" />
+              <AlertDescription className="text-amber-800">
+                <span className="font-semibold">Account Validation Required:</span> Make a 55c deposit to validate your account. Pollee Inc will send a return transaction to confirm receipt.
+              </AlertDescription>
+            </Alert>
+          </motion.div>
+          )}
+
+          {successMessage && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -347,9 +367,78 @@ export default function Profile() {
               </div>
             </form>
           </CardContent>
-        </Card>
+          </Card>
 
-        {age >= 18 && (
+          {/* Account Validation Section */}
+          {!isAccountValidated && (
+          <Card className="border-0 shadow-xl mt-6">
+            <CardHeader className="bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-t-xl">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                  <BadgeCheck className="w-6 h-6" />
+                </div>
+                <CardTitle className="text-2xl">Account Validation</CardTitle>
+              </div>
+            </CardHeader>
+
+            <CardContent className="p-8">
+              {!validationInitiated ? (
+                <div className="space-y-4">
+                  <p className="text-slate-700">
+                    To validate your account and start voting, you need to make a <span className="font-bold">55c deposit</span> to the Pollee Inc bank account.
+                  </p>
+
+                  <div className="bg-slate-50 rounded-lg p-4 space-y-2 text-sm">
+                    <p className="font-semibold text-slate-900">Pollee Inc Bank Details:</p>
+                    <div className="space-y-1">
+                      <div className="flex justify-between">
+                        <span className="text-slate-600">BSB:</span>
+                        <span className="font-mono font-semibold">123-456</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-600">Account Name:</span>
+                        <span className="font-semibold">Pollee Inc</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-600">Amount:</span>
+                        <span className="font-semibold text-amber-600">$0.55 AUD</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <p className="text-sm text-blue-800">
+                      <span className="font-semibold">Important:</span> Include your email address ({user?.email}) in the transaction description so we can verify your payment.
+                    </p>
+                  </div>
+
+                  <Button
+                    onClick={handleInitiateValidation}
+                    className="w-full h-14 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 rounded-lg text-lg"
+                  >
+                    <BadgeCheck className="w-5 h-5 mr-2" />
+                    I've Made the 55c Deposit
+                  </Button>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle2 className="w-8 h-8 text-blue-600" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-slate-900 mb-2">Validation Pending</h3>
+                  <p className="text-slate-600 mb-4">
+                    Thank you! We'll process your 55c deposit and send a return transaction to confirm receipt.
+                  </p>
+                  <p className="text-sm text-slate-500">
+                    This usually takes 1-2 business days. You'll receive an email once your account is validated.
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          )}
+
+          {age >= 18 && (
           <div className="mt-6">
             <DelegationManager user={user} />
           </div>
