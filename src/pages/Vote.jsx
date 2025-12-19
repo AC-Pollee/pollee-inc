@@ -20,7 +20,7 @@ export default function Vote() {
   
   const [submitted, setSubmitted] = useState(false);
   
-  const { data: user } = useQuery({
+  const { data: user, isLoading: loadingUser, error: userError } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me()
   });
@@ -88,7 +88,39 @@ export default function Vote() {
     );
   }
   
-  if (isLoading) {
+  // Redirect to login if not authenticated
+  if (userError || (!loadingUser && !user)) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 flex items-center justify-center p-4">
+        <Card className="max-w-md w-full text-center border-0 shadow-xl">
+          <CardContent className="pt-8 pb-8">
+            <div className="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center mx-auto mb-4">
+              <User className="w-8 h-8 text-indigo-600" />
+            </div>
+            <h2 className="text-xl font-semibold text-slate-900 mb-2">Login Required</h2>
+            <p className="text-slate-500 mb-6">Please log in or sign up to vote on this poll</p>
+            <div className="flex flex-col gap-3">
+              <Button 
+                onClick={() => base44.auth.redirectToLogin(window.location.href)}
+                className="bg-indigo-600 hover:bg-indigo-700 w-full"
+              >
+                Log In
+              </Button>
+              <Button 
+                onClick={() => base44.auth.redirectToLogin(window.location.href)}
+                variant="outline"
+                className="w-full"
+              >
+                Sign Up
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+  
+  if (isLoading || loadingUser) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 p-4 md:p-8">
         <div className="max-w-2xl mx-auto">
