@@ -421,14 +421,14 @@ export default function Profile() {
 
                   <Button
                     onClick={handleInitiateValidation}
-                    disabled={!profileData.bsb || !profileData.account_number}
+                    disabled={!formData.bsb || !formData.account_number}
                     className="w-full h-14 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 rounded-lg text-lg disabled:opacity-50"
                   >
                     <BadgeCheck className="w-5 h-5 mr-2" />
                     Request Validation Deposit
                   </Button>
 
-                  {(!profileData.bsb || !profileData.account_number) && (
+                  {(!formData.bsb || !formData.account_number) && (
                     <p className="text-sm text-red-600 text-center">
                       Please complete your bank details above before requesting validation
                     </p>
@@ -442,7 +442,7 @@ export default function Profile() {
                     </div>
                     <h3 className="text-xl font-semibold text-slate-900 mb-2">Validation Deposit Sent</h3>
                     <p className="text-slate-600 mb-4">
-                      We've sent a random amount (less than $0.25 AUD) to your account ending in {profileData.account_number?.slice(-4) || 'XXXX'}.
+                      We've sent a random amount (less than $0.25 AUD) to your account ending in {formData.account_number?.slice(-4) || 'XXXX'}.
                     </p>
                   </div>
 
