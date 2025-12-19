@@ -91,6 +91,15 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
   const handleSubmit = () => {
     if (!extractedData) return;
 
+    const amount = parseFloat(transactionData.amount) || 0;
+    const expectedAmount = extractedData.delegated_votes_count * 0.55;
+    
+    // Validate amount (allow small floating point differences)
+    if (Math.abs(amount - expectedAmount) > 0.01) {
+      setError(`Transaction amount should be $${expectedAmount.toFixed(2)} AUD (${extractedData.delegated_votes_count} votes × $0.55)`);
+      return;
+    }
+
     onSubmit({
       poll_id: pollId,
       poll_item_id: extractedData.poll_item_id,
@@ -100,10 +109,16 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
       delegation_status: extractedData.delegation_status,
       delegated_votes_count: extractedData.delegated_votes_count,
       transaction_reference: transactionData.reference,
-      transaction_amount: parseFloat(transactionData.amount) || 0,
+      transaction_amount: amount,
       transaction_date: transactionData.date || new Date().toISOString(),
       transaction_description: transactionData.description,
       bank_name: transactionData.bank,
+      payment_breakdown: {
+        infomarian: 0.30 * extractedData.delegated_votes_count,
+        pollee_incorporated: 0.10 * extractedData.delegated_votes_count,
+        local_franchise: 0.10 * extractedData.delegated_votes_count,
+        gst: 0.05 * extractedData.delegated_votes_count
+      },
       status: 'pending'
     });
   };
@@ -127,6 +142,28 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
               <li>Number of delegated votes</li>
               <li>Your Infomarian ID</li>
             </ul>
+          </div>
+        </div>
+      </Card>
+
+      <Card className="p-6 bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-200">
+        <h3 className="font-semibold text-emerald-900 mb-3">Vote Payment: $0.55 AUD per vote</h3>
+        <div className="space-y-2 text-sm text-emerald-700">
+          <div className="flex justify-between">
+            <span>Infomarian:</span>
+            <span className="font-semibold">$0.30</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Pollee Incorporated:</span>
+            <span className="font-semibold">$0.10</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Local Franchise:</span>
+            <span className="font-semibold">$0.10</span>
+          </div>
+          <div className="flex justify-between border-t border-emerald-200 pt-2">
+            <span>GST:</span>
+            <span className="font-semibold">$0.05</span>
           </div>
         </div>
       </Card>
@@ -260,6 +297,10 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
               <div>
                 <p className="text-emerald-600 font-medium">Delegated Votes</p>
                 <p className="text-emerald-900 font-semibold">{extractedData.delegated_votes_count}</p>
+              </div>
+              <div>
+                <p className="text-emerald-600 font-medium">Expected Payment</p>
+                <p className="text-emerald-900 font-semibold">${(extractedData.delegated_votes_count * 0.55).toFixed(2)} AUD</p>
               </div>
             </div>
           </Card>

@@ -435,6 +435,30 @@ export default function Admin() {
                               </div>
                             )}
                             
+                            {vote.payment_breakdown && (
+                              <div className="space-y-1">
+                                <p className="text-sm text-slate-500">Payment Breakdown ($0.55 per vote)</p>
+                                <div className="bg-emerald-50 p-3 rounded-lg border border-emerald-200 text-xs space-y-1">
+                                  <div className="flex justify-between">
+                                    <span>Infomarian:</span>
+                                    <span className="font-semibold">${vote.payment_breakdown.infomarian?.toFixed(2)}</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span>Pollee Inc:</span>
+                                    <span className="font-semibold">${vote.payment_breakdown.pollee_incorporated?.toFixed(2)}</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span>Local Franchise:</span>
+                                    <span className="font-semibold">${vote.payment_breakdown.local_franchise?.toFixed(2)}</span>
+                                  </div>
+                                  <div className="flex justify-between border-t border-emerald-300 pt-1">
+                                    <span>GST:</span>
+                                    <span className="font-semibold">${vote.payment_breakdown.gst?.toFixed(2)}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                            
                             <div className="flex items-center gap-3 pt-4">
                               <Button
                                 onClick={() => updateVote.mutate({ id: vote.id, data: { status: 'verified' } })}
