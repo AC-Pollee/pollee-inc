@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { User, Save, CheckCircle2, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import DelegationManager from '@/components/profile/DelegationManager';
 
 export default function Profile() {
   const queryClient = useQueryClient();
@@ -347,6 +348,12 @@ export default function Profile() {
             </form>
           </CardContent>
         </Card>
+
+        {age >= 18 && (
+          <div className="mt-6">
+            <DelegationManager user={user} />
+          </div>
+        )}
 
         {user?.role === 'admin' && (
           <Card className="border-0 shadow-lg mt-6 bg-gradient-to-br from-purple-50 to-indigo-50 border-purple-200">

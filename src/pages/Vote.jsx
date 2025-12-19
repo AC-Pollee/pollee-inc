@@ -258,6 +258,7 @@ export default function Vote() {
                       pollId={pollId}
                       pollOptions={poll?.options || []}
                       onSubmit={handleSubmit}
+                      currentUser={user}
                     />
                   )}
                 </CardContent>

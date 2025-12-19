@@ -6,12 +6,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, Sparkles, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Checkbox } from "@/components/ui/checkbox";
 import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 
-export default function TransactionForm({ pollId, pollOptions, onSubmit }) {
+export default function TransactionForm({ pollId, pollOptions, onSubmit, currentUser }) {
   const [transactionData, setTransactionData] = useState({
     fullName: '',
+    pollNumber: pollId || '',
+    infomarianId: currentUser?.infomarian_id || '',
+    infomarianTip: '0.30',
+    carryingDelegation: false,
     reference: '',
     amount: '',
     date: '',
@@ -21,10 +27,33 @@ export default function TransactionForm({ pollId, pollOptions, onSubmit }) {
   const [extracting, setExtracting] = useState(false);
   const [extractedData, setExtractedData] = useState(null);
   const [error, setError] = useState(null);
+  const [selectedDelegations, setSelectedDelegations] = useState([]);
+
+  const { data: availableDelegations = [] } = useQuery({
+    queryKey: ['available-delegations', currentUser?.id, pollId],
+    queryFn: async () => {
+      if (!currentUser?.id) return [];
+      const allDelegations = await base44.entities.Delegation.filter({ 
+        delegate_user_id: currentUser.id,
+        status: 'verified'
+      });
+      return allDelegations.filter(d => 
+        d.delegation_type === 'open' || d.poll_id === pollId
+      );
+    },
+    enabled: !!currentUser?.id
+  });
+
+  const totalVotes = 1 + selectedDelegations.length;
+  const expectedTip = parseFloat(transactionData.infomarianTip) || 0.30;
 
   const handleExtract = async () => {
     if (!transactionData.fullName.trim()) {
       setError('Please enter your full name');
+      return;
+    }
+    if (!transactionData.infomarianId.trim()) {
+      setError('Please enter your Infomarian ID');
       return;
     }
     if (!transactionData.description.trim()) {
@@ -97,11 +126,11 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
     if (!extractedData) return;
 
     const amount = parseFloat(transactionData.amount) || 0;
-    const expectedAmount = extractedData.delegated_votes_count * 0.55;
+    const baseAmount = 0.25; // Pollee + Franchise + GST
+    const expectedAmount = (baseAmount + expectedTip) * totalVotes;
     
-    // Validate amount (allow small floating point differences)
     if (Math.abs(amount - expectedAmount) > 0.01) {
-      setError(`Transaction amount should be $${expectedAmount.toFixed(2)} AUD (${extractedData.delegated_votes_count} votes × $0.55)`);
+      setError(`Transaction amount should be $${expectedAmount.toFixed(2)} AUD (${totalVotes} votes × $${(baseAmount + expectedTip).toFixed(2)})`);
       return;
     }
 
@@ -110,20 +139,21 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
       poll_item_id: extractedData.poll_item_id,
       option_label: extractedData.option_label,
       voter_name: transactionData.fullName,
-      infomarian_id: extractedData.infomarian_id,
-      delegation_status: extractedData.delegation_status,
-      delegated_votes_count: extractedData.delegated_votes_count,
+      infomarian_id: transactionData.infomarianId,
+      delegation_status: transactionData.carryingDelegation ? 'delegated' : 'direct',
+      delegated_votes_count: totalVotes,
       transaction_reference: transactionData.reference,
       transaction_amount: amount,
       transaction_date: transactionData.date || new Date().toISOString(),
       transaction_description: transactionData.description,
       bank_name: transactionData.bank,
       payment_breakdown: {
-        infomarian: 0.30 * extractedData.delegated_votes_count,
-        pollee_incorporated: 0.10 * extractedData.delegated_votes_count,
-        local_franchise: 0.10 * extractedData.delegated_votes_count,
-        gst: 0.05 * extractedData.delegated_votes_count
+        infomarian: expectedTip * totalVotes,
+        pollee_incorporated: 0.10 * totalVotes,
+        local_franchise: 0.10 * totalVotes,
+        gst: 0.05 * totalVotes
       },
+      delegation_ids: selectedDelegations.map(d => d.id),
       status: 'pending'
     });
   };
@@ -152,39 +182,132 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
       </Card>
 
       <Card className="p-6 bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-200">
-        <h3 className="font-semibold text-emerald-900 mb-3">Vote Payment: $0.55 AUD per vote</h3>
+        <h3 className="font-semibold text-emerald-900 mb-3">Vote Payment Breakdown</h3>
         <div className="space-y-2 text-sm text-emerald-700">
           <div className="flex justify-between">
-            <span>Infomarian:</span>
-            <span className="font-semibold">$0.30</span>
+            <span>Infomarian Tip (per vote):</span>
+            <span className="font-semibold">${expectedTip.toFixed(2)}</span>
           </div>
           <div className="flex justify-between">
             <span>Pollee Incorporated:</span>
-            <span className="font-semibold">$0.10</span>
+            <span className="font-semibold">${(0.10 * totalVotes).toFixed(2)}</span>
           </div>
           <div className="flex justify-between">
             <span>Local Franchise:</span>
-            <span className="font-semibold">$0.10</span>
+            <span className="font-semibold">${(0.10 * totalVotes).toFixed(2)}</span>
           </div>
           <div className="flex justify-between border-t border-emerald-200 pt-2">
             <span>GST:</span>
-            <span className="font-semibold">$0.05</span>
+            <span className="font-semibold">${(0.05 * totalVotes).toFixed(2)}</span>
+          </div>
+          <div className="flex justify-between border-t border-emerald-300 pt-2 font-bold text-base">
+            <span>Total ({totalVotes} vote{totalVotes > 1 ? 's' : ''}):</span>
+            <span>${((0.25 + expectedTip) * totalVotes).toFixed(2)} AUD</span>
           </div>
         </div>
       </Card>
 
       <div className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="fullName" className="text-base font-semibold">
-            Full Name <span className="text-red-500">*</span>
-          </Label>
-          <Input
-            id="fullName"
-            placeholder="Enter your full name"
-            value={transactionData.fullName}
-            onChange={(e) => setTransactionData({...transactionData, fullName: e.target.value})}
-            className="h-11 rounded-lg"
-          />
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="fullName" className="text-base font-semibold">
+              Full Name <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              id="fullName"
+              placeholder="Enter your full name"
+              value={transactionData.fullName}
+              onChange={(e) => setTransactionData({...transactionData, fullName: e.target.value})}
+              className="h-11 rounded-lg"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="pollNumber" className="text-base font-semibold">
+              Poll Number
+            </Label>
+            <Input
+              id="pollNumber"
+              value={transactionData.pollNumber}
+              onChange={(e) => setTransactionData({...transactionData, pollNumber: e.target.value})}
+              placeholder="Auto-filled"
+              className="h-11 rounded-lg bg-slate-50"
+              disabled
+            />
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="infomarianId" className="text-base font-semibold">
+              Infomarian ID <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              id="infomarianId"
+              placeholder="Your Infomarian ID"
+              value={transactionData.infomarianId}
+              onChange={(e) => setTransactionData({...transactionData, infomarianId: e.target.value})}
+              className="h-11 rounded-lg"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="infomarianTip" className="text-base font-semibold">
+              Infomarian Tip (per vote)
+            </Label>
+            <Input
+              id="infomarianTip"
+              type="number"
+              step="0.01"
+              min="0.30"
+              value={transactionData.infomarianTip}
+              onChange={(e) => setTransactionData({...transactionData, infomarianTip: e.target.value})}
+              className="h-11 rounded-lg"
+            />
+            <p className="text-xs text-slate-500">Minimum $0.30 AUD</p>
+          </div>
+        </div>
+
+        {availableDelegations.length > 0 && (
+          <div className="space-y-3 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="carryingDelegation"
+                checked={transactionData.carryingDelegation}
+                onCheckedChange={(checked) => {
+                  setTransactionData({...transactionData, carryingDelegation: checked});
+                  if (!checked) setSelectedDelegations([]);
+                }}
+              />
+              <Label htmlFor="carryingDelegation" className="font-semibold text-blue-900 cursor-pointer">
+                Carrying Delegation
+              </Label>
+            </div>
+
+            {transactionData.carryingDelegation && (
+              <div className="space-y-2 ml-6">
+                <p className="text-sm text-blue-700 mb-2">Select delegations to carry:</p>
+                {availableDelegations.map(delegation => (
+                  <div key={delegation.id} className="flex items-center gap-2">
+                    <Checkbox
+                      id={`delegation-${delegation.id}`}
+                      checked={selectedDelegations.some(d => d.id === delegation.id)}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setSelectedDelegations([...selectedDelegations, delegation]);
+                        } else {
+                          setSelectedDelegations(selectedDelegations.filter(d => d.id !== delegation.id));
+                        }
+                      }}
+                    />
+                    <Label htmlFor={`delegation-${delegation.id}`} className="text-sm text-blue-800 cursor-pointer">
+                      {delegation.delegator_full_name} ({delegation.delegation_type === 'open' ? 'Open' : 'This Poll'})
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-4">
@@ -255,7 +378,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
 
         <Button
           onClick={handleExtract}
-          disabled={!transactionData.fullName.trim() || !transactionData.description.trim() || extracting}
+          disabled={!transactionData.fullName.trim() || !transactionData.infomarianId.trim() || !transactionData.description.trim() || extracting}
           className="w-full h-12 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 rounded-lg"
         >
           {extracting ? (
@@ -298,7 +421,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
               </div>
               <div>
                 <p className="text-emerald-600 font-medium">Infomarian ID</p>
-                <p className="text-emerald-900 font-semibold">{extractedData.infomarian_id}</p>
+                <p className="text-emerald-900 font-semibold">{transactionData.infomarianId}</p>
               </div>
               <div>
                 <p className="text-emerald-600 font-medium">Voting For</p>
@@ -310,15 +433,21 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
               </div>
               <div>
                 <p className="text-emerald-600 font-medium">Delegation Status</p>
-                <p className="text-emerald-900 font-semibold capitalize">{extractedData.delegation_status}</p>
+                <p className="text-emerald-900 font-semibold capitalize">
+                  {transactionData.carryingDelegation ? 'Delegated' : 'Direct'}
+                </p>
               </div>
               <div>
-                <p className="text-emerald-600 font-medium">Delegated Votes</p>
-                <p className="text-emerald-900 font-semibold">{extractedData.delegated_votes_count}</p>
+                <p className="text-emerald-600 font-medium">Total Votes</p>
+                <p className="text-emerald-900 font-semibold">{totalVotes}</p>
+              </div>
+              <div>
+                <p className="text-emerald-600 font-medium">Infomarian Tip</p>
+                <p className="text-emerald-900 font-semibold">${(expectedTip * totalVotes).toFixed(2)} AUD</p>
               </div>
               <div>
                 <p className="text-emerald-600 font-medium">Expected Payment</p>
-                <p className="text-emerald-900 font-semibold">${(extractedData.delegated_votes_count * 0.55).toFixed(2)} AUD</p>
+                <p className="text-emerald-900 font-semibold">${((0.25 + expectedTip) * totalVotes).toFixed(2)} AUD</p>
               </div>
             </div>
           </Card>
