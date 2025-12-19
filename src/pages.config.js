@@ -1,15 +1,17 @@
-import Home from './pages/Home';
-import Vote from './pages/Vote';
-import Results from './pages/Results';
 import Admin from './pages/Admin';
+import Home from './pages/Home';
+import Results from './pages/Results';
+import Vote from './pages/Vote';
+import Profile from './pages/Profile';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Home": Home,
-    "Vote": Vote,
-    "Results": Results,
     "Admin": Admin,
+    "Home": Home,
+    "Results": Results,
+    "Vote": Vote,
+    "Profile": Profile,
 }
 
 export const pagesConfig = {

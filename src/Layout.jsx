@@ -1,13 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Vote, BarChart3, Settings } from 'lucide-react';
+import { Vote, BarChart3, Settings, User } from 'lucide-react';
 
 export default function Layout({ children, currentPageName }) {
   const navItems = [
     { name: 'Home', icon: Vote, label: 'Polls' },
     { name: 'Results', icon: BarChart3, label: 'Results' },
     { name: 'Admin', icon: Settings, label: 'Admin' },
+    { name: 'Profile', icon: User, label: 'Profile' },
   ];
   
   return (
