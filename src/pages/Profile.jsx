@@ -192,7 +192,7 @@ export default function Profile() {
               <Alert className="mb-6 bg-amber-50 border-amber-200">
                 <BadgeCheck className="h-4 w-4 text-amber-600" />
                 <AlertDescription className="text-amber-800">
-                  <span className="font-semibold">Account Validation Required:</span> Request a validation deposit from Pollee Inc (less than $0.25 AUD). Enter the amount you receive to verify your account.
+                  <span className="font-semibold">Account Validation Required:</span> Make a $0.55 AUD deposit to Pollee Inc. Once verified, we'll send you a random amount (less than $0.25 AUD) to confirm your account.
                 </AlertDescription>
               </Alert>
             </motion.div>
@@ -402,20 +402,41 @@ export default function Profile() {
             <CardContent className="p-8">
               {!validationInitiated ? (
                 <div className="space-y-4">
-                  <p className="text-slate-700">
-                    To validate your account and start voting, request a validation deposit from Pollee Inc. We'll send a <span className="font-bold">random amount (less than $0.25 AUD)</span> to your bank account.
-                  </p>
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 mb-4">
+                    <h4 className="font-semibold text-blue-900 mb-3">Step 1: Make Your 0.55 AUD Deposit</h4>
+                    <p className="text-slate-700 mb-4">
+                      To validate your account and start voting, you must make a <span className="font-bold text-indigo-700">$0.55 AUD deposit</span> to the Pollee Inc bank account.
+                    </p>
+                    
+                    <div className="bg-white rounded-lg p-4 space-y-2 text-sm">
+                      <p className="font-semibold text-slate-900">Pollee Inc Bank Details:</p>
+                      <div className="space-y-1">
+                        <div className="flex justify-between">
+                          <span className="text-slate-600">BSB:</span>
+                          <span className="font-mono font-semibold">123-456</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-600">Account Name:</span>
+                          <span className="font-semibold">Pollee Inc</span>
+                        </div>
+                        <div className="flex justify-between border-t border-slate-200 pt-2 mt-2">
+                          <span className="text-slate-600">Amount:</span>
+                          <span className="font-semibold text-amber-600">$0.55 AUD</span>
+                        </div>
+                      </div>
+                    </div>
 
-                  <div className="bg-slate-50 rounded-lg p-4 space-y-2 text-sm">
-                    <p className="font-semibold text-slate-900">Your Bank Details Required:</p>
-                    <div className="space-y-1 text-slate-600">
-                      <p>Make sure you have entered your BSB and Account Number in the profile form above.</p>
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mt-4">
+                      <p className="text-sm text-amber-800">
+                        <span className="font-semibold">Important:</span> Include your email address ({user?.email}) in the transaction description so we can verify your payment.
+                      </p>
                     </div>
                   </div>
 
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <p className="text-sm text-blue-800">
-                      <span className="font-semibold">How it works:</span> Pollee Inc will send a random deposit (less than $0.25 AUD) to your account. You must enter the exact amount you receive to complete validation.
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+                    <h4 className="font-semibold text-emerald-900 mb-2">Step 2: We'll Confirm Receipt</h4>
+                    <p className="text-sm text-emerald-800">
+                      Once we verify your $0.55 AUD deposit, Pollee Inc will send a <span className="font-semibold">random amount (less than $0.25 AUD)</span> to your bank account ending in {formData.account_number?.slice(-4) || 'XXXX'}.
                     </p>
                   </div>
 
@@ -425,30 +446,36 @@ export default function Profile() {
                     className="w-full h-14 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 rounded-lg text-lg disabled:opacity-50"
                   >
                     <BadgeCheck className="w-5 h-5 mr-2" />
-                    Request Validation Deposit
+                    I've Made the $0.55 AUD Deposit
                   </Button>
 
                   {(!formData.bsb || !formData.account_number) && (
                     <p className="text-sm text-red-600 text-center">
-                      Please complete your bank details above before requesting validation
+                      Please complete your bank details above before proceeding
                     </p>
                   )}
                 </div>
               ) : (
                 <div className="space-y-6">
                   <div className="text-center">
-                    <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
-                      <BadgeCheck className="w-8 h-8 text-blue-600" />
+                    <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
+                      <BadgeCheck className="w-8 h-8 text-amber-600" />
                     </div>
-                    <h3 className="text-xl font-semibold text-slate-900 mb-2">Validation Deposit Sent</h3>
+                    <h3 className="text-xl font-semibold text-slate-900 mb-2">Validation In Progress</h3>
                     <p className="text-slate-600 mb-4">
-                      We've sent a random amount (less than $0.25 AUD) to your account ending in {formData.account_number?.slice(-4) || 'XXXX'}.
+                      Thank you for making your $0.55 AUD deposit. Our admin team is verifying your payment.
                     </p>
                   </div>
 
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                    <p className="text-sm text-amber-800">
-                      <span className="font-semibold">Next Step:</span> Check your bank account and enter the exact amount you received from Pollee Inc to complete validation.
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <p className="text-sm text-blue-800">
+                      <span className="font-semibold">Once verified:</span> Pollee Inc will send a random amount (less than $0.25 AUD) to your account ending in {formData.account_number?.slice(-4) || 'XXXX'}.
+                    </p>
+                  </div>
+
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+                    <p className="text-sm text-emerald-800">
+                      <span className="font-semibold">Final Step:</span> Once you receive the random deposit, enter the exact amount below to complete validation.
                     </p>
                   </div>
 
