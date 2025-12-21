@@ -563,13 +563,30 @@ export default function Admin() {
                                     <span>GST:</span>
                                     <span className="font-semibold">${vote.payment_breakdown.gst?.toFixed(2)}</span>
                                   </div>
+                                  {vote.transaction_amount && vote.transaction_amount > 0.55 && (
+                                    <div className="flex justify-between border-t border-emerald-300 pt-1 mt-1">
+                                      <span className="font-bold text-emerald-700">Tip to Infomarian:</span>
+                                      <span className="font-bold text-emerald-700">
+                                        ${(vote.transaction_amount - 0.55).toFixed(2)}
+                                      </span>
+                                    </div>
+                                  )}
                                 </div>
                               </div>
                             )}
                             
                             <div className="flex items-center gap-3 pt-4">
                               <Button
-                                onClick={() => updateVote.mutate({ id: vote.id, data: { status: 'verified' } })}
+                                onClick={async () => {
+                                  const tipAmount = Math.max(0, (vote.transaction_amount || 0.55) - 0.55);
+                                  updateVote.mutate({ 
+                                    id: vote.id, 
+                                    data: { 
+                                      status: 'verified',
+                                      tip_amount: tipAmount
+                                    } 
+                                  });
+                                }}
                                 className="bg-emerald-600 hover:bg-emerald-700"
                                 disabled={updateVote.isPending}
                               >

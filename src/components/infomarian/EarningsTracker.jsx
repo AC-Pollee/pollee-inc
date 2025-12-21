@@ -26,10 +26,13 @@ export default function EarningsTracker({ infomarian }) {
 
   const calculateEarnings = (vote) => {
     const perVoteEarning = 0.30; // $0.30 per vote
-    return perVoteEarning * (vote.delegated_votes_count || 1);
+    const baseEarning = perVoteEarning * (vote.delegated_votes_count || 1);
+    const tip = vote.tip_amount || 0;
+    return baseEarning + tip;
   };
 
   const totalEarnings = votes.reduce((sum, vote) => sum + calculateEarnings(vote), 0);
+  const totalTips = votes.reduce((sum, vote) => sum + (vote.tip_amount || 0), 0);
   const thisMonthVotes = votes.filter(v => {
     const voteDate = new Date(v.created_date);
     const now = new Date();
@@ -108,12 +111,12 @@ export default function EarningsTracker({ infomarian }) {
           <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-violet-50">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-sm text-slate-600">Per Vote</p>
+                <p className="text-sm text-slate-600">Tips Received</p>
                 <TrendingUp className="w-5 h-5 text-purple-600" />
               </div>
-              <p className="text-3xl font-bold text-purple-700">$0.30</p>
+              <p className="text-3xl font-bold text-purple-700">${totalTips.toFixed(2)}</p>
               <p className="text-xs text-slate-500 mt-1">
-                Standard rate
+                From generous voters
               </p>
             </CardContent>
           </Card>
@@ -163,9 +166,14 @@ export default function EarningsTracker({ infomarian }) {
                     <p className="text-lg font-bold text-emerald-600">
                       +${calculateEarnings(vote).toFixed(2)}
                     </p>
-                    <p className="text-xs text-slate-500">
-                      ${vote.transaction_amount?.toFixed(2)} total
-                    </p>
+                    <div className="text-xs text-slate-500 space-y-0.5">
+                      <p>${vote.transaction_amount?.toFixed(2)} total</p>
+                      {vote.tip_amount > 0 && (
+                        <p className="text-purple-600 font-semibold">
+                          +${vote.tip_amount.toFixed(2)} tip
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </motion.div>
               ))}
