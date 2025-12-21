@@ -13,6 +13,9 @@ import AssignedPolls from '@/components/infomarian/AssignedPolls';
 import CommentsModeration from '@/components/infomarian/CommentsModeration';
 import MediaModeration from '@/components/infomarian/MediaModeration';
 import EarningsTracker from '@/components/infomarian/EarningsTracker';
+import UserManagement from '@/components/infomarian/UserManagement';
+import UserSupport from '@/components/infomarian/UserSupport';
+import TaskAssignment from '@/components/infomarian/TaskAssignment';
 
 export default function InfomarianDashboard() {
   const [activeTab, setActiveTab] = useState('polls');
@@ -178,18 +181,12 @@ export default function InfomarianDashboard() {
 
         {/* Main Content Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="bg-white border border-slate-200 p-1 rounded-xl shadow-sm">
-            <TabsTrigger 
-              value="polls" 
-              className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-6"
-            >
+          <TabsList className="bg-white border border-slate-200 p-1 rounded-xl shadow-sm flex-wrap">
+            <TabsTrigger value="polls" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
               <BarChart3 className="w-4 h-4 mr-2" />
-              Assigned Polls
+              Polls
             </TabsTrigger>
-            <TabsTrigger 
-              value="comments" 
-              className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-6 relative"
-            >
+            <TabsTrigger value="comments" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4 relative">
               <MessageSquare className="w-4 h-4 mr-2" />
               Comments
               {pendingComments.length > 0 && (
@@ -198,10 +195,7 @@ export default function InfomarianDashboard() {
                 </span>
               )}
             </TabsTrigger>
-            <TabsTrigger 
-              value="media" 
-              className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-6 relative"
-            >
+            <TabsTrigger value="media" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4 relative">
               <Image className="w-4 h-4 mr-2" />
               Media
               {pendingMedia.length > 0 && (
@@ -210,10 +204,16 @@ export default function InfomarianDashboard() {
                 </span>
               )}
             </TabsTrigger>
-            <TabsTrigger 
-              value="earnings" 
-              className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-6"
-            >
+            <TabsTrigger value="users" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
+              Users
+            </TabsTrigger>
+            <TabsTrigger value="support" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
+              Support
+            </TabsTrigger>
+            <TabsTrigger value="tasks" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
+              Tasks
+            </TabsTrigger>
+            <TabsTrigger value="earnings" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
               <DollarSign className="w-4 h-4 mr-2" />
               Earnings
             </TabsTrigger>
@@ -229,6 +229,18 @@ export default function InfomarianDashboard() {
 
           <TabsContent value="media">
             <MediaModeration infomarian={infomarian} />
+          </TabsContent>
+
+          <TabsContent value="users">
+            <UserManagement infomarian={infomarian} />
+          </TabsContent>
+
+          <TabsContent value="support">
+            <UserSupport infomarian={infomarian} />
+          </TabsContent>
+
+          <TabsContent value="tasks">
+            <TaskAssignment infomarian={infomarian} />
           </TabsContent>
 
           <TabsContent value="earnings">
