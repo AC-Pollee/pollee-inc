@@ -91,8 +91,9 @@ export default function Profile() {
   };
 
   const age = calculateAge(user?.date_of_birth);
-  const isProfileComplete = user?.last_name && user?.infomarian_id && user?.date_of_birth;
-  const isAccountValidated = user?.account_validated || false;
+  const isSuperAdmin = user?.email === 'ac@acproductiondesign.com';
+  const isProfileComplete = isSuperAdmin || (user?.last_name && user?.infomarian_id && user?.date_of_birth);
+  const isAccountValidated = isSuperAdmin || user?.account_validated || false;
   const validationInitiatedState = user?.validation_initiated || false;
 
   const handleInitiateValidation = async () => {
@@ -198,7 +199,7 @@ export default function Profile() {
           </motion.div>
           )}
 
-          {!isAccountValidated && (
+          {!isAccountValidated && !isSuperAdmin && (
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -207,6 +208,20 @@ export default function Profile() {
                 <BadgeCheck className="h-4 w-4 text-amber-600" />
                 <AlertDescription className="text-amber-800">
                   <span className="font-semibold">Account Validation Required:</span> Make a $0.55 AUD deposit to Pollee Inc. Once verified, we'll send you a random amount (less than $0.25 AUD) to confirm your account.
+                </AlertDescription>
+              </Alert>
+            </motion.div>
+          )}
+
+          {isSuperAdmin && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <Alert className="mb-6 bg-purple-50 border-purple-200">
+                <BadgeCheck className="h-4 w-4 text-purple-600" />
+                <AlertDescription className="text-purple-800">
+                  <span className="font-semibold">SuperAdmin Account:</span> Full access to all features without validation requirements.
                 </AlertDescription>
               </Alert>
             </motion.div>
@@ -402,7 +417,7 @@ export default function Profile() {
           </Card>
 
           {/* Account Validation Section */}
-          {!isAccountValidated && (
+          {!isAccountValidated && !isSuperAdmin && (
           <Card className="border-0 shadow-xl mt-6">
             <CardHeader className="bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-t-xl">
               <div className="flex items-center gap-3">
