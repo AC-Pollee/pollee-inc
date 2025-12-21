@@ -488,16 +488,6 @@ export default function FranchiseAdmin() {
                   )}
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="contact_phone">Contact Phone</Label>
-                  <Input
-                    id="contact_phone"
-                    value={franchiseData.contact_phone}
-                    onChange={(e) => setFranchiseData({...franchiseData, contact_phone: e.target.value})}
-                    placeholder="+61 400 000 000"
-                  />
-                </div>
-
                 {/* Create Franchise Section */}
                 <div className="border-t pt-6 mt-6">
                   <h4 className="font-semibold text-slate-900 mb-4">Create Franchise</h4>
