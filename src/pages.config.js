@@ -5,6 +5,8 @@ import Profile from './pages/Profile';
 import Results from './pages/Results';
 import Vote from './pages/Vote';
 import InfomarianDashboard from './pages/InfomarianDashboard';
+import MasterFranchiserDashboard from './pages/MasterFranchiserDashboard';
+import FranchiseManagerDashboard from './pages/FranchiseManagerDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -16,6 +18,8 @@ export const PAGES = {
     "Results": Results,
     "Vote": Vote,
     "InfomarianDashboard": InfomarianDashboard,
+    "MasterFranchiserDashboard": MasterFranchiserDashboard,
+    "FranchiseManagerDashboard": FranchiseManagerDashboard,
 }
 
 export const pagesConfig = {

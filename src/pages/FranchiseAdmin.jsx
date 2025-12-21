@@ -13,6 +13,14 @@ import { ArrowLeft, Building2, Users, Plus, Trash2 } from 'lucide-react';
 
 export default function FranchiseAdmin() {
   const queryClient = useQueryClient();
+  
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me()
+  });
+  
+  const isSuperAdmin = currentUser?.email === 'ac@acproductiondesign.com';
+  const hasAccess = isSuperAdmin || currentUser?.user_role === 'master_franchiser' || currentUser?.user_role === 'franchise_manager';
   const [activeTab, setActiveTab] = useState('franchises');
 
   // Franchise state

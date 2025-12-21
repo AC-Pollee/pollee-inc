@@ -37,21 +37,57 @@ export default function Layout({ children, currentPageName }) {
     refetchInterval: 30000 // Refresh every 30 seconds
   });
 
-  const navItems = [
-    { name: 'Home', icon: Vote, label: 'Polls' },
-    { name: 'Results', icon: BarChart3, label: 'Results' },
-    { name: 'Admin', icon: Settings, label: 'Admin' },
-    { name: 'Profile', icon: User, label: 'Profile' },
-  ];
+  // Role-based navigation
+  const getRoleNavItems = () => {
+    const isSuperAdmin = user?.email === 'ac@acproductiondesign.com';
+    const userRole = user?.user_role;
 
-  if (infomarian) {
-    navItems.splice(3, 0, { 
-      name: 'InfomarianDashboard', 
-      icon: Shield, 
-      label: 'Infomarian',
-      badge: pendingCount > 0 ? pendingCount : null
-    });
-  }
+    if (isSuperAdmin) {
+      return [
+        { name: 'Home', icon: Vote, label: 'Polls' },
+        { name: 'Results', icon: BarChart3, label: 'Results' },
+        { name: 'MasterFranchiserDashboard', icon: Shield, label: 'Master' },
+        { name: 'Admin', icon: Settings, label: 'Admin' },
+        { name: 'Profile', icon: User, label: 'Profile' },
+      ];
+    }
+
+    if (userRole === 'master_franchiser') {
+      return [
+        { name: 'MasterFranchiserDashboard', icon: Shield, label: 'Dashboard' },
+        { name: 'FranchiseAdmin', icon: Settings, label: 'Franchises' },
+        { name: 'Admin', icon: Settings, label: 'Polls' },
+        { name: 'Profile', icon: User, label: 'Profile' },
+      ];
+    }
+
+    if (userRole === 'franchise_manager') {
+      return [
+        { name: 'FranchiseManagerDashboard', icon: Vote, label: 'Dashboard' },
+        { name: 'FranchiseAdmin', icon: Settings, label: 'Infomarians' },
+        { name: 'Admin', icon: Settings, label: 'Polls' },
+        { name: 'Profile', icon: User, label: 'Profile' },
+      ];
+    }
+
+    if (userRole === 'infomarian' || infomarian) {
+      return [
+        { name: 'InfomarianDashboard', icon: Shield, label: 'Dashboard', badge: pendingCount > 0 ? pendingCount : null },
+        { name: 'Home', icon: Vote, label: 'Polls' },
+        { name: 'Results', icon: BarChart3, label: 'Results' },
+        { name: 'Profile', icon: User, label: 'Profile' },
+      ];
+    }
+
+    // Default voter navigation
+    return [
+      { name: 'Home', icon: Vote, label: 'Polls' },
+      { name: 'Results', icon: BarChart3, label: 'Results' },
+      { name: 'Profile', icon: User, label: 'Profile' },
+    ];
+  };
+
+  const navItems = getRoleNavItems();
 
   // Note: Infomarian moderation and help features accessible via Profile page
   
