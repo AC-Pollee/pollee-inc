@@ -18,6 +18,29 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
   
   const isSuperAdmin = currentUser?.email === 'ac@acproductiondesign.com';
 
+  // Check if user is suspended or banned
+  const isUserSuspended = () => {
+    if (!currentUser) return false;
+    if (currentUser.permanently_banned) return true;
+    if (currentUser.suspension_end_date) {
+      return new Date(currentUser.suspension_end_date) > new Date();
+    }
+    return false;
+  };
+
+  const getSuspensionMessage = () => {
+    if (currentUser?.permanently_banned) {
+      return "Your commenting privileges have been permanently revoked due to repeated Code of Conduct violations.";
+    }
+    if (currentUser?.suspension_end_date) {
+      const endDate = new Date(currentUser.suspension_end_date);
+      if (endDate > new Date()) {
+        return `Your commenting privileges are suspended until ${format(endDate, 'MMM d, yyyy h:mm a')} due to Code of Conduct violations.`;
+      }
+    }
+    return null;
+  };
+
   const { data: comments = [] } = useQuery({
     queryKey: ['comments', pollId],
     queryFn: () => base44.entities.Comment.filter({ poll_id: pollId }, '-created_date'),
@@ -239,7 +262,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
                 </div>
               )}
               
-              {currentUser && comment.moderation_status === 'approved' && !isClosed && userAge >= 12 && (
+              {currentUser && comment.moderation_status === 'approved' && !isClosed && userAge >= 12 && !isUserSuspended() && (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -324,7 +347,18 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
       </CardHeader>
       
       <CardContent className="space-y-4 md:space-y-6">
-        {currentUser && !isClosed && !replyingTo && userAge >= 12 && (
+        {isUserSuspended() && (
+          <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-sm text-red-800 font-medium">{getSuspensionMessage()}</p>
+            {currentUser?.strikes && currentUser.strikes.length > 0 && (
+              <div className="mt-2">
+                <p className="text-xs text-red-700">Strike {currentUser.strikes.length}: {currentUser.strikes[currentUser.strikes.length - 1].reason}</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {currentUser && !isClosed && !replyingTo && userAge >= 12 && !isUserSuspended() && (
           <form onSubmit={handleSubmit} className="space-y-3">
             <Textarea
               value={newComment}

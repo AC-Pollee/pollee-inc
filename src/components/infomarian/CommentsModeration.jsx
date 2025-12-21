@@ -28,10 +28,16 @@ export default function CommentsModeration({ infomarian }) {
     queryFn: () => base44.entities.Poll.list()
   });
 
+  const { data: users = [] } = useQuery({
+    queryKey: ['users'],
+    queryFn: () => base44.entities.User.list()
+  });
+
   const updateComment = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Comment.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries(['commentsToModerate']);
+      queryClient.invalidateQueries(['comments']);
       setEditingComment(null);
       setRejectingComment(null);
       setRejectionReason('');
@@ -40,7 +46,17 @@ export default function CommentsModeration({ infomarian }) {
 
   const deleteComment = useMutation({
     mutationFn: (id) => base44.entities.Comment.delete(id),
-    onSuccess: () => queryClient.invalidateQueries(['commentsToModerate'])
+    onSuccess: () => {
+      queryClient.invalidateQueries(['commentsToModerate']);
+      queryClient.invalidateQueries(['comments']);
+    }
+  });
+
+  const updateUser = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.User.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['users']);
+    }
   });
 
   const handleApprove = (comment) => {
@@ -53,27 +69,86 @@ export default function CommentsModeration({ infomarian }) {
     });
   };
 
-  const handleReject = (comment) => {
+  const calculateSuspensionDays = (strikeCount) => {
+    if (strikeCount === 1) return 1; // 24 hours
+    if (strikeCount === 2) return 7; // 7 days
+    if (strikeCount === 3) return 28; // 28 days
+    return null; // Permanent ban
+  };
+
+  const issueStrike = async (comment, severity, reason) => {
+    const user = users.find(u => u.email === comment.user_email);
+    if (!user) return;
+
+    const currentStrikes = user.strikes || [];
+    const newStrike = {
+      date: new Date().toISOString(),
+      infomarian_id: infomarian.infomarian_id,
+      infomarian_name: infomarian.full_name,
+      reason: reason,
+      severity: severity,
+      comment_id: comment.id
+    };
+
+    const updatedStrikes = [...currentStrikes, newStrike];
+    const strikeCount = updatedStrikes.length;
+    const suspensionDays = calculateSuspensionDays(strikeCount);
+
+    let userData = {
+      strikes: updatedStrikes,
+      commenting_restricted: strikeCount >= 1
+    };
+
+    if (strikeCount >= 4) {
+      userData.permanently_banned = true;
+      userData.suspension_end_date = null;
+    } else if (suspensionDays) {
+      const suspensionEnd = new Date();
+      suspensionEnd.setDate(suspensionEnd.getDate() + suspensionDays);
+      userData.suspension_end_date = suspensionEnd.toISOString();
+    }
+
+    await updateUser.mutateAsync({ id: user.id, data: userData });
+  };
+
+  const handleReject = async (comment) => {
     if (!rejectionReason.trim()) {
       alert('Please provide a reason for rejection');
       return;
     }
-    updateComment.mutate({
-      id: comment.id,
-      data: {
-        moderation_status: 'rejected',
-        moderated_by: infomarian.infomarian_id,
-        moderation_reason: rejectionReason
-      }
-    });
+
+    const severity = window.confirm(
+      'Is this a severe violation requiring a strike?\n\nClick OK for Strike (Code of Conduct violation)\nClick Cancel for rejection without strike'
+    );
+
+    if (severity) {
+      await issueStrike(comment, 'minor', rejectionReason);
+    }
+
+    await deleteComment.mutateAsync(comment.id);
   };
 
-  const handleFlag = (comment) => {
+  const handleFlag = async (comment) => {
+    const reason = prompt('Reason for flagging (will escalate to admin review):');
+    if (!reason) return;
+
+    const issueStrikeNow = window.confirm(
+      'Should a strike be issued for this violation?\n\nOK = Issue Strike\nCancel = Flag only'
+    );
+
+    if (issueStrikeNow) {
+      const severityChoice = window.confirm(
+        'Severity level:\n\nOK = Severe violation\nCancel = Moderate violation'
+      );
+      await issueStrike(comment, severityChoice ? 'severe' : 'moderate', reason);
+    }
+
     updateComment.mutate({
       id: comment.id,
       data: {
         moderation_status: 'flagged',
-        moderated_by: infomarian.infomarian_id
+        moderated_by: infomarian.infomarian_id,
+        moderation_reason: reason
       }
     });
   };
@@ -205,9 +280,12 @@ export default function CommentsModeration({ infomarian }) {
                   <Textarea
                     value={rejectionReason}
                     onChange={(e) => setRejectionReason(e.target.value)}
-                    placeholder="Reason for rejection..."
+                    placeholder="Reason for rejection (will be visible to user)..."
                     className="min-h-[80px]"
                   />
+                  <p className="text-xs text-red-600">
+                    Note: Rejecting will delete the comment and you'll be asked if a strike should be issued.
+                  </p>
                 </motion.div>
               )}
 

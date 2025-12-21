@@ -219,6 +219,10 @@ export default function InfomarianDashboard() {
             </TabsTrigger>
           </TabsList>
 
+          <TabsContent value="queue">
+            <ModerationQueue infomarian={infomarian} />
+          </TabsContent>
+
           <TabsContent value="polls">
             <AssignedPolls infomarian={infomarian} />
           </TabsContent>
