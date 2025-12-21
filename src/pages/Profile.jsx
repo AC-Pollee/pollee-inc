@@ -7,8 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import { User, Save, CheckCircle2, AlertCircle, BadgeCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { format } from 'date-fns';
 import DelegationManager from '@/components/profile/DelegationManager';
 import DelegationsHeldRegister from '@/components/profile/DelegationsHeldRegister';
 
