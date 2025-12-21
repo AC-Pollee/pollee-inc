@@ -144,10 +144,12 @@ export default function FranchiseAdmin() {
   };
 
   const handleSelectUser = (user) => {
+    const generatedId = generateInfomarianId(infomarianData.franchise_id, user.id);
     setInfomarianData({
       ...infomarianData, 
       user_email: user.email,
-      full_name: user.full_name || ''
+      full_name: user.full_name || '',
+      infomarian_id: generatedId
     });
     setShowUserDropdown(false);
     setUserSearchResults([]);
@@ -170,13 +172,25 @@ export default function FranchiseAdmin() {
   };
 
   const handleSelectUserByName = (user) => {
+    const generatedId = generateInfomarianId(infomarianData.franchise_id, user.id);
     setInfomarianData({
       ...infomarianData, 
       user_email: user.email,
-      full_name: user.full_name || ''
+      full_name: user.full_name || '',
+      infomarian_id: generatedId
     });
     setShowNameDropdown(false);
     setNameSearchResults([]);
+  };
+
+  const generateInfomarianId = (franchiseId, userId) => {
+    if (!franchiseId || !userId) return '';
+    
+    // Count existing infomarians for this franchise
+    const franchiseInfomarians = infomarians.filter(i => i.franchise_id === franchiseId);
+    const nextSeq = (franchiseInfomarians.length + 1).toString().padStart(3, '0');
+    
+    return `${franchiseId}-${userId}-${nextSeq}`;
   };
 
   const handleCreateInfomarian = () => {
@@ -449,18 +463,34 @@ export default function FranchiseAdmin() {
                     <Input
                       id="infomarian_id"
                       value={infomarianData.infomarian_id}
-                      onChange={(e) => setInfomarianData({...infomarianData, infomarian_id: e.target.value})}
-                      placeholder="INFO001"
+                      disabled
+                      placeholder="Auto-generated"
+                      className="bg-slate-50"
                     />
+                    <p className="text-xs text-slate-500">Auto-generated from Franchise + User + Sequential</p>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="franchise_id">Franchise ID</Label>
-                    <Input
+                    <select
                       id="franchise_id"
                       value={infomarianData.franchise_id}
-                      onChange={(e) => setInfomarianData({...infomarianData, franchise_id: e.target.value})}
-                      placeholder="Select from franchises above"
-                    />
+                      onChange={(e) => {
+                        const franchiseId = e.target.value;
+                        const userId = allUsers.find(u => u.email === infomarianData.user_email)?.id;
+                        const generatedId = generateInfomarianId(franchiseId, userId);
+                        setInfomarianData({
+                          ...infomarianData, 
+                          franchise_id: franchiseId,
+                          infomarian_id: generatedId
+                        });
+                      }}
+                      className="w-full h-10 px-3 rounded-md border border-slate-200"
+                    >
+                      <option value="">Select franchise...</option>
+                      {franchises.map(f => (
+                        <option key={f.id} value={f.id}>{f.franchise_name} ({f.id})</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 
