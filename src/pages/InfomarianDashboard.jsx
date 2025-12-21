@@ -44,7 +44,9 @@ export default function InfomarianDashboard() {
     c.media_urls && c.media_urls.length > 0 && c.moderation_status === 'pending'
   );
 
-  if (!infomarian) {
+  const isSuperAdmin = user?.email === 'ac@acproductiondesign.com';
+  
+  if (!infomarian && user?.user_role !== 'infomarian' && !isSuperAdmin) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 p-4 md:p-8">
         <div className="max-w-4xl mx-auto text-center">

@@ -130,6 +130,20 @@ export default function FranchiseAdmin() {
     });
   };
 
+  if (!hasAccess) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 p-8">
+        <Card className="max-w-md mx-auto text-center">
+          <CardContent className="pt-12 pb-12">
+            <Building2 className="w-16 h-16 text-slate-400 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-slate-900 mb-2">Access Denied</h2>
+            <p className="text-slate-500">You don't have permission to manage franchises.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
