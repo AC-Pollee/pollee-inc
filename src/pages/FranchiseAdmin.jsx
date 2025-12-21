@@ -54,7 +54,8 @@ export default function FranchiseAdmin() {
   const [ownerSearchResults, setOwnerSearchResults] = useState([]);
   const [showOwnerDropdown, setShowOwnerDropdown] = useState(false);
   const [selectedOwner, setSelectedOwner] = useState(null);
-  const [ownerDetailsConfirmed, setOwnerDetailsConfirmed] = useState(false);
+  const [ownerDetailsConfirmed, setOwnerDetailsConfirmed] = useState(null);
+  const [editingOwnerDetails, setEditingOwnerDetails] = useState(false);
 
   // Fetch all users for lookup
   const { data: allUsers = [] } = useQuery({
@@ -451,25 +452,101 @@ export default function FranchiseAdmin() {
                           )}
                         </div>
                         
-                        <div className="flex items-center gap-2 mt-4 p-3 bg-white rounded-lg border border-slate-200">
-                          <input
-                            type="checkbox"
-                            id="confirm-owner-details"
-                            checked={ownerDetailsConfirmed}
-                            onChange={(e) => setOwnerDetailsConfirmed(e.target.checked)}
-                            className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-600"
-                          />
-                          <label htmlFor="confirm-owner-details" className="text-sm font-medium text-slate-700 cursor-pointer">
-                            Are these details correct?
-                          </label>
+                        <div className="mt-4 p-4 bg-white rounded-lg border border-slate-200">
+                          <p className="text-sm font-medium text-slate-700 mb-3">Are these details correct?</p>
+                          <div className="flex gap-4">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="radio"
+                                name="owner-confirmation"
+                                checked={ownerDetailsConfirmed === true}
+                                onChange={() => {
+                                  setOwnerDetailsConfirmed(true);
+                                  setEditingOwnerDetails(false);
+                                }}
+                                className="w-4 h-4 text-indigo-600 focus:ring-indigo-600"
+                              />
+                              <span className="text-sm font-medium text-slate-700">Yes</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="radio"
+                                name="owner-confirmation"
+                                checked={ownerDetailsConfirmed === false}
+                                onChange={() => {
+                                  setOwnerDetailsConfirmed(false);
+                                  setEditingOwnerDetails(true);
+                                }}
+                                className="w-4 h-4 text-red-600 focus:ring-red-600"
+                              />
+                              <span className="text-sm font-medium text-slate-700">No</span>
+                            </label>
+                          </div>
                         </div>
+
+                        {editingOwnerDetails && (
+                          <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg space-y-3">
+                            <p className="text-sm font-semibold text-amber-900">Edit Owner Details</p>
+                            <div className="space-y-2">
+                              <Label htmlFor="edit-owner-name">Full Name</Label>
+                              <Input
+                                id="edit-owner-name"
+                                value={selectedOwner.full_name || ''}
+                                onChange={(e) => setSelectedOwner({...selectedOwner, full_name: e.target.value})}
+                                className="bg-white"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="edit-owner-email">Email</Label>
+                              <Input
+                                id="edit-owner-email"
+                                value={selectedOwner.email}
+                                onChange={(e) => setSelectedOwner({...selectedOwner, email: e.target.value})}
+                                className="bg-white"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="edit-owner-phone">Phone</Label>
+                              <Input
+                                id="edit-owner-phone"
+                                value={selectedOwner.phone_number || ''}
+                                onChange={(e) => setSelectedOwner({...selectedOwner, phone_number: e.target.value})}
+                                className="bg-white"
+                              />
+                            </div>
+                            <Button
+                              onClick={async () => {
+                                await updateUserRecord.mutateAsync({
+                                  userId: selectedOwner.id,
+                                  userData: {
+                                    full_name: selectedOwner.full_name,
+                                    email: selectedOwner.email,
+                                    phone_number: selectedOwner.phone_number
+                                  }
+                                });
+                                setFranchiseData({
+                                  ...franchiseData,
+                                  owner_email: selectedOwner.email,
+                                  contact_phone: selectedOwner.phone_number
+                                });
+                                setEditingOwnerDetails(false);
+                                setOwnerDetailsConfirmed(null);
+                                alert('User record updated. Please confirm the details again.');
+                              }}
+                              className="w-full bg-amber-600 hover:bg-amber-700"
+                            >
+                              Update User Record
+                            </Button>
+                          </div>
+                        )}
 
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => {
                             setSelectedOwner(null);
-                            setOwnerDetailsConfirmed(false);
+                            setOwnerDetailsConfirmed(null);
+                            setEditingOwnerDetails(false);
                             setFranchiseData({...franchiseData, owner_email: '', contact_phone: '', owner_user_id: null});
                           }}
                           className="mt-3 text-red-600 hover:text-red-700"
@@ -496,7 +573,7 @@ export default function FranchiseAdmin() {
                           // Commit owner selection - this locks in the owner
                           alert('Owner confirmed and saved to franchise data');
                         }}
-                        disabled={!ownerDetailsConfirmed}
+                        disabled={ownerDetailsConfirmed !== true}
                         className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
                       >
                         Commit Owner Selection
