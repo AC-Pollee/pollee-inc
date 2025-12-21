@@ -6,9 +6,21 @@ import { Trophy, AlertCircle } from 'lucide-react';
 export default function ResultsChart({ poll, votes }) {
   const verifiedVotes = votes.filter(v => v.status === 'verified');
   
+  // Only count the latest vote per voter (allows vote changes)
+  const latestVotesByVoter = {};
+  verifiedVotes.forEach(vote => {
+    const voterKey = vote.voter_id || vote.created_by;
+    if (!latestVotesByVoter[voterKey] || 
+        new Date(vote.created_date) > new Date(latestVotesByVoter[voterKey].created_date)) {
+      latestVotesByVoter[voterKey] = vote;
+    }
+  });
+  
+  const latestVotes = Object.values(latestVotesByVoter);
+  
   // Count votes including delegated votes
   const optionCounts = poll.options?.reduce((acc, option) => {
-    const optionVotes = verifiedVotes.filter(v => v.poll_item_id === option.id);
+    const optionVotes = latestVotes.filter(v => v.poll_item_id === option.id);
     acc[option.id] = optionVotes.reduce((sum, vote) => sum + (vote.delegated_votes_count || 1), 0);
     return acc;
   }, {}) || {};

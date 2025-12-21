@@ -13,6 +13,7 @@ import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import DelegationManager from '@/components/profile/DelegationManager';
 import DelegationsHeldRegister from '@/components/profile/DelegationsHeldRegister';
+import VoteHistory from '@/components/profile/VoteHistory';
 
 export default function Profile() {
   const queryClient = useQueryClient();
@@ -619,6 +620,13 @@ export default function Profile() {
           {age >= 18 && (
             <div className="mt-6">
               <DelegationManager user={user} />
+            </div>
+          )}
+
+          {/* Vote History - visible to all users */}
+          {user && (
+            <div className="mt-6">
+              <VoteHistory userId={user.voter_id} voterEmail={user.email} />
             </div>
           )}
 

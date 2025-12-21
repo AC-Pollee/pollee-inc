@@ -29,6 +29,20 @@ export default function TransactionForm({ pollId, pollOptions, onSubmit, current
   const [error, setError] = useState(null);
   const [selectedDelegations, setSelectedDelegations] = useState([]);
 
+  // Check if user has already voted on this poll
+  const { data: existingVotes = [] } = useQuery({
+    queryKey: ['user-votes', currentUser?.id, pollId],
+    queryFn: async () => {
+      if (!currentUser?.id || !pollId) return [];
+      const votes = await base44.entities.Vote.filter({ poll_id: pollId });
+      return votes.filter(v => v.voter_id === currentUser.voter_id || v.created_by === currentUser.email);
+    },
+    enabled: !!currentUser?.id && !!pollId
+  });
+
+  const hasVotedBefore = existingVotes.length > 0;
+  const lastVote = hasVotedBefore ? existingVotes[existingVotes.length - 1] : null;
+
   const { data: availableDelegations = [] } = useQuery({
     queryKey: ['available-delegations', currentUser?.id, pollId],
     queryFn: async () => {
@@ -147,6 +161,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
       transaction_date: transactionData.date || new Date().toISOString(),
       transaction_description: transactionData.description,
       bank_name: transactionData.bank,
+      voter_id: currentUser?.voter_id || `V${Date.now()}`,
       payment_breakdown: {
         infomarian: expectedTip * totalVotes,
         pollee_incorporated: 0.10 * totalVotes,
@@ -154,12 +169,33 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
         gst: 0.05 * totalVotes
       },
       delegation_ids: selectedDelegations.map(d => d.id),
-      status: 'pending'
+      status: 'pending',
+      is_vote_change: hasVotedBefore
     });
   };
 
   return (
     <div className="space-y-6">
+      {hasVotedBefore && (
+        <Card className="p-6 bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+              <AlertCircle className="w-5 h-5 text-amber-600" />
+            </div>
+            <div className="space-y-2">
+              <h3 className="font-semibold text-amber-900">Vote Change</h3>
+              <p className="text-sm text-amber-700">
+                You previously voted for <span className="font-bold">{lastVote?.option_label}</span>. 
+                You can change your vote by submitting a new transaction. Only your most recent vote will count.
+              </p>
+              <p className="text-xs text-amber-600 mt-2">
+                All vote transactions are kept in the change log for transparency.
+              </p>
+            </div>
+          </div>
+        </Card>
+      )}
+
       <Card className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-indigo-200">
         <div className="flex items-start gap-3">
           <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
