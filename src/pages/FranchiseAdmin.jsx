@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Building2, Users, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Building2, Users, Plus, Trash2, Search } from 'lucide-react';
 
 export default function FranchiseAdmin() {
   const queryClient = useQueryClient();
@@ -43,6 +43,21 @@ export default function FranchiseAdmin() {
     expertise_areas: '',
     assigned_postcodes: '',
     moderation_level: 'local'
+  });
+
+  const [userSearchResults, setUserSearchResults] = useState([]);
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
+
+  // Fetch all users for lookup
+  const { data: allUsers = [] } = useQuery({
+    queryKey: ['all-users'],
+    queryFn: async () => {
+      try {
+        return await base44.entities.User.list();
+      } catch {
+        return [];
+      }
+    }
   });
 
   const { data: franchises = [] } = useQuery({
@@ -108,6 +123,32 @@ export default function FranchiseAdmin() {
       postcodes_served: postcodes,
       status: 'active'
     });
+  };
+
+  const handleUserEmailSearch = (email) => {
+    setInfomarianData({...infomarianData, user_email: email});
+    
+    if (email.length >= 2) {
+      const matches = allUsers.filter(user => 
+        user.email.toLowerCase().includes(email.toLowerCase()) ||
+        user.full_name?.toLowerCase().includes(email.toLowerCase())
+      ).slice(0, 5);
+      setUserSearchResults(matches);
+      setShowUserDropdown(matches.length > 0);
+    } else {
+      setUserSearchResults([]);
+      setShowUserDropdown(false);
+    }
+  };
+
+  const handleSelectUser = (user) => {
+    setInfomarianData({
+      ...infomarianData, 
+      user_email: user.email,
+      full_name: user.full_name || ''
+    });
+    setShowUserDropdown(false);
+    setUserSearchResults([]);
   };
 
   const handleCreateInfomarian = () => {
@@ -306,15 +347,43 @@ export default function FranchiseAdmin() {
                       placeholder="John Smith"
                     />
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-2 relative">
                     <Label htmlFor="user_email">Email</Label>
-                    <Input
-                      id="user_email"
-                      type="email"
-                      value={infomarianData.user_email}
-                      onChange={(e) => setInfomarianData({...infomarianData, user_email: e.target.value})}
-                      placeholder="john@example.com"
-                    />
+                    <div className="relative">
+                      <Input
+                        id="user_email"
+                        type="email"
+                        value={infomarianData.user_email}
+                        onChange={(e) => handleUserEmailSearch(e.target.value)}
+                        onFocus={() => {
+                          if (userSearchResults.length > 0) setShowUserDropdown(true);
+                        }}
+                        placeholder="Search registered users..."
+                        className="pr-10"
+                      />
+                      <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    </div>
+                    
+                    {showUserDropdown && userSearchResults.length > 0 && (
+                      <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-64 overflow-auto">
+                        {userSearchResults.map((user) => (
+                          <button
+                            key={user.id}
+                            type="button"
+                            onClick={() => handleSelectUser(user)}
+                            className="w-full text-left px-4 py-3 hover:bg-indigo-50 transition-colors border-b border-slate-100 last:border-b-0"
+                          >
+                            <p className="font-medium text-slate-900">{user.full_name || 'No name'}</p>
+                            <p className="text-sm text-slate-500">{user.email}</p>
+                            {user.user_role && (
+                              <Badge className="mt-1 text-xs bg-slate-100 text-slate-600">
+                                {user.user_role}
+                              </Badge>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
 
