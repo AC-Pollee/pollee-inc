@@ -30,7 +30,8 @@ export default function FranchiseAdmin() {
     postcodes_served: '',
     state: '',
     owner_email: '',
-    contact_phone: ''
+    contact_phone: '',
+    owner_user_id: null
   });
 
   // Infomarian state
@@ -127,11 +128,25 @@ export default function FranchiseAdmin() {
     onSuccess: () => queryClient.invalidateQueries(['infomarians'])
   });
 
-  const handleCreateFranchise = () => {
+  const handleCreateFranchise = async () => {
     const postcodes = franchiseData.postcodes_served
       .split(',')
       .map(p => p.trim())
       .filter(p => p);
+
+    // Update User record if email or phone was modified
+    if (franchiseData.owner_user_id) {
+      const originalUser = allUsers.find(u => u.id === franchiseData.owner_user_id);
+      if (originalUser && (originalUser.email !== franchiseData.owner_email || originalUser.phone_number !== franchiseData.contact_phone)) {
+        await updateUserRecord.mutateAsync({
+          userId: franchiseData.owner_user_id,
+          userData: {
+            email: franchiseData.owner_email,
+            phone_number: franchiseData.contact_phone
+          }
+        });
+      }
+    }
 
     createFranchise.mutate({
       ...franchiseData,
@@ -230,7 +245,8 @@ export default function FranchiseAdmin() {
     setFranchiseData({
       ...franchiseData, 
       owner_email: user.email,
-      contact_phone: user.phone_number || franchiseData.contact_phone
+      contact_phone: user.phone_number || franchiseData.contact_phone,
+      owner_user_id: user.id
     });
     setShowOwnerDropdown(false);
     setOwnerSearchResults([]);
@@ -438,7 +454,7 @@ export default function FranchiseAdmin() {
                           size="sm"
                           onClick={() => {
                             setSelectedOwner(null);
-                            setFranchiseData({...franchiseData, owner_email: '', contact_phone: ''});
+                            setFranchiseData({...franchiseData, owner_email: '', contact_phone: '', owner_user_id: null});
                           }}
                           className="mt-3 text-red-600 hover:text-red-700"
                         >
@@ -446,6 +462,18 @@ export default function FranchiseAdmin() {
                         </Button>
                       </CardContent>
                     </Card>
+                  )}
+
+                  {franchiseData.owner_user_id && (
+                    <div className="space-y-2">
+                      <Label>Registered User Email</Label>
+                      <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <p className="text-sm font-medium text-blue-900">{franchiseData.owner_email}</p>
+                        <p className="text-xs text-blue-600 mt-1">
+                          Any changes to email or contact phone will update the master user record
+                        </p>
+                      </div>
+                    </div>
                   )}
                 </div>
 
