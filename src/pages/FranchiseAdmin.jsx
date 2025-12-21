@@ -49,6 +49,9 @@ export default function FranchiseAdmin() {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [nameSearchResults, setNameSearchResults] = useState([]);
   const [showNameDropdown, setShowNameDropdown] = useState(false);
+  const [ownerSearchResults, setOwnerSearchResults] = useState([]);
+  const [showOwnerDropdown, setShowOwnerDropdown] = useState(false);
+  const [selectedOwner, setSelectedOwner] = useState(null);
 
   // Fetch all users for lookup
   const { data: allUsers = [] } = useQuery({
@@ -193,6 +196,34 @@ export default function FranchiseAdmin() {
     return `${franchiseId}-${userId}-${nextSeq}`;
   };
 
+  const handleOwnerSearch = (search) => {
+    setFranchiseData({...franchiseData, owner_email: search});
+    setSelectedOwner(null);
+    
+    if (search.length >= 2) {
+      const matches = allUsers.filter(user => 
+        user.email.toLowerCase().includes(search.toLowerCase()) ||
+        user.full_name?.toLowerCase().includes(search.toLowerCase())
+      ).slice(0, 5);
+      setOwnerSearchResults(matches);
+      setShowOwnerDropdown(matches.length > 0);
+    } else {
+      setOwnerSearchResults([]);
+      setShowOwnerDropdown(false);
+    }
+  };
+
+  const handleSelectOwner = (user) => {
+    setSelectedOwner(user);
+    setFranchiseData({
+      ...franchiseData, 
+      owner_email: user.email,
+      contact_phone: user.phone_number || franchiseData.contact_phone
+    });
+    setShowOwnerDropdown(false);
+    setOwnerSearchResults([]);
+  };
+
   const handleCreateInfomarian = () => {
     const expertise = infomarianData.expertise_areas
       .split(',')
@@ -292,26 +323,104 @@ export default function FranchiseAdmin() {
                   />
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="state">State/Territory</Label>
-                    <Input
-                      id="state"
-                      value={franchiseData.state}
-                      onChange={(e) => setFranchiseData({...franchiseData, state: e.target.value})}
-                      placeholder="e.g., NSW"
-                    />
+                <div className="space-y-2">
+                  <Label htmlFor="state">State/Territory</Label>
+                  <Input
+                    id="state"
+                    value={franchiseData.state}
+                    onChange={(e) => setFranchiseData({...franchiseData, state: e.target.value})}
+                    placeholder="e.g., NSW"
+                  />
+                </div>
+
+                {/* Owner Search Section */}
+                <div className="border-t pt-4 space-y-4">
+                  <h4 className="font-semibold text-slate-900">Search & Select Franchise Owner</h4>
+                  
+                  <div className="space-y-2 relative">
+                    <Label htmlFor="owner_email">Search Registered User</Label>
+                    <div className="relative">
+                      <Input
+                        id="owner_email"
+                        type="text"
+                        value={franchiseData.owner_email}
+                        onChange={(e) => handleOwnerSearch(e.target.value)}
+                        onFocus={() => {
+                          if (ownerSearchResults.length > 0) setShowOwnerDropdown(true);
+                        }}
+                        placeholder="Search by name or email..."
+                        className="pr-10"
+                      />
+                      <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    </div>
+                    
+                    {showOwnerDropdown && ownerSearchResults.length > 0 && (
+                      <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-64 overflow-auto">
+                        {ownerSearchResults.map((user) => (
+                          <button
+                            key={user.id}
+                            type="button"
+                            onClick={() => handleSelectOwner(user)}
+                            className="w-full text-left px-4 py-3 hover:bg-indigo-50 transition-colors border-b border-slate-100 last:border-b-0"
+                          >
+                            <p className="font-medium text-slate-900">{user.full_name || 'No name'}</p>
+                            <p className="text-sm text-slate-500">{user.email}</p>
+                            {user.phone_number && (
+                              <p className="text-xs text-slate-400">{user.phone_number}</p>
+                            )}
+                            {user.user_role && (
+                              <Badge className="mt-1 text-xs bg-slate-100 text-slate-600">
+                                {user.user_role}
+                              </Badge>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="owner_email">Owner Email</Label>
-                    <Input
-                      id="owner_email"
-                      type="email"
-                      value={franchiseData.owner_email}
-                      onChange={(e) => setFranchiseData({...franchiseData, owner_email: e.target.value})}
-                      placeholder="owner@example.com"
-                    />
-                  </div>
+
+                  {selectedOwner && (
+                    <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-200">
+                      <CardContent className="p-4">
+                        <h5 className="font-semibold text-indigo-900 mb-3">Selected Owner - Confirm Details</h5>
+                        <div className="grid md:grid-cols-2 gap-3 text-sm">
+                          <div>
+                            <p className="text-indigo-600 font-medium">Full Name</p>
+                            <p className="text-indigo-900 font-semibold">{selectedOwner.full_name || 'N/A'}</p>
+                          </div>
+                          <div>
+                            <p className="text-indigo-600 font-medium">Email</p>
+                            <p className="text-indigo-900 font-semibold">{selectedOwner.email}</p>
+                          </div>
+                          <div>
+                            <p className="text-indigo-600 font-medium">Phone</p>
+                            <p className="text-indigo-900 font-semibold">{selectedOwner.phone_number || 'N/A'}</p>
+                          </div>
+                          <div>
+                            <p className="text-indigo-600 font-medium">User Role</p>
+                            <p className="text-indigo-900 font-semibold">{selectedOwner.user_role || 'voter'}</p>
+                          </div>
+                          {selectedOwner.date_of_birth && (
+                            <div>
+                              <p className="text-indigo-600 font-medium">Date of Birth</p>
+                              <p className="text-indigo-900 font-semibold">{selectedOwner.date_of_birth}</p>
+                            </div>
+                          )}
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedOwner(null);
+                            setFranchiseData({...franchiseData, owner_email: '', contact_phone: ''});
+                          }}
+                          className="mt-3 text-red-600 hover:text-red-700"
+                        >
+                          Clear Selection
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  )}
                 </div>
 
                 <div className="space-y-2">
