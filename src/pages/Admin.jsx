@@ -40,7 +40,7 @@ export default function Admin() {
   // Bank Details State
   const [bankDetails, setBankDetails] = useState({
     pollee_bsb: '123-456',
-    pollee_account: '12345678',
+    pollee_account: 'Pollee Inc',
     pollee_account_name: 'Pollee Inc',
     yes_account: '11111111',
     no_account: '22222222',
