@@ -31,6 +31,7 @@ export default function Profile() {
   const [validationInitiated, setValidationInitiated] = useState(false);
   const [depositAmount, setDepositAmount] = useState('');
   const [validationError, setValidationError] = useState('');
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const { data: user, isLoading } = useQuery({
     queryKey: ['currentUser'],
@@ -416,11 +417,35 @@ export default function Profile() {
                 </div>
               </div>
 
-              <div className="pt-4">
+              <div className="pt-4 space-y-4">
+                <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                  <input
+                    type="checkbox"
+                    id="terms-agreement"
+                    checked={agreedToTerms}
+                    onChange={(e) => setAgreedToTerms(e.target.checked)}
+                    className="mt-1 h-5 w-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-600"
+                  />
+                  <label htmlFor="terms-agreement" className="text-sm text-slate-700 cursor-pointer">
+                    I agree to the{' '}
+                    <a href="https://pollee.net/code-of-practice" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-700 underline">
+                      Pollee Code of Practice
+                    </a>
+                    ,{' '}
+                    <a href="https://pollee.net/code-of-conduct" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-700 underline">
+                      Code of Conduct
+                    </a>
+                    {' '}and{' '}
+                    <a href="https://pollee.net/model-rules" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-700 underline">
+                      Model Rules
+                    </a>
+                  </label>
+                </div>
+
                 <Button
                   type="submit"
-                  disabled={updateProfile.isPending}
-                  className="w-full h-14 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 rounded-lg text-lg"
+                  disabled={updateProfile.isPending || !agreedToTerms}
+                  className="w-full h-14 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 rounded-lg text-lg disabled:opacity-50"
                 >
                   {updateProfile.isPending ? (
                     <>
