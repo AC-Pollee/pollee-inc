@@ -42,7 +42,8 @@ export default function FranchiseAdmin() {
     bio: '',
     expertise_areas: '',
     assigned_postcodes: '',
-    moderation_level: 'local'
+    moderation_level: 'local',
+    selected_user_id: null
   });
 
   const [userSearchResults, setUserSearchResults] = useState([]);
@@ -107,6 +108,15 @@ export default function FranchiseAdmin() {
     }
   });
 
+  const updateUserRecord = useMutation({
+    mutationFn: async ({ userId, userData }) => {
+      return await base44.entities.User.update(userId, userData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['all-users']);
+    }
+  });
+
   const deleteFranchise = useMutation({
     mutationFn: (id) => base44.entities.Franchise.delete(id),
     onSuccess: () => queryClient.invalidateQueries(['franchises'])
@@ -152,7 +162,8 @@ export default function FranchiseAdmin() {
       ...infomarianData, 
       user_email: user.email,
       full_name: user.full_name || '',
-      infomarian_id: generatedId
+      infomarian_id: generatedId,
+      selected_user_id: user.id
     });
     setShowUserDropdown(false);
     setUserSearchResults([]);
@@ -180,7 +191,8 @@ export default function FranchiseAdmin() {
       ...infomarianData, 
       user_email: user.email,
       full_name: user.full_name || '',
-      infomarian_id: generatedId
+      infomarian_id: generatedId,
+      selected_user_id: user.id
     });
     setShowNameDropdown(false);
     setNameSearchResults([]);
@@ -224,7 +236,7 @@ export default function FranchiseAdmin() {
     setOwnerSearchResults([]);
   };
 
-  const handleCreateInfomarian = () => {
+  const handleCreateInfomarian = async () => {
     const expertise = infomarianData.expertise_areas
       .split(',')
       .map(e => e.trim())
@@ -234,6 +246,20 @@ export default function FranchiseAdmin() {
       .split(',')
       .map(p => p.trim())
       .filter(p => p);
+
+    // Update User record if email or name was modified
+    if (infomarianData.selected_user_id) {
+      const originalUser = allUsers.find(u => u.id === infomarianData.selected_user_id);
+      if (originalUser && (originalUser.email !== infomarianData.user_email || originalUser.full_name !== infomarianData.full_name)) {
+        await updateUserRecord.mutateAsync({
+          userId: infomarianData.selected_user_id,
+          userData: {
+            email: infomarianData.user_email,
+            full_name: infomarianData.full_name
+          }
+        });
+      }
+    }
 
     createInfomarian.mutate({
       ...infomarianData,
@@ -564,6 +590,18 @@ export default function FranchiseAdmin() {
                       </div>
                     )}
                   </div>
+                  
+                  {infomarianData.selected_user_id && (
+                    <div className="space-y-2">
+                      <Label>Registered User Email</Label>
+                      <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <p className="text-sm font-medium text-blue-900">{infomarianData.user_email}</p>
+                        <p className="text-xs text-blue-600 mt-1">
+                          Any changes to email or name will update the master user record
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
