@@ -589,10 +589,86 @@ export default function Profile() {
           )}
 
           {age >= 18 && (
-          <div className="mt-6">
-            <DelegationManager user={user} />
-          </div>
-        )}
+            <div className="mt-6">
+              <DelegationManager user={user} />
+            </div>
+          )}
+
+          {/* Strike Register */}
+          {user?.strikes && user.strikes.length > 0 && (
+            <Card className="border-0 shadow-lg mt-6 bg-gradient-to-br from-red-50 to-orange-50 border-red-200">
+              <CardHeader className="bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-t-xl">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                    <AlertCircle className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-2xl">Conduct Strike Register</CardTitle>
+                    <p className="text-red-100 text-sm mt-1">
+                      {user.strikes.length} strike{user.strikes.length > 1 ? 's' : ''} on record
+                    </p>
+                  </div>
+                </div>
+              </CardHeader>
+
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  {user.strikes.map((strike, index) => (
+                    <div 
+                      key={index} 
+                      className={`p-4 rounded-lg border-2 ${
+                        strike.severity === 'severe' ? 'bg-red-50 border-red-300' :
+                        strike.severity === 'moderate' ? 'bg-orange-50 border-orange-300' :
+                        'bg-yellow-50 border-yellow-300'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        <Badge className={
+                          strike.severity === 'severe' ? 'bg-red-600 text-white' :
+                          strike.severity === 'moderate' ? 'bg-orange-600 text-white' :
+                          'bg-yellow-600 text-white'
+                        }>
+                          Strike {index + 1} - {strike.severity}
+                        </Badge>
+                        <span className="text-sm text-slate-500">
+                          {format(new Date(strike.date), 'MMM d, yyyy h:mm a')}
+                        </span>
+                      </div>
+
+                      <p className="text-slate-900 font-semibold mb-2">
+                        {strike.reason}
+                      </p>
+
+                      <div className="text-sm text-slate-600">
+                        <p>Issued by: <span className="font-medium">{strike.infomarian_name}</span> (ID: {strike.infomarian_id})</p>
+                        {strike.comment_id && (
+                          <p className="text-xs text-slate-500 mt-1">Related to comment: {strike.comment_id}</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {user.strikes.length >= 3 && (
+                  <Alert variant="destructive" className="mt-4">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      You have received 3 or more strikes. Your commenting privileges may be restricted.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {user.commenting_restricted && (
+                  <Alert variant="destructive" className="mt-4">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      <span className="font-semibold">Commenting Restricted:</span> Your ability to comment on polls has been limited due to conduct violations.
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
         {user?.role === 'admin' && (
           <Card className="border-0 shadow-lg mt-6 bg-gradient-to-br from-purple-50 to-indigo-50 border-purple-200">
