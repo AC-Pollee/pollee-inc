@@ -47,6 +47,8 @@ export default function FranchiseAdmin() {
 
   const [userSearchResults, setUserSearchResults] = useState([]);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [nameSearchResults, setNameSearchResults] = useState([]);
+  const [showNameDropdown, setShowNameDropdown] = useState(false);
 
   // Fetch all users for lookup
   const { data: allUsers = [] } = useQuery({
@@ -149,6 +151,32 @@ export default function FranchiseAdmin() {
     });
     setShowUserDropdown(false);
     setUserSearchResults([]);
+  };
+
+  const handleNameSearch = (name) => {
+    setInfomarianData({...infomarianData, full_name: name});
+    
+    if (name.length >= 2) {
+      const matches = allUsers.filter(user => 
+        user.full_name?.toLowerCase().includes(name.toLowerCase()) ||
+        user.email.toLowerCase().includes(name.toLowerCase())
+      ).slice(0, 5);
+      setNameSearchResults(matches);
+      setShowNameDropdown(matches.length > 0);
+    } else {
+      setNameSearchResults([]);
+      setShowNameDropdown(false);
+    }
+  };
+
+  const handleSelectUserByName = (user) => {
+    setInfomarianData({
+      ...infomarianData, 
+      user_email: user.email,
+      full_name: user.full_name || ''
+    });
+    setShowNameDropdown(false);
+    setNameSearchResults([]);
   };
 
   const handleCreateInfomarian = () => {
@@ -338,14 +366,42 @@ export default function FranchiseAdmin() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
+                  <div className="space-y-2 relative">
                     <Label htmlFor="full_name">Full Name</Label>
-                    <Input
-                      id="full_name"
-                      value={infomarianData.full_name}
-                      onChange={(e) => setInfomarianData({...infomarianData, full_name: e.target.value})}
-                      placeholder="John Smith"
-                    />
+                    <div className="relative">
+                      <Input
+                        id="full_name"
+                        value={infomarianData.full_name}
+                        onChange={(e) => handleNameSearch(e.target.value)}
+                        onFocus={() => {
+                          if (nameSearchResults.length > 0) setShowNameDropdown(true);
+                        }}
+                        placeholder="Search registered users..."
+                        className="pr-10"
+                      />
+                      <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    </div>
+                    
+                    {showNameDropdown && nameSearchResults.length > 0 && (
+                      <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-64 overflow-auto">
+                        {nameSearchResults.map((user) => (
+                          <button
+                            key={user.id}
+                            type="button"
+                            onClick={() => handleSelectUserByName(user)}
+                            className="w-full text-left px-4 py-3 hover:bg-indigo-50 transition-colors border-b border-slate-100 last:border-b-0"
+                          >
+                            <p className="font-medium text-slate-900">{user.full_name || 'No name'}</p>
+                            <p className="text-sm text-slate-500">{user.email}</p>
+                            {user.user_role && (
+                              <Badge className="mt-1 text-xs bg-slate-100 text-slate-600">
+                                {user.user_role}
+                              </Badge>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-2 relative">
                     <Label htmlFor="user_email">Email</Label>
