@@ -738,8 +738,8 @@ export default function Profile() {
               <p className="text-sm text-slate-600 text-center mt-2">Best practices for voting and participation</p>
             </a>
           </div>
+          </div>
         </div>
-        </div>
-        </div>
-        );
-        }
+      </div>
+    );
+  }
