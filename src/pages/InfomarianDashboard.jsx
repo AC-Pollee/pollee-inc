@@ -11,6 +11,7 @@ import { ArrowLeft, BarChart3, MessageSquare, Image, DollarSign, AlertCircle, Ch
 import { motion } from 'framer-motion';
 import AssignedPolls from '@/components/infomarian/AssignedPolls';
 import CommentsModeration from '@/components/infomarian/CommentsModeration';
+import ModerationQueue from '@/components/infomarian/ModerationQueue';
 import MediaModeration from '@/components/infomarian/MediaModeration';
 import EarningsTracker from '@/components/infomarian/EarningsTracker';
 import UserManagement from '@/components/infomarian/UserManagement';
@@ -18,7 +19,7 @@ import UserSupport from '@/components/infomarian/UserSupport';
 import TaskAssignment from '@/components/infomarian/TaskAssignment';
 
 export default function InfomarianDashboard() {
-  const [activeTab, setActiveTab] = useState('polls');
+  const [activeTab, setActiveTab] = useState('queue');
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -182,18 +183,22 @@ export default function InfomarianDashboard() {
         {/* Main Content Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="bg-white border border-slate-200 p-1 rounded-xl shadow-sm flex-wrap">
-            <TabsTrigger value="polls" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
-              <BarChart3 className="w-4 h-4 mr-2" />
-              Polls
-            </TabsTrigger>
-            <TabsTrigger value="comments" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4 relative">
-              <MessageSquare className="w-4 h-4 mr-2" />
-              Comments
+            <TabsTrigger value="queue" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4 relative">
+              <AlertCircle className="w-4 h-4 mr-2" />
+              Queue
               {pendingComments.length > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
                   {pendingComments.length}
                 </span>
               )}
+            </TabsTrigger>
+            <TabsTrigger value="polls" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
+              <BarChart3 className="w-4 h-4 mr-2" />
+              Polls
+            </TabsTrigger>
+            <TabsTrigger value="comments" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
+              <MessageSquare className="w-4 h-4 mr-2" />
+              Moderate
             </TabsTrigger>
             <TabsTrigger value="media" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4 relative">
               <Image className="w-4 h-4 mr-2" />
