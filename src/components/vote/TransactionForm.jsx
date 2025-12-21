@@ -221,7 +221,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
         <h3 className="font-semibold text-emerald-900 mb-3">Vote Payment Breakdown</h3>
         <div className="space-y-2 text-sm text-emerald-700">
           <div className="flex justify-between">
-            <span>Infomarian Tip (per vote):</span>
+            <span>Infomarian Fee (per vote):</span>
             <span className="font-semibold">${expectedTip.toFixed(2)}</span>
           </div>
           <div className="flex justify-between">
@@ -289,7 +289,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
 
           <div className="space-y-2">
             <Label htmlFor="infomarianTip" className="text-base font-semibold">
-              Infomarian Tip (per vote)
+              Infomarian Fee (per vote)
             </Label>
             <Input
               id="infomarianTip"
@@ -478,7 +478,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
                 <p className="text-emerald-900 font-semibold">{totalVotes}</p>
               </div>
               <div>
-                <p className="text-emerald-600 font-medium">Infomarian Tip</p>
+                <p className="text-emerald-600 font-medium">Infomarian Fee</p>
                 <p className="text-emerald-900 font-semibold">${(expectedTip * totalVotes).toFixed(2)} AUD</p>
               </div>
               <div>
