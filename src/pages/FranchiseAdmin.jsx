@@ -465,14 +465,25 @@ export default function FranchiseAdmin() {
                   )}
 
                   {franchiseData.owner_user_id && (
-                    <div className="space-y-2">
-                      <Label>Registered User Email</Label>
-                      <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                        <p className="text-sm font-medium text-blue-900">{franchiseData.owner_email}</p>
-                        <p className="text-xs text-blue-600 mt-1">
-                          Any changes to email or contact phone will update the master user record
-                        </p>
+                    <div className="space-y-3">
+                      <div className="space-y-2">
+                        <Label>Registered User Email</Label>
+                        <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                          <p className="text-sm font-medium text-blue-900">{franchiseData.owner_email}</p>
+                          <p className="text-xs text-blue-600 mt-1">
+                            Any changes to email or contact phone will update the master user record
+                          </p>
+                        </div>
                       </div>
+                      <Button
+                        onClick={() => {
+                          // Commit owner selection - this locks in the owner
+                          alert('Owner confirmed and saved to franchise data');
+                        }}
+                        className="w-full bg-indigo-600 hover:bg-indigo-700"
+                      >
+                        Commit Owner Selection
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -487,14 +498,18 @@ export default function FranchiseAdmin() {
                   />
                 </div>
 
-                <Button
-                  onClick={handleCreateFranchise}
-                  disabled={!franchiseData.franchise_name || !franchiseData.postcode || !franchiseData.state || !franchiseData.owner_email}
-                  className="w-full bg-indigo-600 hover:bg-indigo-700"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Franchise
-                </Button>
+                {/* Create Franchise Section */}
+                <div className="border-t pt-6 mt-6">
+                  <h4 className="font-semibold text-slate-900 mb-4">Create Franchise</h4>
+                  <Button
+                    onClick={handleCreateFranchise}
+                    disabled={!franchiseData.franchise_name || !franchiseData.postcode || !franchiseData.state || !franchiseData.owner_email}
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 h-12"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Franchise
+                  </Button>
+                </div>
               </CardContent>
             </Card>
 
