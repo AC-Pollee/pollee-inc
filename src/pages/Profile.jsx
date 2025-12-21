@@ -157,6 +157,26 @@ export default function Profile() {
           <p className="text-slate-500">Manage your account information</p>
         </div>
 
+        <Card className="border-0 shadow-lg mb-8 bg-gradient-to-br from-blue-50 to-indigo-50">
+          <CardContent className="p-6">
+            <h3 className="text-lg font-semibold text-indigo-900 mb-3">Welcome to Pollee</h3>
+            <div className="text-slate-700 space-y-3 leading-relaxed">
+              <p>
+                We believe in transparent and accountable Democracy built on trust and respect for all. Infomarians are professional users who are paid out of your voting to provide poll discussion content, to moderate discussions to ensure civility and respect are maintained, and to provide real help with using the system.
+              </p>
+              <p>
+                We work on three strikes and your commenting rights are curtailed or removed, depending on the severity of any offense. You will be warned and the issue discussed on each notification of a complaint by another user or your Infomarian.
+              </p>
+              <p>
+                If you appreciate the assistance an Infomarian provides you or applaud the quality of their work, you can "Tip" them by adding any amount to the base 55c vote transaction. You can also rate your interactions to help the community identify Infomarians who consistently deliver you truthful information, maintain a civilised discussion, and assist you when you have problems.
+              </p>
+              <p className="font-semibold text-indigo-800">
+                With a vote, you can change your world, one poll at a time.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
         {!isProfileComplete && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
