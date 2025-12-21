@@ -142,6 +142,55 @@ export default function Home() {
         )}
       </div>
 
+      {/* Important Documents Section */}
+      <div className="max-w-6xl mx-auto px-4 pb-12">
+        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl shadow-lg p-8 border border-indigo-100">
+          <h2 className="text-xl font-bold text-slate-900 mb-6 text-center">
+            Important Documents & Guidelines
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            <a
+              href="https://pollee.net/code-of-conduct"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-slate-200 hover:border-indigo-300"
+            >
+              <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center mb-3">
+                <Shield className="w-6 h-6 text-indigo-600" />
+              </div>
+              <h3 className="font-semibold text-slate-900 text-center">Code of Conduct</h3>
+              <p className="text-sm text-slate-600 text-center mt-2">Community standards and behavior guidelines</p>
+            </a>
+            
+            <a
+              href="https://pollee.net/model-rules"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-slate-200 hover:border-indigo-300"
+            >
+              <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mb-3">
+                <BarChart3 className="w-6 h-6 text-purple-600" />
+              </div>
+              <h3 className="font-semibold text-slate-900 text-center">Model Rules</h3>
+              <p className="text-sm text-slate-600 text-center mt-2">Platform governance and operational rules</p>
+            </a>
+            
+            <a
+              href="https://pollee.net/code-of-practice"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-slate-200 hover:border-indigo-300"
+            >
+              <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-3">
+                <Vote className="w-6 h-6 text-blue-600" />
+              </div>
+              <h3 className="font-semibold text-slate-900 text-center">Code of Practice</h3>
+              <p className="text-sm text-slate-600 text-center mt-2">Best practices for voting and participation</p>
+            </a>
+          </div>
+        </div>
+      </div>
+
       {/* Footer Explanatory Section */}
       <div className="max-w-6xl mx-auto px-4 pb-20">
         <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 border border-slate-100">
