@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ArrowLeft, CheckCircle2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, AlertCircle, History, Clock } from 'lucide-react';
+import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import TransactionForm from '@/components/vote/TransactionForm';
 import PollDiscussion from '@/components/polls/PollDiscussion';
@@ -33,6 +34,20 @@ export default function Vote() {
     },
     enabled: !!pollId
   });
+
+  // Fetch user's previous votes on this poll
+  const { data: userVotes = [] } = useQuery({
+    queryKey: ['user-poll-votes', pollId, user?.id],
+    queryFn: async () => {
+      if (!pollId || !user?.id) return [];
+      const votes = await base44.entities.Vote.filter({ poll_id: pollId });
+      return votes.filter(v => v.voter_id === user.voter_id || v.created_by === user.email)
+        .sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+    },
+    enabled: !!pollId && !!user?.id
+  });
+
+  const lastVote = userVotes.length > 0 ? userVotes[0] : null;
 
   const calculateAge = (dob) => {
     if (!dob) return null;
@@ -208,15 +223,54 @@ export default function Vote() {
                 </CardHeader>
                 
                 <CardContent className="p-8">
+                  {/* Show last vote if user has voted before */}
+                  {lastVote && !isPollClosed && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mb-6"
+                    >
+                      <Alert className="bg-gradient-to-br from-blue-50 to-indigo-50 border-indigo-200">
+                        <History className="h-4 w-4 text-indigo-600" />
+                        <AlertDescription>
+                          <div className="space-y-1">
+                            <p className="text-indigo-900 font-semibold">Your Last Vote</p>
+                            <div className="flex items-center gap-2">
+                              <span className="text-indigo-700">
+                                <span className="font-bold">{lastVote.option_label}</span>
+                              </span>
+                              <span className="text-xs text-indigo-600 flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                {format(new Date(lastVote.created_date), 'MMM d, h:mm a')}
+                              </span>
+                            </div>
+                            <p className="text-xs text-indigo-600 mt-1">
+                              You can change your vote anytime before the poll closes.
+                            </p>
+                          </div>
+                        </AlertDescription>
+                      </Alert>
+                    </motion.div>
+                  )}
+
                   <div className="space-y-4 mb-8">
                     <h3 className="font-semibold text-lg">Available Options</h3>
                     <div className="grid gap-3">
                       {poll?.options?.map((option) => (
                         <div
                           key={option.id}
-                          className="flex items-center justify-between p-4 rounded-lg bg-slate-50 border border-slate-200"
+                          className={`flex items-center justify-between p-4 rounded-lg border-2 transition-all ${
+                            lastVote?.poll_item_id === option.id
+                              ? 'bg-indigo-50 border-indigo-300'
+                              : 'bg-slate-50 border-slate-200'
+                          }`}
                         >
-                          <span className="font-medium text-slate-900">{option.label}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-slate-900">{option.label}</span>
+                            {lastVote?.poll_item_id === option.id && (
+                              <CheckCircle2 className="w-4 h-4 text-indigo-600" />
+                            )}
+                          </div>
                           <span className="text-sm text-slate-500 font-mono">ID: {option.id}</span>
                         </div>
                       ))}
