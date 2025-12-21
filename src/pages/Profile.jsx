@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { User, Save, CheckCircle2, AlertCircle, BadgeCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import DelegationManager from '@/components/profile/DelegationManager';
+import DelegationsHeldRegister from '@/components/profile/DelegationsHeldRegister';
 
 export default function Profile() {
   const queryClient = useQueryClient();
@@ -592,6 +593,11 @@ export default function Profile() {
             <div className="mt-6">
               <DelegationManager user={user} />
             </div>
+          )}
+
+          {/* Delegations Held Register - Visible to Infomarians and above */}
+          {(user?.user_role === 'infomarian' || user?.user_role === 'franchise_manager' || user?.user_role === 'master_franchiser' || isSuperAdmin) && (
+            <DelegationsHeldRegister userId={user?.id} />
           )}
 
           {/* Strike Register */}
