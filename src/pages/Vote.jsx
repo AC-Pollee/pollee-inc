@@ -47,7 +47,8 @@ export default function Vote() {
   };
 
   const age = calculateAge(user?.date_of_birth);
-  const canVote = age !== null && age >= 18;
+  const isSuperAdmin = user?.email === 'ac@acproductiondesign.com';
+  const canVote = isSuperAdmin || (age !== null && age >= 18);
   
   // Check if poll is closed (past end_date)
   const isPollClosed = poll?.end_date && new Date(poll.end_date) < new Date();
@@ -229,7 +230,7 @@ export default function Vote() {
                         <span className="font-semibold">This poll has closed.</span> Voting and discussions are no longer available. View the final results below.
                       </AlertDescription>
                     </Alert>
-                  ) : !user?.date_of_birth ? (
+                  ) : !isSuperAdmin && !user?.date_of_birth ? (
                     <Alert className="bg-amber-50 border-amber-200">
                       <AlertCircle className="h-4 w-4 text-amber-600" />
                       <AlertDescription className="text-amber-800">
@@ -239,14 +240,14 @@ export default function Vote() {
                         </Link>
                       </AlertDescription>
                     </Alert>
-                  ) : age < 12 ? (
+                  ) : !isSuperAdmin && age < 12 ? (
                     <Alert className="bg-red-50 border-red-200">
                       <AlertCircle className="h-4 w-4 text-red-600" />
                       <AlertDescription className="text-red-800">
                         You must be at least 12 years old to participate in this platform.
                       </AlertDescription>
                     </Alert>
-                  ) : age < 18 ? (
+                  ) : !isSuperAdmin && age < 18 ? (
                     <Alert className="bg-blue-50 border-blue-200">
                       <AlertCircle className="h-4 w-4 text-blue-600" />
                       <AlertDescription className="text-blue-800">
@@ -264,8 +265,8 @@ export default function Vote() {
                 </CardContent>
               </Card>
 
-              {/* Live/Final Results - visible to everyone 12+ or closed polls */}
-              {(age >= 12 || isPollClosed) && (
+              {/* Live/Final Results - visible to everyone 12+ or closed polls or superadmin */}
+              {(isSuperAdmin || age >= 12 || isPollClosed) && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -276,8 +277,8 @@ export default function Vote() {
                 </motion.div>
               )}
 
-              {/* Discussion - available to everyone 12+ only when poll is open */}
-              {age >= 12 && !isPollClosed && (
+              {/* Discussion - available to everyone 12+ only when poll is open or superadmin */}
+              {(isSuperAdmin || age >= 12) && !isPollClosed && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -288,8 +289,8 @@ export default function Vote() {
                 </motion.div>
               )}
 
-              {/* Closed Discussion - viewable but not editable */}
-              {age >= 12 && isPollClosed && (
+              {/* Closed Discussion - viewable but not editable or superadmin */}
+              {(isSuperAdmin || age >= 12) && isPollClosed && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
