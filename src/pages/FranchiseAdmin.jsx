@@ -54,6 +54,7 @@ export default function FranchiseAdmin() {
   const [ownerSearchResults, setOwnerSearchResults] = useState([]);
   const [showOwnerDropdown, setShowOwnerDropdown] = useState(false);
   const [selectedOwner, setSelectedOwner] = useState(null);
+  const [ownerDetailsConfirmed, setOwnerDetailsConfirmed] = useState(false);
 
   // Fetch all users for lookup
   const { data: allUsers = [] } = useQuery({
@@ -449,11 +450,26 @@ export default function FranchiseAdmin() {
                             </div>
                           )}
                         </div>
+                        
+                        <div className="flex items-center gap-2 mt-4 p-3 bg-white rounded-lg border border-slate-200">
+                          <input
+                            type="checkbox"
+                            id="confirm-owner-details"
+                            checked={ownerDetailsConfirmed}
+                            onChange={(e) => setOwnerDetailsConfirmed(e.target.checked)}
+                            className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-600"
+                          />
+                          <label htmlFor="confirm-owner-details" className="text-sm font-medium text-slate-700 cursor-pointer">
+                            Are these details correct?
+                          </label>
+                        </div>
+
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => {
                             setSelectedOwner(null);
+                            setOwnerDetailsConfirmed(false);
                             setFranchiseData({...franchiseData, owner_email: '', contact_phone: '', owner_user_id: null});
                           }}
                           className="mt-3 text-red-600 hover:text-red-700"
@@ -480,7 +496,8 @@ export default function FranchiseAdmin() {
                           // Commit owner selection - this locks in the owner
                           alert('Owner confirmed and saved to franchise data');
                         }}
-                        className="w-full bg-indigo-600 hover:bg-indigo-700"
+                        disabled={!ownerDetailsConfirmed}
+                        className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
                       >
                         Commit Owner Selection
                       </Button>
