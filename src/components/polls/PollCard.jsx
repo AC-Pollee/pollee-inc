@@ -44,9 +44,11 @@ export default function PollCard({ poll, voteCount }) {
           </div>
         </div>
         
-        <h3 className="text-lg font-semibold text-slate-900 mb-2 line-clamp-2 group-hover:text-indigo-700 transition-colors">
-          {poll.title}
-        </h3>
+        <Link to={createPageUrl(`Vote?pollId=${poll.id}`)}>
+          <h3 className="text-lg font-semibold text-slate-900 mb-2 line-clamp-2 group-hover:text-indigo-700 transition-colors cursor-pointer">
+            {poll.title}
+          </h3>
+        </Link>
         
         {poll.description && (
           <p className="text-sm text-slate-500 mb-4 line-clamp-2">{poll.description}</p>
