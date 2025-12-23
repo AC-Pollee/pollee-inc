@@ -259,7 +259,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
             <span className="font-semibold">$0.30</span>
           </div>
           <div className="flex justify-between">
-            <span>Infomarian Tip (per vote):</span>
+            <span>Infomarian Tip:</span>
             <span className="font-semibold">${(expectedTip - 0.25).toFixed(2)}</span>
           </div>
           <div className="flex justify-between">
