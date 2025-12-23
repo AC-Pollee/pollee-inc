@@ -230,27 +230,6 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
         </Card>
       )}
 
-      <Card className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-indigo-200">
-        <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
-            <AlertCircle className="w-5 h-5 text-indigo-600" />
-          </div>
-          <div className="space-y-2">
-            <h3 className="font-semibold text-indigo-900">How to Vote with Your Transaction</h3>
-            <p className="text-sm text-indigo-700">
-              Your bank transaction description must include:
-            </p>
-            <ul className="text-sm text-indigo-700 list-disc list-inside space-y-1 ml-2">
-              <li>Your Name</li>
-              <li>Poll Item ID (e.g., "Option 1" or the ID number)</li>
-              <li>Delegation status ("direct" or "delegated")</li>
-              <li>Number of delegated votes</li>
-              <li>Your Infomarian ID</li>
-            </ul>
-          </div>
-        </div>
-      </Card>
-
       <div className="space-y-4">
         <div className="grid md:grid-cols-2 gap-4">
           <div className="space-y-2">
