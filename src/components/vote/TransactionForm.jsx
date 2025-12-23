@@ -519,7 +519,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
           <Textarea
             id="description"
             placeholder="Paste your complete transaction description here. Example: 'Vote John Smith Option1 Direct 1 vote InfoID:12345'"
-            value={transactionData.description}
+            value={transactionData.description || `Available Options:\n${pollOptions.map(opt => `${opt.label} (ID: ${opt.id})`).join('\n')}`}
             onChange={(e) => setTransactionData({...transactionData, description: e.target.value})}
             className="min-h-[120px] rounded-lg"
           />
