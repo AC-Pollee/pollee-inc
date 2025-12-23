@@ -260,7 +260,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
           </div>
           <div className="flex justify-between">
             <span>Infomarian Tip:</span>
-            <span className="font-semibold">${(expectedTip - 0.25).toFixed(2)}</span>
+            <span className="font-semibold">${expectedTip.toFixed(2)}</span>
           </div>
           <div className="flex justify-between">
             <span>Pollee Incorporated:</span>
