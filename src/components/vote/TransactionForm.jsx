@@ -398,10 +398,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
             onChange={(e) => setTransactionData({...transactionData, description: e.target.value})}
             className="min-h-[120px] rounded-lg"
           />
-          <p className="text-xs text-slate-500">
-            Copy and paste the exact description from your bank transaction
-          </p>
-        </div>
+          </div>
 
         <Card className="p-6 bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-200">
           <h3 className="font-semibold text-emerald-900 mb-3">Vote Payment Breakdown</h3>
