@@ -255,7 +255,11 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
         <h3 className="font-semibold text-emerald-900 mb-3">Vote Payment Breakdown</h3>
         <div className="space-y-2 text-sm text-emerald-700">
           <div className="flex justify-between">
-            <span>Infomarian Fee (per vote):</span>
+            <span>Infomarian Fee:</span>
+            <span className="font-semibold">$0.30</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Infomarian Tip (per vote):</span>
             <span className="font-semibold">${(expectedTip - 0.25).toFixed(2)}</span>
           </div>
           <div className="flex justify-between">
