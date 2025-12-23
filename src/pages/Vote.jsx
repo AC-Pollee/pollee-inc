@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ArrowLeft, CheckCircle2, AlertCircle, History, Clock } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, AlertCircle, History, Clock, Vote as VoteIcon, User } from 'lucide-react';
 import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import TransactionForm from '@/components/vote/TransactionForm';
