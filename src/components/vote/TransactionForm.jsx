@@ -530,7 +530,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
                   <span className="font-semibold text-indigo-900">{franchise?.id || 'N/A'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-600">Infomarian Fee:</span>
+                  <span className="text-slate-600">Infomarian Tip:</span>
                   <span className="font-semibold text-indigo-900">${expectedTip.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
