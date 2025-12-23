@@ -231,6 +231,10 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
       )}
 
       <div className="space-y-4">
+        <div className="bg-gradient-to-r from-slate-700 to-slate-800 text-white px-4 py-3 rounded-lg">
+          <h3 className="text-lg font-semibold">Transaction Information</h3>
+        </div>
+
         <div className="grid md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="fullName" className="text-base font-semibold">
