@@ -445,7 +445,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
             </div>
             <div className="flex justify-between border-t border-emerald-300 pt-2 font-bold text-base">
               <span>Total ({totalVotes} vote{totalVotes > 1 ? 's' : ''}):</span>
-              <span>${((0.25 + expectedTip) * totalVotes).toFixed(2)} AUD</span>
+              <span>${(0.30 + expectedTip + (0.25 * totalVotes)).toFixed(2)} AUD</span>
             </div>
           </div>
         </Card>
