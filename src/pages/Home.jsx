@@ -20,7 +20,7 @@ export default function Home() {
     queryFn: () => base44.entities.Vote.list()
   });
   
-  const activePolls = polls.filter(p => p.status === 'active');
+  const activePolls = polls.filter(p => p.status === 'active' && p.moderation_status === 'approved');
   
   const getVoteCount = (pollId) => {
     const pollVotes = votes.filter(v => v.poll_id === pollId && v.status === 'verified');

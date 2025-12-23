@@ -17,6 +17,7 @@ import EarningsTracker from '@/components/infomarian/EarningsTracker';
 import UserManagement from '@/components/infomarian/UserManagement';
 import UserSupport from '@/components/infomarian/UserSupport';
 import TaskAssignment from '@/components/infomarian/TaskAssignment';
+import PollModeration from '@/components/infomarian/PollModeration';
 
 export default function InfomarianDashboard() {
   const [activeTab, setActiveTab] = useState('queue');
@@ -40,6 +41,11 @@ export default function InfomarianDashboard() {
     queryFn: () => base44.entities.Comment.list()
   });
 
+  const { data: polls = [] } = useQuery({
+    queryKey: ['polls-dashboard'],
+    queryFn: () => base44.entities.Poll.list()
+  });
+
   const pendingComments = comments.filter(c => 
     c.moderation_status === 'pending' || c.moderation_status === 'flagged'
   );
@@ -47,6 +53,8 @@ export default function InfomarianDashboard() {
   const pendingMedia = comments.filter(c => 
     c.media_urls && c.media_urls.length > 0 && c.moderation_status === 'pending'
   );
+
+  const pendingPolls = polls.filter(p => p.moderation_status === 'pending');
 
   const isSuperAdmin = user?.email === 'ac@acproductiondesign.com';
   
@@ -192,9 +200,18 @@ export default function InfomarianDashboard() {
                 </span>
               )}
             </TabsTrigger>
+            <TabsTrigger value="poll-moderation" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4 relative">
+              <AlertCircle className="w-4 h-4 mr-2" />
+              Poll Review
+              {pendingPolls.length > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                  {pendingPolls.length}
+                </span>
+              )}
+            </TabsTrigger>
             <TabsTrigger value="polls" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
               <BarChart3 className="w-4 h-4 mr-2" />
-              Polls
+              My Polls
             </TabsTrigger>
             <TabsTrigger value="comments" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
               <MessageSquare className="w-4 h-4 mr-2" />
@@ -226,6 +243,10 @@ export default function InfomarianDashboard() {
 
           <TabsContent value="queue">
             <ModerationQueue infomarian={infomarian} />
+          </TabsContent>
+
+          <TabsContent value="poll-moderation">
+            <PollModeration infomarian={infomarian} />
           </TabsContent>
 
           <TabsContent value="polls">

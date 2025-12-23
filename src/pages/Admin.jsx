@@ -127,7 +127,8 @@ export default function Admin() {
       state: pollState || undefined,
       postcodes: postcodes.length > 0 ? postcodes : undefined,
       assigned_infomarians: [],
-      status: 'active'
+      status: 'active',
+      moderation_status: 'pending'
     });
   };
   
@@ -405,6 +406,20 @@ export default function Admin() {
                               }`}>
                                 {poll.status}
                               </Badge>
+                              {poll.moderation_status && (
+                                <Badge className={`${
+                                  poll.moderation_status === 'approved'
+                                    ? 'bg-green-100 text-green-700'
+                                    : poll.moderation_status === 'rejected'
+                                    ? 'bg-red-100 text-red-700'
+                                    : 'bg-amber-100 text-amber-700'
+                                }`}>
+                                  {poll.moderation_status === 'pending' && <Clock className="w-3 h-3 mr-1" />}
+                                  {poll.moderation_status === 'approved' && <CheckCircle2 className="w-3 h-3 mr-1" />}
+                                  {poll.moderation_status === 'rejected' && <XCircle className="w-3 h-3 mr-1" />}
+                                  {poll.moderation_status}
+                                </Badge>
+                              )}
                             </div>
                             <p className="text-sm text-slate-500">
                               {totalVotes} total votes • {verifiedVotes} verified • {pollVotes.length} transactions
