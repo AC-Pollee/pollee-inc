@@ -523,7 +523,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
           <Textarea
             id="description"
             placeholder="Paste your complete transaction description here. Example: 'Vote John Smith Option1 Direct 1 vote InfoID:12345'"
-            value={transactionData.description || (selectedChoice ? `Vote ${transactionData.fullName} ${selectedChoice === 'undecided' ? "I Don't Know" : selectedChoice.charAt(0).toUpperCase() + selectedChoice.slice(1)} Direct 1 vote InfoID:${transactionData.infomarianId}` : '')}
+            value={transactionData.description || (selectedChoice ? `Vote ${transactionData.fullName} ${selectedChoice === 'undecided' ? "I Don't Know" : selectedChoice.charAt(0).toUpperCase() + selectedChoice.slice(1)} Direct 1 vote InfoID:${transactionData.infomarianId}` : `Available Options:\n${pollOptions.map(opt => `${opt.label} (ID: ${opt.id})`).join('\n')}`)}
             onChange={(e) => setTransactionData({...transactionData, description: e.target.value})}
             className="min-h-[120px] rounded-lg"
           />
