@@ -448,7 +448,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
 
         {/* Quick Vote Selection */}
         <Card className="p-6 bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-200">
-          <h3 className="font-semibold text-indigo-900 mb-4">Quick Vote Selection</h3>
+          <h3 className="font-semibold text-indigo-900 mb-4">Final Vote Selection</h3>
           <div className="grid grid-cols-3 gap-4 mb-4">
             <Button
               onClick={() => setSelectedChoice('yes')}
