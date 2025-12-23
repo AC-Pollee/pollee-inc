@@ -346,6 +346,7 @@ export default function Vote() {
               {/* Discussion - available to everyone 12+ only when poll is open or superadmin */}
               {(isSuperAdmin || age >= 12) && !isPollClosed && (
                 <motion.div
+                  id="discussion"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
@@ -358,6 +359,7 @@ export default function Vote() {
               {/* Closed Discussion - viewable but not editable or superadmin */}
               {(isSuperAdmin || age >= 12) && isPollClosed && (
                 <motion.div
+                  id="discussion"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}

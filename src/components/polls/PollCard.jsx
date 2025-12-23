@@ -44,7 +44,7 @@ export default function PollCard({ poll, voteCount }) {
           </div>
         </div>
         
-        <Link to={createPageUrl(`Vote?pollId=${poll.id}`)}>
+        <Link to={createPageUrl(`Vote?pollId=${poll.id}#discussion`)}>
           <h3 className="text-lg font-semibold text-slate-900 mb-2 line-clamp-2 group-hover:text-indigo-700 transition-colors cursor-pointer">
             {poll.title}
           </h3>
