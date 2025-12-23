@@ -97,16 +97,23 @@ export default function Layout({ children, currentPageName }) {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-100">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            <Link to={createPageUrl('Home')} className="flex items-center gap-2">
-              <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center">
-                <img 
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69415ee66a530550d1e35558/70757a247_pollee.png" 
-                  alt="Pollee Inc Logo" 
-                  className="w-8 h-8"
-                />
-              </div>
-              <span className="font-bold text-xl text-slate-900">Pollee Inc</span>
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link to={createPageUrl('Home')} className="flex items-center gap-2">
+                <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center">
+                  <img 
+                    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69415ee66a530550d1e35558/70757a247_pollee.png" 
+                    alt="Pollee Inc Logo" 
+                    className="w-8 h-8"
+                  />
+                </div>
+                <span className="font-bold text-xl text-slate-900">Pollee Inc</span>
+              </Link>
+              <Link to={createPageUrl('Profile')}>
+                <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
+                  New User
+                </button>
+              </Link>
+            </div>
             
             <div className="flex items-center gap-1">
               {navItems.map((item) => {
