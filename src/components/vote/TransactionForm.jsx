@@ -323,7 +323,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
 
           <div className="space-y-2">
             <Label htmlFor="infomarianTip" className="text-base font-semibold">
-              Infomarian Fee (per vote)
+              Tip replaces Fee
             </Label>
             <Input
               id="infomarianTip"
