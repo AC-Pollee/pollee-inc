@@ -285,7 +285,7 @@ export default function Profile() {
                   </Label>
                   <Input
                     id="full_name"
-                    value={formData.full_name}
+                    value={formData.full_name?.split(' ')[0] || formData.full_name}
                     onChange={(e) => setFormData({...formData, full_name: e.target.value})}
                     placeholder="Enter your first name"
                     className="h-12 rounded-lg"
