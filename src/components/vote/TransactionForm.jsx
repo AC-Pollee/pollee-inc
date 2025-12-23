@@ -256,7 +256,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
         <div className="space-y-2 text-sm text-emerald-700">
           <div className="flex justify-between">
             <span>Infomarian Fee (per vote):</span>
-            <span className="font-semibold">${expectedTip.toFixed(2)}</span>
+            <span className="font-semibold">${(expectedTip - 0.25).toFixed(2)}</span>
           </div>
           <div className="flex justify-between">
             <span>Pollee Incorporated:</span>
@@ -451,7 +451,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
           <div className="space-y-2 text-sm text-emerald-700">
             <div className="flex justify-between">
               <span>Infomarian Fee (per vote):</span>
-              <span className="font-semibold">${expectedTip.toFixed(2)}</span>
+              <span className="font-semibold">${(expectedTip - 0.25).toFixed(2)}</span>
             </div>
             <div className="flex justify-between">
               <span>Pollee Incorporated:</span>
