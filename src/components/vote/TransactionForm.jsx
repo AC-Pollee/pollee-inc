@@ -230,92 +230,6 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
         </Card>
       )}
 
-      {/* Quick Vote Selection */}
-      <Card className="p-6 bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-200">
-        <h3 className="font-semibold text-indigo-900 mb-4">Quick Vote Selection</h3>
-        <div className="grid grid-cols-3 gap-4 mb-4">
-          <Button
-            onClick={() => setSelectedChoice('yes')}
-            className={`h-20 text-lg font-semibold ${
-              selectedChoice === 'yes'
-                ? 'bg-green-600 hover:bg-green-700 text-white'
-                : 'bg-white text-slate-700 hover:bg-slate-50 border-2 border-slate-200'
-            }`}
-          >
-            Yes
-          </Button>
-          <Button
-            onClick={() => setSelectedChoice('no')}
-            className={`h-20 text-lg font-semibold ${
-              selectedChoice === 'no'
-                ? 'bg-red-600 hover:bg-red-700 text-white'
-                : 'bg-white text-slate-700 hover:bg-slate-50 border-2 border-slate-200'
-            }`}
-          >
-            No
-          </Button>
-          <Button
-            onClick={() => setSelectedChoice('undecided')}
-            className={`h-20 text-lg font-semibold ${
-              selectedChoice === 'undecided'
-                ? 'bg-amber-600 hover:bg-amber-700 text-white'
-                : 'bg-white text-slate-700 hover:bg-slate-50 border-2 border-slate-200'
-            }`}
-          >
-            I Don't Know
-          </Button>
-        </div>
-
-        {selectedChoice && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            className="space-y-4 border-t border-indigo-200 pt-4"
-          >
-            <div className="bg-white rounded-lg p-4 space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-slate-600">My Choice:</span>
-                <span className="font-semibold text-indigo-900 capitalize">
-                  {selectedChoice === 'undecided' ? "I Don't Know" : selectedChoice}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-600">Franchise Name:</span>
-                <span className="font-semibold text-indigo-900">{franchise?.franchise_name || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-600">Franchise ID:</span>
-                <span className="font-semibold text-indigo-900">{franchise?.id || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-600">Infomarian Fee:</span>
-                <span className="font-semibold text-indigo-900">${expectedTip.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-600">Destination Account:</span>
-                <span className="font-semibold text-indigo-900 font-mono text-xs">
-                  {franchise && selectedChoice === 'yes' && `${franchise.yes_account_bsb || 'N/A'} - ${franchise.yes_account_number || 'N/A'}`}
-                  {franchise && selectedChoice === 'no' && `${franchise.no_account_bsb || 'N/A'} - ${franchise.no_account_number || 'N/A'}`}
-                  {franchise && selectedChoice === 'undecided' && `${franchise.undecided_account_bsb || 'N/A'} - ${franchise.undecided_account_number || 'N/A'}`}
-                </span>
-              </div>
-              <div className="flex justify-between border-t border-slate-200 pt-2 font-bold">
-                <span className="text-slate-600">Total Amount:</span>
-                <span className="text-indigo-900">${(0.25 + expectedTip).toFixed(2)} AUD</span>
-              </div>
-            </div>
-            <Button
-              onClick={handleQuickVote}
-              disabled={!transactionData.fullName || !transactionData.infomarianId}
-              className="w-full h-12 bg-indigo-600 hover:bg-indigo-700"
-            >
-              <CheckCircle2 className="w-5 h-5 mr-2" />
-              Submit Vote
-            </Button>
-          </motion.div>
-        )}
-      </Card>
-
       <Card className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-indigo-200">
         <div className="flex items-start gap-3">
           <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
@@ -531,6 +445,92 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
             Copy and paste the exact description from your bank transaction
           </p>
         </div>
+
+        {/* Quick Vote Selection */}
+        <Card className="p-6 bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-200">
+          <h3 className="font-semibold text-indigo-900 mb-4">Quick Vote Selection</h3>
+          <div className="grid grid-cols-3 gap-4 mb-4">
+            <Button
+              onClick={() => setSelectedChoice('yes')}
+              className={`h-20 text-lg font-semibold ${
+                selectedChoice === 'yes'
+                  ? 'bg-green-600 hover:bg-green-700 text-white'
+                  : 'bg-white text-slate-700 hover:bg-slate-50 border-2 border-slate-200'
+              }`}
+            >
+              Yes
+            </Button>
+            <Button
+              onClick={() => setSelectedChoice('no')}
+              className={`h-20 text-lg font-semibold ${
+                selectedChoice === 'no'
+                  ? 'bg-red-600 hover:bg-red-700 text-white'
+                  : 'bg-white text-slate-700 hover:bg-slate-50 border-2 border-slate-200'
+              }`}
+            >
+              No
+            </Button>
+            <Button
+              onClick={() => setSelectedChoice('undecided')}
+              className={`h-20 text-lg font-semibold ${
+                selectedChoice === 'undecided'
+                  ? 'bg-amber-600 hover:bg-amber-700 text-white'
+                  : 'bg-white text-slate-700 hover:bg-slate-50 border-2 border-slate-200'
+              }`}
+            >
+              I Don't Know
+            </Button>
+          </div>
+
+          {selectedChoice && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              className="space-y-4 border-t border-indigo-200 pt-4"
+            >
+              <div className="bg-white rounded-lg p-4 space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-slate-600">My Choice:</span>
+                  <span className="font-semibold text-indigo-900 capitalize">
+                    {selectedChoice === 'undecided' ? "I Don't Know" : selectedChoice}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-600">Franchise Name:</span>
+                  <span className="font-semibold text-indigo-900">{franchise?.franchise_name || 'N/A'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-600">Franchise ID:</span>
+                  <span className="font-semibold text-indigo-900">{franchise?.id || 'N/A'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-600">Infomarian Fee:</span>
+                  <span className="font-semibold text-indigo-900">${expectedTip.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-600">Destination Account:</span>
+                  <span className="font-semibold text-indigo-900 font-mono text-xs">
+                    {franchise && selectedChoice === 'yes' && `${franchise.yes_account_bsb || 'N/A'} - ${franchise.yes_account_number || 'N/A'}`}
+                    {franchise && selectedChoice === 'no' && `${franchise.no_account_bsb || 'N/A'} - ${franchise.no_account_number || 'N/A'}`}
+                    {franchise && selectedChoice === 'undecided' && `${franchise.undecided_account_bsb || 'N/A'} - ${franchise.undecided_account_number || 'N/A'}`}
+                  </span>
+                </div>
+                <div className="flex justify-between border-t border-slate-200 pt-2 font-bold">
+                  <span className="text-slate-600">Total Amount:</span>
+                  <span className="text-indigo-900">${(0.25 + expectedTip).toFixed(2)} AUD</span>
+                </div>
+              </div>
+              <Button
+                onClick={handleQuickVote}
+                disabled={!transactionData.fullName || !transactionData.infomarianId}
+                className="w-full h-12 bg-indigo-600 hover:bg-indigo-700"
+              >
+                <CheckCircle2 className="w-5 h-5 mr-2" />
+                Submit Vote
+              </Button>
+            </motion.div>
+          )}
+        </Card>
 
         <Button
           onClick={handleExtract}
