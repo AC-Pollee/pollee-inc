@@ -375,7 +375,7 @@ export default function Profile() {
               <div className="border-t border-slate-200 pt-6 mt-6">
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
                   <p className="text-sm text-blue-800">
-                    We use banks transactions because they are generally secure, generally confidential and fully accountable by both Parties. It is also a serios crime to interfere with financial transactions
+                    We use banks transactions because they are generally secure, generally confidential and fully accountable by both Parties. It is also a serious crime to interfere with financial transactions
                   </p>
                 </div>
                 <h3 className="text-lg font-semibold text-slate-900 mb-4">Australian Bank Details</h3>
