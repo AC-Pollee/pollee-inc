@@ -280,6 +280,10 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
                 </span>
               </div>
               <div className="flex justify-between">
+                <span className="text-slate-600">Franchise Name:</span>
+                <span className="font-semibold text-indigo-900">{franchise?.franchise_name || 'N/A'}</span>
+              </div>
+              <div className="flex justify-between">
                 <span className="text-slate-600">Franchise ID:</span>
                 <span className="font-semibold text-indigo-900">{franchise?.id || 'N/A'}</span>
               </div>
