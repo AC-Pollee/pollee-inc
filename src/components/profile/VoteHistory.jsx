@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { History, CheckCircle2, Clock, XCircle, RefreshCw } from 'lucide-react';
+import { Input } from "@/components/ui/input";
+import { History, CheckCircle2, Clock, XCircle, RefreshCw, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 
 export default function VoteHistory({ userId, voterEmail }) {
+  const [searchQuery, setSearchQuery] = useState('');
   const { data: votes = [], isLoading } = useQuery({
     queryKey: ['vote-history', userId],
     queryFn: async () => {
@@ -57,6 +59,14 @@ export default function VoteHistory({ userId, voterEmail }) {
     return acc;
   }, {});
 
+  // Filter polls based on search query
+  const filteredVotesByPoll = Object.entries(votesByPoll).filter(([pollId, pollVotes]) => {
+    if (!searchQuery.trim()) return true;
+    const pollTitle = getPollTitle(pollId).toLowerCase();
+    const query = searchQuery.toLowerCase();
+    return pollTitle.includes(query) || pollId.toLowerCase().includes(query);
+  });
+
   if (isLoading) {
     return (
       <Card className="border-0 shadow-lg">
@@ -93,6 +103,17 @@ export default function VoteHistory({ userId, voterEmail }) {
         </div>
       </CardHeader>
       <CardContent className="p-6">
+        <div className="mb-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Input
+              placeholder="Search by poll name or poll ID..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+        </div>
         {votes.length === 0 ? (
           <div className="text-center py-8">
             <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
@@ -100,9 +121,16 @@ export default function VoteHistory({ userId, voterEmail }) {
             </div>
             <p className="text-slate-500">No voting history yet</p>
           </div>
+        ) : filteredVotesByPoll.length === 0 ? (
+          <div className="text-center py-8">
+            <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
+              <Search className="w-8 h-8 text-slate-400" />
+            </div>
+            <p className="text-slate-500">No polls found matching "{searchQuery}"</p>
+          </div>
         ) : (
-          <div className="space-y-6">
-            {Object.entries(votesByPoll).map(([pollId, pollVotes], idx) => {
+          <div className="space-y-6 max-h-[800px] overflow-y-auto pr-2">
+            {filteredVotesByPoll.map(([pollId, pollVotes], idx) => {
               const latestVote = pollVotes[0]; // Already sorted by -created_date
               const hasChanges = pollVotes.length > 1;
               
