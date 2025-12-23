@@ -446,6 +446,32 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
           </p>
         </div>
 
+        <Card className="p-6 bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-200">
+          <h3 className="font-semibold text-emerald-900 mb-3">Vote Payment Breakdown</h3>
+          <div className="space-y-2 text-sm text-emerald-700">
+            <div className="flex justify-between">
+              <span>Infomarian Fee (per vote):</span>
+              <span className="font-semibold">${expectedTip.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Pollee Incorporated:</span>
+              <span className="font-semibold">${(0.10 * totalVotes).toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Local Franchise:</span>
+              <span className="font-semibold">${(0.10 * totalVotes).toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between border-t border-emerald-200 pt-2">
+              <span>GST:</span>
+              <span className="font-semibold">${(0.05 * totalVotes).toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between border-t border-emerald-300 pt-2 font-bold text-base">
+              <span>Total ({totalVotes} vote{totalVotes > 1 ? 's' : ''}):</span>
+              <span>${((0.25 + expectedTip) * totalVotes).toFixed(2)} AUD</span>
+            </div>
+          </div>
+        </Card>
+
         {/* Quick Vote Selection */}
         <Card className="p-6 bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-200">
           <h3 className="font-semibold text-indigo-900 mb-4">Final Vote Selection</h3>
