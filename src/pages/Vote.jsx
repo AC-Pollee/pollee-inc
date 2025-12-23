@@ -35,6 +35,18 @@ export default function Vote() {
     enabled: !!pollId
   });
 
+  const { data: franchise } = useQuery({
+    queryKey: ['franchise', poll?.franchise_id],
+    queryFn: async () => {
+      if (!poll?.franchise_id) return null;
+      const franchises = await base44.entities.Franchise.filter({ id: poll.franchise_id });
+      return franchises[0];
+    },
+    enabled: !!poll?.franchise_id
+  });
+
+  const [selectedChoice, setSelectedChoice] = useState(null);
+
   // Fetch user's previous votes on this poll
   const { data: userVotes = [] } = useQuery({
     queryKey: ['user-poll-votes', pollId, user?.id],
@@ -309,12 +321,105 @@ export default function Vote() {
                       </AlertDescription>
                     </Alert>
                   ) : (
-                    <TransactionForm
-                      pollId={pollId}
-                      pollOptions={poll?.options || []}
-                      onSubmit={handleSubmit}
-                      currentUser={user}
-                    />
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-3 gap-4">
+                        <Button
+                          onClick={() => setSelectedChoice('yes')}
+                          className={`h-20 text-lg font-semibold ${
+                            selectedChoice === 'yes'
+                              ? 'bg-green-600 hover:bg-green-700'
+                              : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                          }`}
+                        >
+                          Yes
+                        </Button>
+                        <Button
+                          onClick={() => setSelectedChoice('no')}
+                          className={`h-20 text-lg font-semibold ${
+                            selectedChoice === 'no'
+                              ? 'bg-red-600 hover:bg-red-700'
+                              : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                          }`}
+                        >
+                          No
+                        </Button>
+                        <Button
+                          onClick={() => setSelectedChoice('undecided')}
+                          className={`h-20 text-lg font-semibold ${
+                            selectedChoice === 'undecided'
+                              ? 'bg-amber-600 hover:bg-amber-700'
+                              : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                          }`}
+                        >
+                          I Don't Know
+                        </Button>
+                      </div>
+
+                      {selectedChoice && franchise && (
+                        <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-indigo-200">
+                          <CardContent className="p-6">
+                            <h3 className="font-semibold text-indigo-900 mb-4">Transaction Summary</h3>
+                            <div className="space-y-2 text-sm">
+                              <div className="flex justify-between">
+                                <span className="text-indigo-700">My Choice:</span>
+                                <span className="font-semibold text-indigo-900 capitalize">{selectedChoice === 'undecided' ? "I Don't Know" : selectedChoice}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-indigo-700">Amount:</span>
+                                <span className="font-semibold text-indigo-900">$0.55 AUD</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-indigo-700">Franchise ID:</span>
+                                <span className="font-semibold text-indigo-900">{franchise.id}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-indigo-700">Destination Account:</span>
+                                <span className="font-semibold text-indigo-900 font-mono">
+                                  {selectedChoice === 'yes' && `${franchise.yes_account_bsb || 'N/A'} - ${franchise.yes_account_number || 'N/A'}`}
+                                  {selectedChoice === 'no' && `${franchise.no_account_bsb || 'N/A'} - ${franchise.no_account_number || 'N/A'}`}
+                                  {selectedChoice === 'undecided' && `${franchise.undecided_account_bsb || 'N/A'} - ${franchise.undecided_account_number || 'N/A'}`}
+                                </span>
+                              </div>
+                            </div>
+                            <Button
+                              onClick={() => {
+                                const voteData = {
+                                  poll_id: pollId,
+                                  poll_item_id: selectedChoice,
+                                  option_label: selectedChoice === 'undecided' ? "I Don't Know" : selectedChoice.charAt(0).toUpperCase() + selectedChoice.slice(1),
+                                  voter_name: user.full_name,
+                                  infomarian_id: user.infomarian_id,
+                                  delegation_status: 'direct',
+                                  delegated_votes_count: 1,
+                                  transaction_reference: `AUTO-${Date.now()}`,
+                                  transaction_amount: 0.55,
+                                  transaction_date: new Date().toISOString(),
+                                  transaction_description: `Vote: ${selectedChoice} - Poll: ${pollId}`,
+                                  bank_name: 'Franchise Banking',
+                                  voter_id: user.voter_id || `V${Date.now()}`,
+                                  franchise_id: franchise.id,
+                                  destination_bsb: selectedChoice === 'yes' ? franchise.yes_account_bsb : selectedChoice === 'no' ? franchise.no_account_bsb : franchise.undecided_account_bsb,
+                                  destination_account: selectedChoice === 'yes' ? franchise.yes_account_number : selectedChoice === 'no' ? franchise.no_account_number : franchise.undecided_account_number,
+                                  payment_breakdown: {
+                                    infomarian: 0.30,
+                                    pollee_incorporated: 0.10,
+                                    local_franchise: 0.10,
+                                    gst: 0.05
+                                  },
+                                  status: 'pending',
+                                  is_vote_change: hasVotedBefore
+                                };
+                                handleSubmit(voteData);
+                              }}
+                              className="w-full mt-4 h-12 bg-indigo-600 hover:bg-indigo-700"
+                            >
+                              <CheckCircle2 className="w-5 h-5 mr-2" />
+                              Submit Vote
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      )}
+                    </div>
                   )}
                 </CardContent>
               </Card>
