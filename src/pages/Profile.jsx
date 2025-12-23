@@ -628,16 +628,16 @@ export default function Profile() {
             </div>
           )}
 
+          {/* Delegations Held Register - Visible to Infomarians and above */}
+          {(user?.user_role === 'infomarian' || user?.user_role === 'franchise_manager' || user?.user_role === 'master_franchiser' || isSuperAdmin) && (
+            <DelegationsHeldRegister userId={user?.id} />
+          )}
+
           {/* Vote History - visible to all users */}
           {user && (
             <div className="mt-6">
               <VoteHistory userId={user.voter_id} voterEmail={user.email} />
             </div>
-          )}
-
-          {/* Delegations Held Register - Visible to Infomarians and above */}
-          {(user?.user_role === 'infomarian' || user?.user_role === 'franchise_manager' || user?.user_role === 'master_franchiser' || isSuperAdmin) && (
-            <DelegationsHeldRegister userId={user?.id} />
           )}
 
           {/* Strike Register */}
