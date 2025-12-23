@@ -142,8 +142,40 @@ export default function Home() {
         )}
       </div>
 
-      {/* Important Documents Section */}
+      {/* Footer Explanatory Section */}
       <div className="max-w-6xl mx-auto px-4 pb-12">
+        <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 border border-slate-100">
+          <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">
+            How Pollee Democracy Works
+          </h2>
+          
+          <div className="prose prose-slate max-w-none space-y-4 text-slate-700">
+            <p className="text-base leading-relaxed">
+              Pollee Democracy is based on some very simple premises:
+            </p>
+            
+            <ol className="list-decimal list-inside space-y-3 text-base leading-relaxed ml-2">
+              <li>A Poll and discussion can be about any subject that requires a decision.</li>
+              <li>A Poll remains open for 720 hours (30 days) from the date of validation.</li>
+              <li>A registered user can vote on a poll at any time over the polling period, a user can change their vote at any time.</li>
+              <li>At the close of the Poll a decision is made by a simple majority of 50% +1 votes drawn from the total number of votes cast in the Poll.</li>
+            </ol>
+
+            <div className="bg-blue-50 border-l-4 border-blue-600 p-4 my-6 rounded-r-lg">
+              <p className="text-base leading-relaxed">
+                The legal age for a vote in Australia is 18 years and above. Until the age is changed legislatively, any member between the ages of 12 - 18 years (Junior) can participate in the discussions and "vote" in a live poll of sentiment, the vote cannot be counted in the total that decides. Your opinions and information are important and it will inform the outcome until you come of age and can vote for yourself.
+              </p>
+            </div>
+
+            <p className="text-lg font-semibold text-indigo-700 italic text-center mt-6">
+              Voting creates change, it's the one power we are promised
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Important Documents Section */}
+      <div className="max-w-6xl mx-auto px-4 pb-20">
         <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl shadow-lg p-8 border border-indigo-100">
           <h2 className="text-xl font-bold text-slate-900 mb-6 text-center">
             Important Documents & Guidelines
@@ -187,38 +219,6 @@ export default function Home() {
               <h3 className="font-semibold text-slate-900 text-center">Code of Practice</h3>
               <p className="text-sm text-slate-600 text-center mt-2">Best practices for voting and participation</p>
             </a>
-          </div>
-        </div>
-      </div>
-
-      {/* Footer Explanatory Section */}
-      <div className="max-w-6xl mx-auto px-4 pb-20">
-        <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 border border-slate-100">
-          <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">
-            How Pollee Democracy Works
-          </h2>
-          
-          <div className="prose prose-slate max-w-none space-y-4 text-slate-700">
-            <p className="text-base leading-relaxed">
-              Pollee Democracy is based on some very simple premises:
-            </p>
-            
-            <ol className="list-decimal list-inside space-y-3 text-base leading-relaxed ml-2">
-              <li>A Poll and discussion can be about any subject that requires a decision.</li>
-              <li>A Poll remains open for 720 hours (30 days) from the date of validation.</li>
-              <li>A registered user can vote on a poll at any time over the polling period, a user can change their vote at any time.</li>
-              <li>At the close of the Poll a decision is made by a simple majority of 50% +1 votes drawn from the total number of votes cast in the Poll.</li>
-            </ol>
-
-            <div className="bg-blue-50 border-l-4 border-blue-600 p-4 my-6 rounded-r-lg">
-              <p className="text-base leading-relaxed">
-                The legal age for a vote in Australia is 18 years and above. Until the age is changed legislatively, any member between the ages of 12 - 18 years (Junior) can participate in the discussions and "vote" in a live poll of sentiment, the vote cannot be counted in the total that decides. Your opinions and information are important and it will inform the outcome until you come of age and can vote for yourself.
-              </p>
-            </div>
-
-            <p className="text-lg font-semibold text-indigo-700 italic text-center mt-6">
-              Voting creates change, it's the one power we are promised
-            </p>
           </div>
         </div>
       </div>
