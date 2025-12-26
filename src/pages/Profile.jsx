@@ -328,13 +328,27 @@ export default function Profile() {
                 </Label>
                 <Input
                   id="date_of_birth"
-                  type="date"
-                  value={formData.date_of_birth}
-                  onChange={(e) => setFormData({...formData, date_of_birth: e.target.value})}
+                  type="text"
+                  placeholder="DD/MM/YYYY"
+                  value={formData.date_of_birth ? (() => {
+                    const [year, month, day] = formData.date_of_birth.split('-');
+                    return `${day}/${month}/${year}`;
+                  })() : ''}
+                  onChange={(e) => {
+                    const input = e.target.value;
+                    // Convert DD/MM/YYYY to YYYY-MM-DD for storage
+                    if (input.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                      const [day, month, year] = input.split('/');
+                      setFormData({...formData, date_of_birth: `${year}-${month}-${day}`});
+                    } else {
+                      setFormData({...formData, date_of_birth: input});
+                    }
+                  }}
                   className="h-12 rounded-lg"
                   required
                 />
-                {formData.date_of_birth && (
+                <p className="text-xs text-slate-500">Format: DD/MM/YYYY (e.g., 25/12/1990)</p>
+                {formData.date_of_birth && formData.date_of_birth.match(/^\d{4}-\d{2}-\d{2}$/) && (
                   <p className="text-xs text-slate-500">
                     Age: {calculateAge(formData.date_of_birth)} years
                     {calculateAge(formData.date_of_birth) >= 18 && ' - Eligible to vote'}
