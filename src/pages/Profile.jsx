@@ -14,6 +14,7 @@ import { format } from 'date-fns';
 import DelegationManager from '@/components/profile/DelegationManager';
 import DelegationsHeldRegister from '@/components/profile/DelegationsHeldRegister';
 import VoteHistory from '@/components/profile/VoteHistory';
+import ReputationScore from '@/components/profile/ReputationScore';
 
 export default function Profile() {
   const queryClient = useQueryClient();
@@ -635,6 +636,11 @@ export default function Profile() {
               </CardContent>
             </Card>
           )}
+
+          {/* Reputation Score */}
+          <div className="mt-6">
+            <ReputationScore user={user} />
+          </div>
 
           {age >= 18 && (
             <div className="mt-6">
