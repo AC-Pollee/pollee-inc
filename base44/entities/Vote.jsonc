@@ -1,0 +1,119 @@
+{
+  "name": "Vote",
+  "type": "object",
+  "properties": {
+    "poll_id": {
+      "type": "string",
+      "description": "Reference to the poll"
+    },
+    "poll_item_id": {
+      "type": "string",
+      "description": "ID number of the poll item being voted for"
+    },
+    "option_label": {
+      "type": "string",
+      "description": "The selected option label"
+    },
+    "voter_name": {
+      "type": "string",
+      "description": "Name of the voter from transaction"
+    },
+    "voter_id": {
+      "type": "string",
+      "description": "Unique voter ID from user profile"
+    },
+    "infomarian_id": {
+      "type": "string",
+      "description": "Infomarian ID from transaction"
+    },
+    "delegation_status": {
+      "type": "string",
+      "enum": [
+        "direct",
+        "delegated"
+      ],
+      "default": "direct",
+      "description": "Whether this is a direct vote or delegated"
+    },
+    "delegated_votes_count": {
+      "type": "number",
+      "default": 1,
+      "description": "Number of delegated votes (1 for direct votes)"
+    },
+    "transaction_reference": {
+      "type": "string",
+      "description": "Bank transaction reference number"
+    },
+    "transaction_amount": {
+      "type": "number",
+      "description": "Transaction amount (should be 0.55 AUD per vote)"
+    },
+    "tip_amount": {
+      "type": "number",
+      "default": 0,
+      "description": "Tip amount (transaction_amount - 0.55 AUD)"
+    },
+    "transaction_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date and time of transaction"
+    },
+    "transaction_description": {
+      "type": "string",
+      "description": "Full transaction description containing vote data"
+    },
+    "bank_name": {
+      "type": "string",
+      "description": "Name of the bank"
+    },
+    "payment_breakdown": {
+      "type": "object",
+      "description": "Breakdown of 0.55 AUD payment",
+      "properties": {
+        "infomarian": {
+          "type": "number",
+          "default": 0.3,
+          "description": "Payment to Infomarian (0.30 AUD)"
+        },
+        "pollee_incorporated": {
+          "type": "number",
+          "default": 0.1,
+          "description": "Payment to Pollee Incorporated (0.10 AUD)"
+        },
+        "local_franchise": {
+          "type": "number",
+          "default": 0.1,
+          "description": "Payment to Local franchise (0.10 AUD)"
+        },
+        "gst": {
+          "type": "number",
+          "default": 0.05,
+          "description": "GST (0.05 AUD)"
+        }
+      }
+    },
+    "is_vote_change": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this vote is a change from a previous vote"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "verified",
+        "rejected"
+      ],
+      "default": "pending"
+    },
+    "rejection_reason": {
+      "type": "string",
+      "description": "Reason for rejection if status is rejected"
+    }
+  },
+  "required": [
+    "poll_id",
+    "poll_item_id",
+    "transaction_description"
+  ]
+}

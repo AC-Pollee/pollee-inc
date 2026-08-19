@@ -1,0 +1,71 @@
+{
+  "name": "Infomarian",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of the user who is an Infomarian"
+    },
+    "full_name": {
+      "type": "string",
+      "description": "Full name of the Infomarian"
+    },
+    "infomarian_id": {
+      "type": "string",
+      "description": "Unique Infomarian identifier"
+    },
+    "franchise_id": {
+      "type": "string",
+      "description": "Franchise they work for"
+    },
+    "bio": {
+      "type": "string",
+      "description": "Professional bio"
+    },
+    "expertise_areas": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Areas of expertise"
+    },
+    "assigned_postcodes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Postcodes they serve"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "suspended"
+      ],
+      "default": "active",
+      "description": "Infomarian status"
+    },
+    "total_earnings": {
+      "type": "number",
+      "default": 0,
+      "description": "Total earnings from transactions"
+    },
+    "moderation_level": {
+      "type": "string",
+      "enum": [
+        "local",
+        "state",
+        "federal"
+      ],
+      "default": "local",
+      "description": "Level of moderation authority"
+    }
+  },
+  "required": [
+    "user_email",
+    "full_name",
+    "infomarian_id",
+    "franchise_id"
+  ]
+}

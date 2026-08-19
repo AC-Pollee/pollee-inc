@@ -1,0 +1,73 @@
+{
+  "name": "Franchise",
+  "type": "object",
+  "properties": {
+    "franchise_name": {
+      "type": "string",
+      "description": "Name of the franchise"
+    },
+    "postcode": {
+      "type": "string",
+      "description": "Primary postcode for the franchise"
+    },
+    "postcodes_served": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "All postcodes served by this franchise"
+    },
+    "state": {
+      "type": "string",
+      "description": "State/Territory"
+    },
+    "owner_email": {
+      "type": "string",
+      "description": "Franchise owner email"
+    },
+    "contact_phone": {
+      "type": "string",
+      "description": "Contact phone number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "suspended"
+      ],
+      "default": "active",
+      "description": "Franchise status"
+    },
+    "yes_account_bsb": {
+      "type": "string",
+      "description": "BSB for Yes votes account"
+    },
+    "yes_account_number": {
+      "type": "string",
+      "description": "Account number for Yes votes"
+    },
+    "no_account_bsb": {
+      "type": "string",
+      "description": "BSB for No votes account"
+    },
+    "no_account_number": {
+      "type": "string",
+      "description": "Account number for No votes"
+    },
+    "undecided_account_bsb": {
+      "type": "string",
+      "description": "BSB for I Don't Know votes account"
+    },
+    "undecided_account_number": {
+      "type": "string",
+      "description": "Account number for I Don't Know votes"
+    }
+  },
+  "required": [
+    "franchise_name",
+    "postcode",
+    "state",
+    "owner_email"
+  ]
+}

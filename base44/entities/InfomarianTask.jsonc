@@ -1,0 +1,85 @@
+{
+  "name": "InfomarianTask",
+  "type": "object",
+  "properties": {
+    "assigned_to_id": {
+      "type": "string",
+      "description": "Infomarian ID who is assigned this task"
+    },
+    "assigned_to_name": {
+      "type": "string",
+      "description": "Name of assigned Infomarian"
+    },
+    "assigned_by_id": {
+      "type": "string",
+      "description": "Infomarian ID who assigned the task"
+    },
+    "assigned_by_name": {
+      "type": "string",
+      "description": "Name of assigning Infomarian"
+    },
+    "task_type": {
+      "type": "string",
+      "enum": [
+        "moderation",
+        "user_support",
+        "content_creation",
+        "poll_management"
+      ],
+      "description": "Type of task"
+    },
+    "title": {
+      "type": "string",
+      "description": "Task title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed task description"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "urgent"
+      ],
+      "default": "medium",
+      "description": "Task priority"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "in_progress",
+        "completed",
+        "cancelled"
+      ],
+      "default": "pending",
+      "description": "Task status"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Task due date"
+    },
+    "related_entity_type": {
+      "type": "string",
+      "description": "Type of related entity (user, poll, comment)"
+    },
+    "related_entity_id": {
+      "type": "string",
+      "description": "ID of related entity"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes or updates"
+    }
+  },
+  "required": [
+    "assigned_to_id",
+    "assigned_by_id",
+    "title",
+    "task_type"
+  ]
+}

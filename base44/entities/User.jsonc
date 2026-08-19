@@ -1,0 +1,161 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "last_name": {
+      "type": "string",
+      "description": "Last name of the user"
+    },
+    "date_of_birth": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of birth"
+    },
+    "infomarian_id": {
+      "type": "string",
+      "description": "Infomarian ID"
+    },
+    "phone_number": {
+      "type": "string",
+      "description": "Phone number"
+    },
+    "bsb": {
+      "type": "string",
+      "description": "Bank BSB number"
+    },
+    "account_number": {
+      "type": "string",
+      "description": "Bank account number"
+    },
+    "account_name": {
+      "type": "string",
+      "description": "Bank account name"
+    },
+    "account_validated": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the bank account has been validated"
+    },
+    "validation_initiated": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether validation deposit has been made"
+    },
+    "validation_deposit_amount": {
+      "type": "number",
+      "description": "Random validation amount sent to user"
+    },
+    "voter_id": {
+      "type": "string",
+      "description": "Unique voter ID assigned after validation"
+    },
+    "user_role": {
+      "type": "string",
+      "enum": [
+        "voter",
+        "infomarian",
+        "franchise_manager",
+        "master_franchiser"
+      ],
+      "default": "voter",
+      "description": "User role in the system"
+    },
+    "strikes": {
+      "type": "array",
+      "default": [],
+      "description": "Conduct violation strikes",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date strike was issued"
+          },
+          "infomarian_id": {
+            "type": "string",
+            "description": "Infomarian who issued the strike"
+          },
+          "infomarian_name": {
+            "type": "string",
+            "description": "Name of the Infomarian"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Reason for the strike"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "minor",
+              "moderate",
+              "severe"
+            ],
+            "description": "Severity of the violation"
+          },
+          "comment_id": {
+            "type": "string",
+            "description": "Related comment ID if applicable"
+          }
+        }
+      }
+    },
+    "commenting_restricted": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether commenting rights are restricted"
+    },
+    "suspension_end_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date when current suspension ends"
+    },
+    "permanently_banned": {
+      "type": "boolean",
+      "default": false,
+      "description": "Permanently banned from commenting (4+ strikes)"
+    },
+    "reputation_score": {
+      "type": "number",
+      "default": 100,
+      "description": "User reputation score (0-1000)"
+    },
+    "reputation_breakdown": {
+      "type": "object",
+      "default": {
+        "verified_votes": 0,
+        "approved_comments": 0,
+        "successful_delegations": 0,
+        "received_delegations": 0,
+        "strikes_minor": 0,
+        "strikes_moderate": 0,
+        "strikes_severe": 0,
+        "flagged_content": 0
+      },
+      "description": "Breakdown of reputation components"
+    },
+    "reputation_level": {
+      "type": "string",
+      "enum": [
+        "newcomer",
+        "member",
+        "contributor",
+        "trusted",
+        "champion"
+      ],
+      "default": "newcomer",
+      "description": "Reputation tier"
+    }
+  },
+  "required": [
+    "last_name",
+    "date_of_birth",
+    "infomarian_id",
+    "phone_number",
+    "bsb",
+    "account_number",
+    "account_name",
+    "validation_deposit_amount",
+    "voter_id"
+  ]
+}

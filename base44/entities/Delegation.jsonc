@@ -1,0 +1,55 @@
+{
+  "name": "Delegation",
+  "type": "object",
+  "properties": {
+    "delegator_user_id": {
+      "type": "string",
+      "description": "User who is delegating their vote"
+    },
+    "delegator_full_name": {
+      "type": "string",
+      "description": "Full name of delegator"
+    },
+    "delegate_user_id": {
+      "type": "string",
+      "description": "User who will carry the delegation"
+    },
+    "delegate_full_name": {
+      "type": "string",
+      "description": "Full name of delegate"
+    },
+    "delegation_type": {
+      "type": "string",
+      "enum": [
+        "open",
+        "specific_poll"
+      ],
+      "description": "Open for all polls or specific poll only"
+    },
+    "poll_id": {
+      "type": "string",
+      "description": "Specific poll ID if delegation_type is specific_poll"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "verified",
+        "revoked"
+      ],
+      "default": "pending",
+      "description": "Delegation verification status"
+    },
+    "verified_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When delegation was verified"
+    }
+  },
+  "required": [
+    "delegator_user_id",
+    "delegator_full_name",
+    "delegate_user_id",
+    "delegation_type"
+  ]
+}

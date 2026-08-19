@@ -1,0 +1,66 @@
+{
+  "name": "Comment",
+  "type": "object",
+  "properties": {
+    "poll_id": {
+      "type": "string",
+      "description": "Reference to the poll being discussed"
+    },
+    "parent_comment_id": {
+      "type": "string",
+      "description": "ID of parent comment for threaded replies"
+    },
+    "user_name": {
+      "type": "string",
+      "description": "Name of the commenter"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Email of the commenter"
+    },
+    "content": {
+      "type": "string",
+      "description": "Comment text"
+    },
+    "is_junior_member": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the commenter is a junior member (12-17 years old)"
+    },
+    "moderation_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected",
+        "flagged"
+      ],
+      "default": "approved",
+      "description": "Moderation status"
+    },
+    "moderated_by": {
+      "type": "string",
+      "description": "Infomarian who moderated this comment"
+    },
+    "moderation_reason": {
+      "type": "string",
+      "description": "Reason for rejection or flagging"
+    },
+    "is_infomarian_content": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is official Infomarian content"
+    },
+    "media_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Multimedia content URLs"
+    }
+  },
+  "required": [
+    "poll_id",
+    "content"
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "name": "Poll",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The poll question"
+    },
+    "description": {
+      "type": "string",
+      "description": "Additional context for the poll"
+    },
+    "options": {
+      "type": "array",
+      "description": "Voting options",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "franchise_id": {
+      "type": "string",
+      "description": "Franchise that created this poll"
+    },
+    "poll_level": {
+      "type": "string",
+      "enum": [
+        "local",
+        "state",
+        "federal"
+      ],
+      "default": "local",
+      "description": "Level of poll scope"
+    },
+    "postcodes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Postcodes eligible to vote (for local polls)"
+    },
+    "state": {
+      "type": "string",
+      "description": "State for state-level polls"
+    },
+    "assigned_infomarians": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Infomarian IDs assigned to moderate this poll"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "closed"
+      ],
+      "default": "active"
+    },
+    "moderation_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected"
+      ],
+      "default": "pending",
+      "description": "Moderation status for new polls"
+    },
+    "moderated_by": {
+      "type": "string",
+      "description": "Email or ID of the moderator who reviewed the poll"
+    },
+    "moderation_reason": {
+      "type": "string",
+      "description": "Reason for rejection if poll is rejected"
+    },
+    "moderation_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the poll was moderated"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "title",
+    "options",
+    "franchise_id",
+    "poll_level"
+  ]
+}
