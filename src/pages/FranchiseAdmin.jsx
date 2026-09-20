@@ -591,7 +591,7 @@ export default function FranchiseAdmin() {
                     className="w-full bg-emerald-600 hover:bg-emerald-700 h-12"
                   >
                     <Plus className="w-4 h-4 mr-2" />
-                    Create Franchise
+                    Confirm Creation
                   </Button>
                 </div>
               </CardContent>
