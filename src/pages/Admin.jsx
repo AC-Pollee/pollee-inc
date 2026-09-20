@@ -403,6 +403,49 @@ export default function Admin() {
                                 <Eye className="w-4 h-4" />
                               </Button>
                             </Link>
+                            {poll.moderation_status === 'pending' && (
+                              <>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                                  disabled={updatePoll.isPending}
+                                  onClick={() => updatePoll.mutate({
+                                    id: poll.id,
+                                    data: {
+                                      moderation_status: 'approved',
+                                      moderated_by: currentUser?.email,
+                                      moderation_date: new Date().toISOString()
+                                    }
+                                  })}
+                                >
+                                  <CheckCircle2 className="w-4 h-4 mr-1" />
+                                  Approve
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="border-red-200 text-red-600 hover:bg-red-50"
+                                  disabled={updatePoll.isPending}
+                                  onClick={() => {
+                                    const reason = prompt('Reason for rejection:');
+                                    if (reason === null) return;
+                                    updatePoll.mutate({
+                                      id: poll.id,
+                                      data: {
+                                        moderation_status: 'rejected',
+                                        moderated_by: currentUser?.email,
+                                        moderation_date: new Date().toISOString(),
+                                        moderation_reason: reason
+                                      }
+                                    });
+                                  }}
+                                >
+                                  <XCircle className="w-4 h-4 mr-1" />
+                                  Reject
+                                </Button>
+                              </>
+                            )}
                             <Button
                               variant="outline"
                               size="sm"
