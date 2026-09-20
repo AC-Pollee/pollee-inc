@@ -52,14 +52,19 @@
       "description": "Total earnings from transactions"
     },
     "moderation_level": {
-      "type": "string",
-      "enum": [
-        "local",
-        "state",
-        "federal"
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "local",
+          "state",
+          "federal"
+        ]
+      },
+      "default": [
+        "local"
       ],
-      "default": "local",
-      "description": "Level of moderation authority"
+      "description": "Levels of moderation authority (one or more)"
     }
   },
   "required": [

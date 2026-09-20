@@ -44,7 +44,7 @@ export default function FranchiseAdmin() {
     bio: '',
     expertise_areas: '',
     assigned_postcodes: '',
-    moderation_level: 'local',
+    moderation_level: ['local'],
     selected_user_id: null
   });
 
@@ -107,7 +107,7 @@ export default function FranchiseAdmin() {
         bio: '',
         expertise_areas: '',
         assigned_postcodes: '',
-        moderation_level: 'local'
+        moderation_level: ['local']
       });
     }
   });
@@ -829,18 +829,30 @@ export default function FranchiseAdmin() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="moderation_level">Moderation Level</Label>
-                  <select
-                    id="moderation_level"
-                    value={infomarianData.moderation_level}
-                    onChange={(e) => setInfomarianData({...infomarianData, moderation_level: e.target.value})}
-                    className="w-full h-10 px-3 rounded-md border border-slate-200"
-                  >
-                    <option value="all">All Levels</option>
-                    <option value="local">Local</option>
-                    <option value="state">State</option>
-                    <option value="federal">Federal</option>
-                  </select>
+                  <Label>Moderation Level (select one or more)</Label>
+                  <div className="flex flex-wrap gap-4 p-3 border border-slate-200 rounded-md">
+                    {['local', 'state', 'federal'].map((level) => (
+                      <label key={level} className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={infomarianData.moderation_level.includes(level)}
+                          onChange={(e) => {
+                            const current = infomarianData.moderation_level;
+                            const next = e.target.checked
+                              ? [...current, level]
+                              : current.filter((l) => l !== level);
+                            setInfomarianData({
+                              ...infomarianData,
+                              moderation_level: next.length ? next : ['local']
+                            });
+                          }}
+                          className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-600"
+                        />
+                        <span className="text-sm font-medium text-slate-700 capitalize">{level}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <p className="text-xs text-slate-500">An Infomarian can work across one, two, or all levels</p>
                 </div>
 
                 <Button
@@ -872,7 +884,7 @@ export default function FranchiseAdmin() {
                         </div>
                         <p className="text-sm text-slate-600">{info.user_email}</p>
                         <p className="text-sm text-slate-500">
-                          Level: {info.moderation_level} • Postcodes: {info.assigned_postcodes?.join(', ')}
+                          Level: {Array.isArray(info.moderation_level) ? info.moderation_level.join(', ') : info.moderation_level} • Postcodes: {info.assigned_postcodes?.join(', ')}
                         </p>
                         <p className="text-sm text-emerald-600 font-semibold">
                           Earnings: ${(info.total_earnings || 0).toFixed(2)} AUD
