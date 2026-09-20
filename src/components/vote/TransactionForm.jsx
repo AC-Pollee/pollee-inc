@@ -17,7 +17,7 @@ export default function TransactionForm({ pollId, pollOptions, onSubmit, current
     fullName: currentUser?.full_name || '',
     pollNumber: pollId || '',
     infomarianId: currentUser?.infomarian_id || '',
-    infomarianTip: '0.30',
+    infomarianTip: '0',
     carryingDelegation: false,
     reference: '',
     amount: '',
@@ -60,7 +60,8 @@ export default function TransactionForm({ pollId, pollOptions, onSubmit, current
   });
 
   const totalVotes = 1 + selectedDelegations.length;
-  const expectedTip = parseFloat(transactionData.infomarianTip) || 0.30;
+  const expectedTip = Math.max(0, parseFloat(transactionData.infomarianTip) || 0);
+  const baseFee = 0.55; // Infomarian $0.30 + Pollee $0.10 + Franchise $0.10 + GST $0.05
 
   const handleExtract = async () => {
     if (!transactionData.fullName.trim()) {
@@ -141,11 +142,10 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
     if (!extractedData) return;
 
     const amount = parseFloat(transactionData.amount) || 0;
-    const baseAmount = 0.25; // Pollee + Franchise + GST
-    const expectedAmount = (baseAmount + expectedTip) * totalVotes;
+    const expectedAmount = (baseFee + expectedTip) * totalVotes;
     
     if (Math.abs(amount - expectedAmount) > 0.01) {
-      setError(`Transaction amount should be $${expectedAmount.toFixed(2)} AUD (${totalVotes} votes × $${(baseAmount + expectedTip).toFixed(2)})`);
+      setError(`Transaction amount should be $${expectedAmount.toFixed(2)} AUD (${totalVotes} votes × $${(baseFee + expectedTip).toFixed(2)} = $${(baseFee * totalVotes).toFixed(2)} base + $${(expectedTip * totalVotes).toFixed(2)} tip)`);
       return;
     }
 
@@ -164,11 +164,12 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
       bank_name: transactionData.bank,
       voter_id: currentUser?.voter_id || `V${Date.now()}`,
       payment_breakdown: {
-        infomarian: expectedTip * totalVotes,
+        infomarian: 0.30 * totalVotes,
         pollee_incorporated: 0.10 * totalVotes,
         local_franchise: 0.10 * totalVotes,
         gst: 0.05 * totalVotes
       },
+      tip_amount: expectedTip * totalVotes,
       delegation_ids: selectedDelegations.map(d => d.id),
       status: 'pending',
       is_vote_change: hasVotedBefore
@@ -178,7 +179,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
   const handleQuickVote = () => {
     if (!selectedChoice || !franchise) return;
 
-    const amount = 0.25 + expectedTip;
+    const amount = baseFee + expectedTip;
     
     onSubmit({
       poll_id: pollId,
@@ -198,11 +199,12 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
       destination_bsb: selectedChoice === 'yes' ? franchise.yes_account_bsb : selectedChoice === 'no' ? franchise.no_account_bsb : franchise.undecided_account_bsb,
       destination_account: selectedChoice === 'yes' ? franchise.yes_account_number : selectedChoice === 'no' ? franchise.no_account_number : franchise.undecided_account_number,
       payment_breakdown: {
-        infomarian: expectedTip,
+        infomarian: 0.30,
         pollee_incorporated: 0.10,
         local_franchise: 0.10,
         gst: 0.05
       },
+      tip_amount: expectedTip,
       status: 'pending',
       is_vote_change: hasVotedBefore
     });
@@ -286,12 +288,12 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
               id="infomarianTip"
               type="number"
               step="0.01"
-              min="0.30"
+              min="0"
               value={transactionData.infomarianTip}
               onChange={(e) => setTransactionData({...transactionData, infomarianTip: e.target.value})}
               className="h-11 rounded-lg"
             />
-            <p className="text-xs text-slate-500">Minimum $0.30 AUD</p>
+            <p className="text-xs text-slate-500">Optional tip — enter any amount (default $0.00 AUD)</p>
           </div>
         </div>
 
@@ -405,11 +407,11 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
           <div className="space-y-2 text-sm text-emerald-700">
             <div className="flex justify-between">
               <span>Infomarian Fee:</span>
-              <span className="font-semibold">$0.30</span>
+              <span className="font-semibold">${(0.30 * totalVotes).toFixed(2)}</span>
             </div>
             <div className="flex justify-between">
               <span>Infomarian Tip:</span>
-              <span className="font-semibold">${expectedTip.toFixed(2)}</span>
+              <span className="font-semibold">${(expectedTip * totalVotes).toFixed(2)}</span>
             </div>
             <div className="flex justify-between">
               <span>Pollee Incorporated:</span>
@@ -425,7 +427,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
             </div>
             <div className="flex justify-between border-t border-emerald-300 pt-2 font-bold text-base">
               <span>Total ({totalVotes} vote{totalVotes > 1 ? 's' : ''}):</span>
-              <span>${(0.30 + expectedTip + (0.25 * totalVotes)).toFixed(2)} AUD</span>
+              <span>${((baseFee + expectedTip) * totalVotes).toFixed(2)} AUD</span>
             </div>
           </div>
         </Card>
@@ -492,6 +494,10 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
                   <span className="font-semibold text-indigo-900">${expectedTip.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
+                  <span className="text-slate-600">Base Fee:</span>
+                  <span className="font-semibold text-indigo-900">$0.55 AUD</span>
+                </div>
+                <div className="flex justify-between">
                   <span className="text-slate-600">Destination Account:</span>
                   <span className="font-semibold text-indigo-900 font-mono text-xs">
                     {franchise && selectedChoice === 'yes' && `${franchise.yes_account_bsb || 'N/A'} - ${franchise.yes_account_number || 'N/A'}`}
@@ -501,7 +507,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
                 </div>
                 <div className="flex justify-between border-t border-slate-200 pt-2 font-bold">
                   <span className="text-slate-600">Total Amount:</span>
-                  <span className="text-indigo-900">${(0.25 + expectedTip).toFixed(2)} AUD</span>
+                  <span className="text-indigo-900">${(0.55 + expectedTip).toFixed(2)} AUD</span>
                 </div>
               </div>
               <Button
@@ -583,11 +589,15 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
               </div>
               <div>
                 <p className="text-emerald-600 font-medium">Infomarian Fee</p>
+                <p className="text-emerald-900 font-semibold">${(0.30 * totalVotes).toFixed(2)} AUD</p>
+              </div>
+              <div>
+                <p className="text-emerald-600 font-medium">Infomarian Tip</p>
                 <p className="text-emerald-900 font-semibold">${(expectedTip * totalVotes).toFixed(2)} AUD</p>
               </div>
               <div>
                 <p className="text-emerald-600 font-medium">Expected Payment</p>
-                <p className="text-emerald-900 font-semibold">${((0.25 + expectedTip) * totalVotes).toFixed(2)} AUD</p>
+                <p className="text-emerald-900 font-semibold">${((0.55 + expectedTip) * totalVotes).toFixed(2)} AUD</p>
               </div>
             </div>
           </Card>
