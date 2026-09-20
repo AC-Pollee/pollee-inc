@@ -108,7 +108,7 @@ export default function Layout({ children, currentPageName }) {
                 </div>
                 <span className="font-bold text-xl text-slate-900">Pollee Inc</span>
               </Link>
-              <Link to={createPageUrl('Profile')}>
+              <Link to={createPageUrl('NewUserRegistration')}>
                 <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
                   New User
                 </button>
