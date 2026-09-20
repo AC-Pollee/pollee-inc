@@ -362,6 +362,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
               onChange={(e) => setTransactionData({...transactionData, amount: e.target.value})}
               className="h-11 rounded-lg"
             />
+            <p className="text-xs text-slate-500">Enter the exact amount you transferred from your bank for this vote — it must match the agreed total ($0.55 base + any tip, per vote).</p>
           </div>
         </div>
 
