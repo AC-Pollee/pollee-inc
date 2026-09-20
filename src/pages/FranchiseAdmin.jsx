@@ -9,7 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Building2, Users, Plus, Trash2, Search } from 'lucide-react';
+import { ArrowLeft, Building2, Users, Plus, Trash2, Search, Pencil } from 'lucide-react';
+import FranchiseEditDialog from '@/components/franchise/FranchiseEditDialog';
 
 export default function FranchiseAdmin() {
   const queryClient = useQueryClient();
@@ -124,6 +125,16 @@ export default function FranchiseAdmin() {
     mutationFn: (id) => base44.entities.Franchise.delete(id),
     onSuccess: () => queryClient.invalidateQueries(['franchises'])
   });
+
+  const updateFranchise = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.Franchise.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['franchises']);
+      setEditingFranchise(null);
+    }
+  });
+
+  const [editingFranchise, setEditingFranchise] = useState(null);
 
   const deleteInfomarian = useMutation({
     mutationFn: (id) => base44.entities.Infomarian.delete(id),
@@ -615,23 +626,42 @@ export default function FranchiseAdmin() {
                         </p>
                         <p className="text-sm text-slate-500">Owner: {franchise.owner_email}</p>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          if (confirm('Delete this franchise?')) {
-                            deleteFranchise.mutate(franchise.id);
-                          }
-                        }}
-                        className="text-slate-400 hover:text-red-500"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setEditingFranchise(franchise)}
+                          className="text-slate-400 hover:text-indigo-600"
+                          title="Edit franchise"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            if (confirm('Delete this franchise?')) {
+                              deleteFranchise.mutate(franchise.id);
+                            }
+                          }}
+                          className="text-slate-400 hover:text-red-500"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
+
+            <FranchiseEditDialog
+              franchise={editingFranchise}
+              open={!!editingFranchise}
+              onClose={() => setEditingFranchise(null)}
+              saving={updateFranchise.isPending}
+              onSave={(data) => updateFranchise.mutate({ id: editingFranchise.id, data })}
+            />
           </TabsContent>
 
           {/* Infomarians Tab */}
