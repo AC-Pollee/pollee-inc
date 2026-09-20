@@ -352,7 +352,7 @@ export default function Vote() {
                   transition={{ delay: 0.3 }}
                   className="mt-6"
                 >
-                  <PollDiscussion pollId={pollId} currentUser={user} userAge={age} />
+                  <PollDiscussion pollId={pollId} currentUser={user} userAge={age} poll={poll} />
                 </motion.div>
               )}
 
@@ -365,7 +365,7 @@ export default function Vote() {
                   transition={{ delay: 0.3 }}
                   className="mt-6"
                 >
-                  <PollDiscussion pollId={pollId} currentUser={user} userAge={age} isClosed={true} />
+                  <PollDiscussion pollId={pollId} currentUser={user} userAge={age} isClosed={true} poll={poll} />
                 </motion.div>
               )}
             </motion.div>

@@ -4,19 +4,47 @@ import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Reply, Flag, Trash2, CheckCircle2, XCircle, AlertTriangle, Edit2, Send } from 'lucide-react';
+import { MessageCircle, Reply, Flag, Trash2, CheckCircle2, XCircle, AlertTriangle, Edit2, Send, Archive, Lock } from 'lucide-react';
 import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
+import DiscussionHeader from './DiscussionHeader';
+import ResponsibilityAgreement from './ResponsibilityAgreement';
 
-export default function PollDiscussion({ pollId, currentUser, userAge, isClosed = false }) {
+export default function PollDiscussion({ pollId, currentUser, userAge, isClosed = false, poll }) {
   const [newComment, setNewComment] = useState('');
+  const [displayName, setDisplayName] = useState('');
+  const [responsibilityAccepted, setResponsibilityAccepted] = useState(false);
   const [replyingTo, setReplyingTo] = useState(null);
+  const [replyResponsibility, setReplyResponsibility] = useState(false);
   const [editingComment, setEditingComment] = useState(null);
   const queryClient = useQueryClient();
-  
+
   const isSuperAdmin = currentUser?.email === 'ac@acproductiondesign.com';
+  const isArchived = isClosed || poll?.discussion_status === 'archived';
+
+  // Determine author type
+  const { data: infomarian } = useQuery({
+    queryKey: ['my-infomarian', currentUser?.email],
+    queryFn: async () => {
+      if (!currentUser?.email) return null;
+      const infomarians = await base44.entities.Infomarian.list();
+      return infomarians.find(i => i.user_email === currentUser.email);
+    },
+    enabled: !!currentUser?.email
+  });
+
+  const isInfomarianOrAdmin = isSuperAdmin || !!infomarian;
+
+  const getAuthorType = () => {
+    if (isInfomarianOrAdmin) return 'infomarian';
+    if (currentUser?.account_validated) return 'member';
+    return 'public';
+  };
+
+  const authorType = getAuthorType();
 
   // Check if user is suspended or banned
   const isUserSuspended = () => {
@@ -47,18 +75,6 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
     enabled: !!pollId
   });
 
-  const { data: infomarian } = useQuery({
-    queryKey: ['my-infomarian', currentUser?.email],
-    queryFn: async () => {
-      if (!currentUser?.email) return null;
-      const infomarians = await base44.entities.Infomarian.list();
-      return infomarians.find(i => i.user_email === currentUser.email);
-    },
-    enabled: !!currentUser?.email
-  });
-
-  const isInfomarianOrAdmin = isSuperAdmin || !!infomarian;
-
   const addComment = useMutation({
     mutationFn: (data) => base44.entities.Comment.create(data),
     onSuccess: () => {
@@ -66,6 +82,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
       queryClient.invalidateQueries(['poll-comments', pollId]);
       setNewComment('');
       setReplyingTo(null);
+      setReplyResponsibility(false);
     }
   });
 
@@ -86,16 +103,46 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
     }
   });
 
+  const canPost = () => {
+    if (!currentUser) return false;
+    if (isArchived) return false;
+    if (isUserSuspended()) return false;
+    if (userAge !== null && userAge < 12) return false;
+    if (!responsibilityAccepted) return false;
+    if (!newComment.trim()) return false;
+    // Public users need a display name
+    if (authorType === 'public' && !displayName.trim()) return false;
+    return true;
+  };
+
+  const canReply = () => {
+    if (!currentUser) return false;
+    if (isArchived) return false;
+    if (isUserSuspended()) return false;
+    if (userAge !== null && userAge < 12) return false;
+    if (!replyResponsibility) return false;
+    if (!newComment.trim()) return false;
+    if (authorType === 'public' && !displayName.trim()) return false;
+    return true;
+  };
+
   const handleSubmit = (e) => {
     e?.preventDefault();
-    if (!newComment.trim() || !currentUser) return;
+    if (!canPost()) return;
+
+    const resolvedName = authorType === 'public'
+      ? displayName.trim()
+      : (currentUser.full_name || currentUser.email);
 
     addComment.mutate({
       poll_id: pollId,
-      user_name: currentUser.full_name || currentUser.email,
+      user_name: resolvedName,
       user_email: currentUser.email,
+      display_name: authorType === 'public' ? displayName.trim() : undefined,
       content: newComment.trim(),
       parent_comment_id: replyingTo,
+      author_type: authorType,
+      responsibility_accepted: true,
       is_junior_member: userAge >= 12 && userAge < 18,
       moderation_status: isInfomarianOrAdmin ? 'approved' : 'pending',
       is_infomarian_content: !!infomarian
@@ -125,11 +172,25 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
   const topLevelComments = approvedComments.filter(c => !c.parent_comment_id);
   const getReplies = (commentId) => approvedComments.filter(c => c.parent_comment_id === commentId);
 
+  const authorBadge = (comment) => {
+    const type = comment.author_type || (comment.is_infomarian_content ? 'infomarian' : 'member');
+    if (comment.is_infomarian_content || type === 'infomarian') {
+      return <Badge className="bg-indigo-600 text-white text-xs">Infomarian</Badge>;
+    }
+    if (type === 'public') {
+      return <Badge className="bg-slate-200 text-slate-700 text-xs">Public</Badge>;
+    }
+    if (comment.is_junior_member) {
+      return <Badge className="bg-blue-100 text-blue-700 text-xs">Junior</Badge>;
+    }
+    return <Badge className="bg-emerald-100 text-emerald-700 text-xs">Member</Badge>;
+  };
+
   const renderComment = (comment, depth = 0) => {
     const replies = getReplies(comment.id);
     const isOwnComment = comment.user_email === currentUser?.email;
     const canModerate = isInfomarianOrAdmin;
-    
+
     return (
       <motion.div
         key={comment.id}
@@ -146,17 +207,14 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
           <div className="flex items-start justify-between mb-2">
             <div className="flex items-center gap-2">
               <Avatar className="w-7 h-7 md:w-8 md:h-8 bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-white text-xs font-semibold">
-                {comment.user_name?.charAt(0)?.toUpperCase() || 'U'}
+                {(comment.display_name || comment.user_name)?.charAt(0)?.toUpperCase() || 'U'}
               </Avatar>
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <p className="font-semibold text-xs md:text-sm text-slate-900">{comment.user_name}</p>
-                  {comment.is_infomarian_content && (
-                    <Badge className="bg-indigo-600 text-white text-xs">Infomarian</Badge>
-                  )}
-                  {comment.is_junior_member && (
-                    <Badge className="bg-blue-100 text-blue-700 text-xs">Junior</Badge>
-                  )}
+                  <p className="font-semibold text-xs md:text-sm text-slate-900">
+                    {comment.display_name || comment.user_name}
+                  </p>
+                  {authorBadge(comment)}
                   {comment.moderation_status === 'pending' && (
                     <Badge className="bg-amber-600 text-white text-xs">Pending</Badge>
                   )}
@@ -167,7 +225,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
                 <p className="text-xs text-slate-500">{format(new Date(comment.created_date), 'MMM d, h:mm a')}</p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-1">
               {canModerate && comment.moderation_status === 'pending' && (
                 <>
@@ -192,7 +250,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
                   </Button>
                 </>
               )}
-              {!canModerate && !isOwnComment && comment.moderation_status === 'approved' && (
+              {!canModerate && !isOwnComment && comment.moderation_status === 'approved' && !isArchived && (
                 <Button
                   variant="ghost"
                   size="icon"
@@ -202,7 +260,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
                   <Flag className="w-3 h-3 md:w-4 md:h-4" />
                 </Button>
               )}
-              {(isOwnComment || canModerate) && (
+              {(isOwnComment || canModerate) && !isArchived && (
                 <>
                   <Button
                     variant="ghost"
@@ -226,7 +284,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
               )}
             </div>
           </div>
-          
+
           {editingComment?.id === comment.id ? (
             <div className="space-y-2">
               <Textarea
@@ -255,18 +313,22 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
           ) : (
             <>
               <p className="text-xs md:text-sm text-slate-700 whitespace-pre-wrap break-words">{comment.content}</p>
-              
+
               {comment.moderation_reason && (
                 <div className="mt-2 p-2 bg-red-100 rounded text-xs text-red-800">
                   <span className="font-semibold">Moderation note:</span> {comment.moderation_reason}
                 </div>
               )}
-              
-              {currentUser && comment.moderation_status === 'approved' && !isClosed && userAge >= 12 && !isUserSuspended() && (
+
+              {currentUser && comment.moderation_status === 'approved' && !isArchived && userAge >= 12 && !isUserSuspended() && (
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setReplyingTo(comment.id)}
+                  onClick={() => {
+                    setReplyingTo(comment.id);
+                    setNewComment('');
+                    setReplyResponsibility(false);
+                  }}
                   className="mt-2 h-6 md:h-7 text-xs text-slate-600 hover:text-indigo-600 px-2"
                 >
                   <Reply className="w-3 h-3 mr-1" />
@@ -276,46 +338,54 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
             </>
           )}
         </div>
-        
+
         {replyingTo === comment.id && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
-            className="mt-2 ml-6 md:ml-8 p-3 bg-white rounded-lg border border-slate-200"
+            className="mt-2 ml-6 md:ml-8 p-3 bg-white rounded-lg border border-slate-200 space-y-3"
           >
-            <form onSubmit={handleSubmit} className="space-y-2">
-              <Textarea
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                placeholder="Write your reply..."
-                className="min-h-[80px] text-sm"
+            {authorType === 'public' && (
+              <Input
+                placeholder="Your display name (required)"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                className="h-9 text-sm"
               />
-              <div className="flex gap-2">
-                <Button
-                  type="submit"
-                  size="sm"
-                  disabled={!newComment.trim()}
-                  className="bg-indigo-600 hover:bg-indigo-700 h-8 text-xs"
-                >
-                  Post Reply
-                </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    setReplyingTo(null);
-                    setNewComment('');
-                  }}
-                  className="h-8 text-xs"
-                >
-                  Cancel
-                </Button>
-              </div>
-            </form>
+            )}
+            <Textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Write your reply..."
+              className="min-h-[80px] text-sm"
+            />
+            <ResponsibilityAgreement accepted={replyResponsibility} onChange={setReplyResponsibility} compact />
+            <div className="flex gap-2">
+              <Button
+                type="submit"
+                size="sm"
+                disabled={!canReply() || addComment.isPending}
+                onClick={handleSubmit}
+                className="bg-indigo-600 hover:bg-indigo-700 h-8 text-xs"
+              >
+                Post Reply
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  setReplyingTo(null);
+                  setNewComment('');
+                }}
+                className="h-8 text-xs"
+              >
+                Cancel
+              </Button>
+            </div>
           </motion.div>
         )}
-        
+
         {replies.length > 0 && (
           <div className="mt-2">
             {replies.map(reply => renderComment(reply, depth + 1))}
@@ -331,22 +401,41 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
         <div className="flex items-center justify-between flex-wrap gap-2">
           <CardTitle className="flex items-center gap-2 text-base md:text-lg">
             <MessageCircle className="w-5 h-5 text-indigo-600" />
-            Discussion ({topLevelComments.length} {topLevelComments.length === 1 ? 'thread' : 'threads'})
-            {isClosed && (
+            Discussion Board
+            {isArchived ? (
+              <Badge className="bg-slate-200 text-slate-700 border-slate-300 text-xs gap-1">
+                <Archive className="w-3 h-3" />
+                Archived
+              </Badge>
+            ) : (
               <Badge className="bg-slate-100 text-slate-600 border-slate-200 text-xs">
-                Closed
+                {topLevelComments.length} {topLevelComments.length === 1 ? 'thread' : 'threads'}
               </Badge>
             )}
           </CardTitle>
-          {isInfomarianOrAdmin && (
+          {isInfomarianOrAdmin && !isArchived && (
             <Badge className="bg-indigo-100 text-indigo-700 text-xs">
               Moderator
             </Badge>
           )}
         </div>
       </CardHeader>
-      
+
       <CardContent className="space-y-4 md:space-y-6">
+        <DiscussionHeader poll={poll} isArchived={isArchived} />
+
+        {isArchived && (
+          <div className="flex items-start gap-3 p-4 bg-slate-100 border border-slate-200 rounded-lg">
+            <Archive className="w-5 h-5 text-slate-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-slate-700">Discussion Archived</p>
+              <p className="text-xs text-slate-500 mt-1">
+                This poll's vote has concluded. The discussion thread is preserved here for future reference and is read-only.
+              </p>
+            </div>
+          </div>
+        )}
+
         {isUserSuspended() && (
           <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
             <p className="text-sm text-red-800 font-medium">{getSuspensionMessage()}</p>
@@ -358,14 +447,29 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
           </div>
         )}
 
-        {currentUser && !isClosed && !replyingTo && userAge >= 12 && !isUserSuspended() && (
+        {currentUser && !isArchived && !replyingTo && userAge >= 12 && !isUserSuspended() && (
           <form onSubmit={handleSubmit} className="space-y-3">
+            {authorType === 'public' && (
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-xs text-blue-800 mb-2">
+                  You are participating as a <span className="font-semibold">general public</span> participant.
+                  Validate your account on your profile to participate as a verified member.
+                </p>
+                <Input
+                  placeholder="Display name (shown on your comments)"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  className="h-10 text-sm"
+                />
+              </div>
+            )}
             <Textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              placeholder={infomarian ? "Share insights as an Infomarian..." : "Share your thoughts..."}
+              placeholder={infomarian ? "Share insights as an Infomarian..." : "Share your thoughts on this issue..."}
               className="min-h-[100px] text-sm"
             />
+            <ResponsibilityAgreement accepted={responsibilityAccepted} onChange={setResponsibilityAccepted} />
             <div className="flex items-center justify-between flex-wrap gap-2">
               {!isInfomarianOrAdmin && (
                 <p className="text-xs text-amber-600 flex items-center">
@@ -375,16 +479,25 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
               )}
               <Button
                 type="submit"
-                disabled={!newComment.trim() || addComment.isPending}
+                disabled={!canPost() || addComment.isPending}
                 className="ml-auto bg-indigo-600 hover:bg-indigo-700 h-9 text-sm"
               >
                 <Send className="w-4 h-4 mr-2" />
-                {infomarian ? 'Post as Infomarian' : 'Post Comment'}
+                {infomarian ? 'Post as Infomarian' : authorType === 'public' ? 'Post as Public' : 'Post Comment'}
               </Button>
             </div>
           </form>
         )}
-        
+
+        {!currentUser && !isArchived && (
+          <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg text-center">
+            <Lock className="w-6 h-6 text-slate-400 mx-auto mb-2" />
+            <p className="text-sm text-slate-600">
+              Log in to participate in the discussion. General public and members are welcome to share their views.
+            </p>
+          </div>
+        )}
+
         <div className="space-y-3 md:space-y-4">
           {topLevelComments.length === 0 ? (
             <div className="text-center py-8 text-slate-400">
