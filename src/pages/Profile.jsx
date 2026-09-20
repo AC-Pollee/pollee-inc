@@ -16,6 +16,7 @@ import DelegationsHeldRegister from '@/components/profile/DelegationsHeldRegiste
 import VoteHistory from '@/components/profile/VoteHistory';
 import ReputationScore from '@/components/profile/ReputationScore';
 import ReputationBadge from '@/components/profile/ReputationBadge';
+import AvatarUploader from '@/components/profile/AvatarUploader';
 
 export default function Profile() {
   const queryClient = useQueryClient();
@@ -166,6 +167,12 @@ export default function Profile() {
           </div>
           <p className="text-slate-500">Manage your account information</p>
         </div>
+
+        <Card className="border-0 shadow-lg mb-8">
+          <CardContent className="p-6">
+            <AvatarUploader user={user} />
+          </CardContent>
+        </Card>
 
         <Card className="border-0 shadow-lg mb-8 bg-gradient-to-br from-blue-50 to-indigo-50">
           <CardContent className="p-6">

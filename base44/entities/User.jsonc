@@ -2,6 +2,10 @@
   "name": "User",
   "type": "object",
   "properties": {
+    "avatar_url": {
+      "type": "string",
+      "description": "URL of the user's uploaded avatar image (JPG or PNG, square, <= 2MB)"
+    },
     "last_name": {
       "type": "string",
       "description": "Last name of the user"
