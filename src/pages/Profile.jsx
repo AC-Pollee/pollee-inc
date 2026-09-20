@@ -15,6 +15,7 @@ import DelegationManager from '@/components/profile/DelegationManager';
 import DelegationsHeldRegister from '@/components/profile/DelegationsHeldRegister';
 import VoteHistory from '@/components/profile/VoteHistory';
 import ReputationScore from '@/components/profile/ReputationScore';
+import ReputationBadge from '@/components/profile/ReputationBadge';
 
 export default function Profile() {
   const queryClient = useQueryClient();
@@ -159,7 +160,10 @@ export default function Profile() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 p-4 md:p-8">
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">My Profile</h1>
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">My Profile</h1>
+            <ReputationBadge user={user} />
+          </div>
           <p className="text-slate-500">Manage your account information</p>
         </div>
 
