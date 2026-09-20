@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
+import VotingOptionsEditor from '@/components/polls/VotingOptionsEditor';
 
 export default function Admin() {
   const queryClient = useQueryClient();
@@ -312,46 +313,16 @@ export default function Admin() {
                 
                 <div className="space-y-3">
                   <Label>Voting Options</Label>
-                  <AnimatePresence>
-                    {options.map((option, index) => (
-                      <motion.div
-                        key={option.id}
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        className="flex items-center gap-3"
-                      >
-                        <span className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-sm font-medium text-indigo-600">
-                          {index + 1}
-                        </span>
-                        <Input
-                          placeholder={`Option ${index + 1}`}
-                          value={option.label}
-                          onChange={(e) => updateOption(option.id, e.target.value)}
-                          className="flex-1 h-12 rounded-xl"
-                        />
-                        {options.length > 2 && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => removeOption(option.id)}
-                            className="text-slate-400 hover:text-red-500"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        )}
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                  
-                  <Button
-                    variant="outline"
-                    onClick={addOption}
-                    className="w-full h-12 rounded-xl border-dashed"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Option
-                  </Button>
+                  <p className="text-xs text-slate-500 -mt-1">
+                    Drag the handle to reorder options. Text wraps automatically for longer option labels.
+                  </p>
+                  <VotingOptionsEditor
+                    options={options}
+                    onChange={setOptions}
+                    onAdd={addOption}
+                    onRemove={removeOption}
+                    onUpdate={updateOption}
+                  />
                 </div>
                 
                 <Button
