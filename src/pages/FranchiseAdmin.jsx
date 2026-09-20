@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Building2, Users, Plus, Trash2, Search, Pencil } from 'lucide-react';
+import { ArrowLeft, Building2, Users, Plus, Trash2, Search, Pencil, Loader2, FileText } from 'lucide-react';
 import FranchiseEditDialog from '@/components/franchise/FranchiseEditDialog';
 
 export default function FranchiseAdmin() {
@@ -42,6 +42,7 @@ export default function FranchiseAdmin() {
     infomarian_id: '',
     franchise_id: '',
     bio: '',
+    bio_pdf_url: '',
     expertise_areas: '',
     assigned_postcodes: '',
     moderation_level: ['local'],
@@ -105,6 +106,7 @@ export default function FranchiseAdmin() {
         infomarian_id: '',
         franchise_id: '',
         bio: '',
+        bio_pdf_url: '',
         expertise_areas: '',
         assigned_postcodes: '',
         moderation_level: ['local']
@@ -297,6 +299,26 @@ export default function FranchiseAdmin() {
       status: 'active',
       total_earnings: 0
     });
+  };
+
+  const [uploadingBio, setUploadingBio] = useState(false);
+
+  const handleBioPdfUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.type !== 'application/pdf') {
+      alert('Please upload a PDF file');
+      return;
+    }
+    setUploadingBio(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadPublicFile({ file });
+      setInfomarianData({ ...infomarianData, bio_pdf_url: file_url });
+    } catch (err) {
+      alert('Failed to upload PDF. Please try again.');
+    } finally {
+      setUploadingBio(false);
+    }
   };
 
   if (!hasAccess) {
@@ -809,6 +831,27 @@ export default function FranchiseAdmin() {
                 </div>
 
                 <div className="space-y-2">
+                  <Label htmlFor="bio_pdf">Bio PDF (optional)</Label>
+                  <div className="flex items-center gap-3">
+                    <Input
+                      id="bio_pdf"
+                      type="file"
+                      accept="application/pdf"
+                      onChange={handleBioPdfUpload}
+                      disabled={uploadingBio}
+                      className="flex-1"
+                    />
+                    {uploadingBio && <Loader2 className="w-4 h-4 animate-spin text-indigo-600" />}
+                  </div>
+                  {infomarianData.bio_pdf_url && (
+                    <p className="text-xs text-emerald-600">
+                      PDF uploaded: <a href={infomarianData.bio_pdf_url} target="_blank" rel="noopener noreferrer" className="underline">View PDF</a>
+                    </p>
+                  )}
+                  <p className="text-xs text-slate-500">Upload a PDF bio to display on the public-facing profile</p>
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="expertise_areas">Expertise Areas (comma-separated)</Label>
                   <Input
                     id="expertise_areas"
@@ -889,6 +932,12 @@ export default function FranchiseAdmin() {
                         <p className="text-sm text-emerald-600 font-semibold">
                           Earnings: ${(info.total_earnings || 0).toFixed(2)} AUD
                         </p>
+                        {info.bio_pdf_url && (
+                          <a href={info.bio_pdf_url} target="_blank" rel="noopener noreferrer" className="text-sm text-indigo-600 hover:underline inline-flex items-center gap-1">
+                            <FileText className="w-4 h-4" />
+                            View Bio PDF
+                          </a>
+                        )}
                       </div>
                       <Button
                         variant="ghost"

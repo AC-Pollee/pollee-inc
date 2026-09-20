@@ -22,6 +22,10 @@
       "type": "string",
       "description": "Professional bio"
     },
+    "bio_pdf_url": {
+      "type": "string",
+      "description": "URL to an uploaded PDF version of the bio for public display"
+    },
     "expertise_areas": {
       "type": "array",
       "items": {
