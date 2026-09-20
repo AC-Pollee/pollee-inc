@@ -18,9 +18,28 @@
       "type": "string",
       "description": "Email of the commenter"
     },
+    "display_name": {
+      "type": "string",
+      "description": "Display name for public participants without validated accounts"
+    },
     "content": {
       "type": "string",
       "description": "Comment text"
+    },
+    "author_type": {
+      "type": "string",
+      "enum": [
+        "member",
+        "public",
+        "infomarian"
+      ],
+      "default": "member",
+      "description": "Type of author - validated member, general public, or infomarian"
+    },
+    "responsibility_accepted": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the author accepted responsibility for their commentary"
     },
     "is_junior_member": {
       "type": "boolean",

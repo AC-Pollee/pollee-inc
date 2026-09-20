@@ -57,6 +57,24 @@
       },
       "description": "Infomarian IDs assigned to moderate this poll"
     },
+    "discussion_created_by": {
+      "type": "string",
+      "description": "Infomarian ID who created the issue discussion thread"
+    },
+    "discussion_status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "archived"
+      ],
+      "default": "open",
+      "description": "Discussion thread status - archived for future reference when vote completes"
+    },
+    "archived_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the discussion thread was archived"
+    },
     "status": {
       "type": "string",
       "enum": [
