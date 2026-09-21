@@ -44,14 +44,14 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto">
+            className="text-center max-w-5xl mx-auto">
             
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 mb-6">
               <Shield className="w-4 h-4 text-indigo-600" />
               <span className="text-sm font-medium text-indigo-700">Verified with Bank Transactions</span>
             </div>
             
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 tracking-tight">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 tracking-tight whitespace-nowrap">
               Discuss, Decide, Make Change
               <span className="block mt-2 pb-2 leading-tight bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent text-3xl md:text-4xl lg:text-5xl">
                 Verified, tamper-proof voting
