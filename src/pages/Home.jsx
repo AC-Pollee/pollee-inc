@@ -165,8 +165,8 @@ export default function Home() {
               <li>At the close of the Poll a decision is made by a simple majority of 50% +1 votes drawn from the total number of votes cast in the Poll.</li>
             </ol>
 
-            <div className="bg-blue-50 border-l-4 border-blue-600 p-4 my-6 rounded-r-lg">
-              <p className="text-base leading-relaxed">
+            <div className="bg-blue-50 dark:bg-blue-950/40 border-l-4 border-blue-600 dark:border-blue-500 p-4 my-6 rounded-r-lg">
+              <p className="text-base leading-relaxed text-slate-900 dark:text-slate-100 font-medium">
                 The legal age for a vote in Australia is 18 years and above. Until the age is changed legislatively, any member between the ages of 12 - 18 years (Junior) can participate in the discussions and "vote" in a live poll of sentiment, the vote cannot be counted in the total that decides. Your opinions and information are important and it will inform the outcome until you come of age and can vote for yourself.
               </p>
             </div>
