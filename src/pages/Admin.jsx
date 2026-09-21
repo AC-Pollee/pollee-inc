@@ -13,11 +13,12 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { 
   ArrowLeft, Plus, Trash2, Loader2, CheckCircle2, XCircle, 
-  Clock, ExternalLink, Settings, Vote, Eye, Building2
+  Clock, ExternalLink, Settings, Vote, Eye, Building2, Shield, Users
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import VotingOptionsEditor from '@/components/polls/VotingOptionsEditor';
+import AssignInfomariansDialog from '@/components/polls/AssignInfomariansDialog';
 
 export default function Admin() {
   const queryClient = useQueryClient();
@@ -32,6 +33,7 @@ export default function Admin() {
   const hasAccess = isSuperAdmin || currentUser?.role === 'admin' || currentUser?.user_role === 'master_franchiser' || currentUser?.user_role === 'franchise_manager';
   
   // Create Poll State
+  const [assignPoll, setAssignPoll] = useState(null);
   const [pollTitle, setPollTitle] = useState('');
   const [pollDescription, setPollDescription] = useState('');
   const [pollEndDate, setPollEndDate] = useState('');
@@ -65,6 +67,11 @@ export default function Admin() {
   const { data: votes = [], isLoading: loadingVotes } = useQuery({
     queryKey: ['votes'],
     queryFn: () => base44.entities.Vote.list('-created_date')
+  });
+
+  const { data: infomarians = [] } = useQuery({
+    queryKey: ['infomarians-list'],
+    queryFn: () => base44.entities.Infomarian.list()
   });
   
   const createPoll = useMutation({
@@ -395,6 +402,17 @@ export default function Admin() {
                             <p className="text-sm text-slate-500">
                               {totalVotes} total votes • {verifiedVotes} verified • {pollVotes.length} transactions
                             </p>
+                            {(poll.assigned_infomarians || []).length > 0 && (
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <Users className="w-3.5 h-3.5 text-slate-400" />
+                                <span className="text-xs text-slate-500">
+                                  {(poll.assigned_infomarians || [])
+                                    .map(id => infomarians.find(i => i.infomarian_id === id || i.id === id || i.user_email === id)?.full_name)
+                                    .filter(Boolean)
+                                    .join(', ') || 'Unassigned'}
+                                </span>
+                              </div>
+                            )}
                           </div>
                           
                           <div className="flex items-center gap-2">
@@ -403,6 +421,15 @@ export default function Admin() {
                                 <Eye className="w-4 h-4" />
                               </Button>
                             </Link>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="border-indigo-200 text-indigo-700 hover:bg-indigo-50"
+                              onClick={() => setAssignPoll(poll)}
+                            >
+                              <Shield className="w-4 h-4 mr-1" />
+                              Assign
+                            </Button>
                             {poll.moderation_status === 'pending' && (
                               <>
                                 <Button
@@ -475,10 +502,15 @@ export default function Admin() {
                   );
                 })}
               </div>
-            )}
-          </TabsContent>
-          
-          {/* Verify Votes Tab */}
+              )}
+              <AssignInfomariansDialog
+              poll={assignPoll}
+              open={!!assignPoll}
+              onOpenChange={(open) => !open && setAssignPoll(null)}
+              />
+              </TabsContent>
+
+              {/* Verify Votes Tab */}
           <TabsContent value="verify">
             {loadingVotes ? (
               <div className="space-y-4">
