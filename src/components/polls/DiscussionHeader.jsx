@@ -18,7 +18,7 @@ export default function DiscussionHeader({ poll, isArchived }) {
   });
 
   const assignedInfomarians = (poll?.assigned_infomarians || [])
-    .map(id => infomarians.find(i => i.infomarian_id === id))
+    .map(id => infomarians.find(i => i.infomarian_id === id || i.id === id || i.user_email === id))
     .filter(Boolean);
 
   const creator = poll?.discussion_created_by
@@ -72,7 +72,7 @@ export default function DiscussionHeader({ poll, isArchived }) {
           ) : creator ? (
             <p className="text-sm text-indigo-800 font-medium">{creator.full_name} (Creator)</p>
           ) : (
-            <p className="text-sm text-slate-500 italic">Assigned Infomarian</p>
+            <p className="text-sm text-slate-500 italic">No Infomarian assigned yet</p>
           )}
         </div>
 
