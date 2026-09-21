@@ -59,7 +59,7 @@ export default function Home() {
             </h1>
             
             <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-              Use your bank account transactions to convey your vote securely and accountably and the cents you spent to support the people who guide the conversations we need to have and who cultivate the information you need to decide - your local Infomarian
+              Convey your vote securely and accountably, to support the people who guide the conversations we need to have.
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
