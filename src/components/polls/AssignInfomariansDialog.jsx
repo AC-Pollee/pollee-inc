@@ -4,7 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Shield, CheckCircle2 } from 'lucide-react';
 
@@ -88,14 +88,13 @@ export default function AssignInfomariansDialog({ poll, open, onOpenChange }) {
                     onClick={() => toggle(inf.infomarian_id)}
                   >
                     <Checkbox
-                      id={`assign-${inf.id}`}
                       checked={checked}
-                      onCheckedChange={() => toggle(inf.infomarian_id)}
+                      className="pointer-events-none"
                     />
                     <div className="flex-1 min-w-0">
-                      <Label htmlFor={`assign-${inf.id}`} className="text-sm font-medium cursor-pointer">
+                      <span className="text-sm font-medium cursor-pointer">
                         {inf.full_name}
-                      </Label>
+                      </span>
                       <p className="text-xs text-slate-500 truncate">{inf.user_email}</p>
                     </div>
                     <div className="flex flex-wrap gap-1 justify-end">
