@@ -30,34 +30,35 @@ export default function Home() {
   };
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/40">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-100/40 dark:from-indigo-900/20 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-100/40 via-transparent to-transparent" />
         
         <div className="relative max-w-6xl mx-auto px-4 pt-16 pb-20">
           <div className="flex justify-end mb-4">
             <ThemeToggle />
           </div>
+          
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-800 mb-6">
-              <Shield className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-              <span className="text-sm font-medium text-indigo-700 dark:text-indigo-300">Verified with Bank Transactions</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 mb-6">
+              <Shield className="w-4 h-4 text-indigo-600" />
+              <span className="text-sm font-medium text-indigo-700">Verified with Bank Transactions</span>
             </div>
             
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-slate-50 mb-6 tracking-tight">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 tracking-tight">
               Secure Voting with
               <span className="block mt-2 bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
                 Transaction Proof
               </span>
             </h1>
             
-            <p className="text-lg text-slate-600 dark:text-slate-300 mb-8 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto leading-relaxed">
               Use your bank account transactions to convey your vote securely and accountably and the cents you spent to support the people who guide the conversations we need to have and who cultivate the information you need to decide - your local Infomarian
             </p>
             
@@ -91,13 +92,13 @@ export default function Home() {
       <div className="max-w-6xl mx-auto px-4 pb-20">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-50">Active Polls</h2>
-            <p className="text-slate-500 dark:text-slate-400 mt-1">Cast your vote on current polls</p>
+            <h2 className="text-2xl font-bold text-slate-900">Active Polls</h2>
+            <p className="text-slate-500 mt-1">Cast your vote on current polls</p>
           </div>
-
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-800">
-            <Vote className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-            <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">{activePolls.length} Active</span>
+          
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-100">
+            <Vote className="w-4 h-4 text-emerald-600" />
+            <span className="text-sm font-medium text-emerald-700">{activePolls.length} Active</span>
           </div>
         </div>
         
@@ -148,12 +149,12 @@ export default function Home() {
 
       {/* Footer Explanatory Section */}
       <div className="max-w-6xl mx-auto px-4 pb-12">
-        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-8 md:p-12 border border-slate-100 dark:border-slate-800">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-50 mb-6 text-center">
+        <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 border border-slate-100">
+          <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">
             How Pollee Democracy Works
           </h2>
           
-          <div className="prose prose-slate dark:prose-invert max-w-none space-y-4 text-slate-700 dark:text-slate-300">
+          <div className="prose prose-slate max-w-none space-y-4 text-slate-700">
             <p className="text-base leading-relaxed">
               Pollee Democracy is based on some very simple premises:
             </p>
@@ -165,8 +166,8 @@ export default function Home() {
               <li>At the close of the Poll a decision is made by a simple majority of 50% +1 votes drawn from the total number of votes cast in the Poll.</li>
             </ol>
 
-            <div className="bg-blue-50 dark:bg-blue-950/40 border-l-4 border-blue-600 dark:border-blue-500 p-4 my-6 rounded-r-lg">
-              <p className="text-base leading-relaxed text-slate-900 dark:text-slate-100 font-medium">
+            <div className="bg-blue-50 border-l-4 border-blue-600 p-4 my-6 rounded-r-lg">
+              <p className="text-base leading-relaxed text-slate-900 font-medium">
                 The legal age for a vote in Australia is 18 years and above. Until the age is changed legislatively, any member between the ages of 12 - 18 years (Junior) can participate in the discussions and "vote" in a live poll of sentiment, the vote cannot be counted in the total that decides. Your opinions and information are important and it will inform the outcome until you come of age and can vote for yourself.
               </p>
             </div>
@@ -180,8 +181,8 @@ export default function Home() {
 
       {/* Important Documents Section */}
       <div className="max-w-6xl mx-auto px-4 pb-20">
-        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-slate-900 dark:to-indigo-950/40 rounded-2xl shadow-lg p-8 border border-indigo-100 dark:border-slate-800">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50 mb-6 text-center">
+        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl shadow-lg p-8 border border-indigo-100">
+          <h2 className="text-xl font-bold text-slate-900 mb-6 text-center">
             Important Documents & Guidelines
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
@@ -189,39 +190,39 @@ export default function Home() {
               href="https://pollee.net/code-of-conduct"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-col items-center justify-center p-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-md transition-all border border-slate-200 dark:border-slate-700 hover:border-indigo-300"
+              className="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-slate-200 hover:border-indigo-300"
             >
-              <div className="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center mb-3">
-                <Shield className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+              <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center mb-3">
+                <Shield className="w-6 h-6 text-indigo-600" />
               </div>
-              <h3 className="font-semibold text-slate-900 dark:text-slate-50 text-center">Code of Conduct</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400 text-center mt-2">Community standards and behavior guidelines</p>
+              <h3 className="font-semibold text-slate-900 text-center">Code of Conduct</h3>
+              <p className="text-sm text-slate-600 text-center mt-2">Community standards and behavior guidelines</p>
             </a>
             
             <a
               href="https://pollee.net/model-rules"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-col items-center justify-center p-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-md transition-all border border-slate-200 dark:border-slate-700 hover:border-indigo-300"
+              className="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-slate-200 hover:border-indigo-300"
             >
-              <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-950 flex items-center justify-center mb-3">
-                <BarChart3 className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+              <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mb-3">
+                <BarChart3 className="w-6 h-6 text-purple-600" />
               </div>
-              <h3 className="font-semibold text-slate-900 dark:text-slate-50 text-center">Model Rules</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400 text-center mt-2">Platform governance and operational rules</p>
+              <h3 className="font-semibold text-slate-900 text-center">Model Rules</h3>
+              <p className="text-sm text-slate-600 text-center mt-2">Platform governance and operational rules</p>
             </a>
             
             <a
               href="https://pollee.net/code-of-practice"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-col items-center justify-center p-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-md transition-all border border-slate-200 dark:border-slate-700 hover:border-indigo-300"
+              className="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-slate-200 hover:border-indigo-300"
             >
-              <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-950 flex items-center justify-center mb-3">
-                <Vote className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+              <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-3">
+                <Vote className="w-6 h-6 text-blue-600" />
               </div>
-              <h3 className="font-semibold text-slate-900 dark:text-slate-50 text-center">Code of Practice</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400 text-center mt-2">Best practices for voting and participation</p>
+              <h3 className="font-semibold text-slate-900 text-center">Code of Practice</h3>
+              <p className="text-sm text-slate-600 text-center mt-2">Best practices for voting and participation</p>
             </a>
           </div>
         </div>

@@ -92,9 +92,9 @@ export default function Layout({ children, currentPageName }) {
   // Note: Infomarian moderation and help features accessible via Profile page
   
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen bg-slate-50">
       {/* Top Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-b border-slate-100 dark:border-slate-800">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-b border-slate-100">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
@@ -106,7 +106,7 @@ export default function Layout({ children, currentPageName }) {
                     className="w-8 h-8"
                   />
                 </div>
-                <span className="font-bold text-xl text-slate-900 dark:text-slate-50">Pollee Inc</span>
+                <span className="font-bold text-xl text-slate-900">Pollee Inc</span>
               </Link>
               <Link to={createPageUrl('NewUserRegistration')}>
                 <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
@@ -126,8 +126,8 @@ export default function Layout({ children, currentPageName }) {
                     className={`
                       flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all relative
                       ${isActive 
-                        ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300' 
-                        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-50 hover:bg-slate-100 dark:hover:bg-slate-800'
+                        ? 'bg-indigo-50 text-indigo-700' 
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                       }
                     `}
                   >
