@@ -349,6 +349,7 @@ Return the data in the exact JSON format specified. If a field cannot be found, 
               onChange={(e) => setTransactionData({...transactionData, reference: e.target.value})}
               className="h-11 rounded-lg"
             />
+            <p className="text-xs text-slate-500">Enter the reference number from your bank transfer so your vote payment can be verified and matched to this poll.</p>
           </div>
 
           <div className="space-y-2">
