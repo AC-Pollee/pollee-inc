@@ -141,7 +141,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
 
   const handleSubmit = (e) => {
     e?.preventDefault();
-    if (!canPost()) return;
+    if (replyingTo ? !canReply() : !canPost()) return;
 
     const resolvedName = authorType === 'public'
       ? displayName.trim()
