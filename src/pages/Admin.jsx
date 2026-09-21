@@ -276,7 +276,7 @@ export default function Admin() {
                     id="franchise"
                     value={franchiseId}
                     onChange={(e) => setFranchiseId(e.target.value)}
-                    className="w-full h-12 px-3 rounded-xl border border-slate-200"
+                    className="w-full h-12 px-3 rounded-xl border border-slate-200 bg-background text-foreground"
                   >
                     <option value="">Select Franchise</option>
                     {franchises.map((f) => (
@@ -293,7 +293,7 @@ export default function Admin() {
                     id="pollLevel"
                     value={pollLevel}
                     onChange={(e) => setPollLevel(e.target.value)}
-                    className="w-full h-12 px-3 rounded-xl border border-slate-200"
+                    className="w-full h-12 px-3 rounded-xl border border-slate-200 bg-background text-foreground"
                   >
                     <option value="local">Local (Specific Postcodes)</option>
                     <option value="state">State</option>
