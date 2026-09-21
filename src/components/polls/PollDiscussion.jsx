@@ -268,12 +268,13 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
                   <CheckCircle2 className="w-3 h-3 md:w-4 md:h-4" />
                 </Button>
               )}
-              {!canModerate && !isOwnComment && comment.moderation_status === 'approved' && !isArchived && (
+              {!canModerate && !isArchived && (
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => handleFlag(comment.id)}
                   className="h-6 w-6 md:h-7 md:w-7 text-amber-600 hover:text-amber-700 hover:bg-amber-50"
+                  title="Request moderation"
                 >
                   <Flag className="w-3 h-3 md:w-4 md:h-4" />
                 </Button>
