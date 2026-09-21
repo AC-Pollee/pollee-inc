@@ -86,10 +86,8 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
       setReplyingTo(null);
       setReplyResponsibility(false);
       toast({
-        title: comment.moderation_status === 'approved' ? "Comment posted" : "Comment submitted for review",
-        description: comment.moderation_status === 'approved'
-          ? "Your comment is now visible."
-          : "Your comment will appear once a moderator approves it.",
+        title: "Comment posted",
+        description: "Your comment is now visible to everyone.",
       });
     },
     onError: (error) => {
@@ -159,7 +157,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
       author_type: authorType,
       responsibility_accepted: true,
       is_junior_member: userAge >= 12 && userAge < 18,
-      moderation_status: isInfomarianOrAdmin ? 'approved' : 'pending',
+      moderation_status: 'approved',
       is_infomarian_content: !!infomarian
     });
   };
@@ -183,7 +181,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
   };
 
   // Organize comments into threads
-  const approvedComments = comments.filter(c => c.moderation_status === 'approved' || isInfomarianOrAdmin);
+  const approvedComments = comments;
   const topLevelComments = approvedComments.filter(c => !c.parent_comment_id);
   const getReplies = (commentId) => approvedComments.filter(c => c.parent_comment_id === commentId);
 
@@ -214,8 +212,8 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
         className={`${depth > 0 ? 'ml-6 md:ml-8 mt-3 pl-3 md:pl-4 border-l-2 border-slate-200' : 'mb-4'}`}
       >
         <div className={`p-3 md:p-4 rounded-lg ${
-          comment.moderation_status === 'flagged' ? 'bg-red-50 border border-red-200' :
-          comment.moderation_status === 'pending' ? 'bg-amber-50 border border-amber-200' :
+          comment.moderation_status === 'rejected' ? 'bg-red-50 border border-red-200' :
+          comment.moderation_status === 'flagged' ? 'bg-orange-50 border border-orange-200' :
           comment.is_infomarian_content ? 'bg-indigo-50 border border-indigo-200' :
           'bg-slate-50'
         }`}>
@@ -230,11 +228,14 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
                     {comment.display_name || comment.user_name}
                   </p>
                   {authorBadge(comment)}
-                  {comment.moderation_status === 'pending' && (
-                    <Badge className="bg-amber-600 text-white text-xs">Pending</Badge>
+                  {comment.moderation_status === 'rejected' && (
+                    <Badge className="bg-red-600 text-white text-xs inline-flex items-center gap-1">
+                      <Flag className="w-3 h-3" />
+                      Moderated
+                    </Badge>
                   )}
                   {comment.moderation_status === 'flagged' && (
-                    <Badge className="bg-red-600 text-white text-xs">Flagged</Badge>
+                    <Badge className="bg-orange-500 text-white text-xs">Flagged</Badge>
                   )}
                 </div>
                 <p className="text-xs text-slate-500">{format(new Date(comment.created_date), 'MMM d, h:mm a')}</p>
@@ -242,28 +243,30 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
             </div>
 
             <div className="flex items-center gap-1">
-              {canModerate && comment.moderation_status === 'pending' && (
-                <>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleModerate(comment.id, 'approved')}
-                    className="h-6 w-6 md:h-7 md:w-7 text-green-600 hover:text-green-700 hover:bg-green-50"
-                  >
-                    <CheckCircle2 className="w-3 h-3 md:w-4 md:h-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                      const reason = prompt('Reason for rejection:');
-                      if (reason) handleModerate(comment.id, 'rejected', reason);
-                    }}
-                    className="h-6 w-6 md:h-7 md:w-7 text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <XCircle className="w-3 h-3 md:w-4 md:h-4" />
-                  </Button>
-                </>
+              {canModerate && comment.moderation_status === 'approved' && !isArchived && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    const reason = prompt('Reason for moderating this comment:');
+                    if (reason) handleModerate(comment.id, 'rejected', reason);
+                  }}
+                  className="h-6 w-6 md:h-7 md:w-7 text-red-600 hover:text-red-700 hover:bg-red-50"
+                  title="Moderate (strike through)"
+                >
+                  <Flag className="w-3 h-3 md:w-4 md:h-4" />
+                </Button>
+              )}
+              {canModerate && comment.moderation_status === 'rejected' && !isArchived && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleModerate(comment.id, 'approved')}
+                  className="h-6 w-6 md:h-7 md:w-7 text-green-600 hover:text-green-700 hover:bg-green-50"
+                  title="Restore comment"
+                >
+                  <CheckCircle2 className="w-3 h-3 md:w-4 md:h-4" />
+                </Button>
               )}
               {!canModerate && !isOwnComment && comment.moderation_status === 'approved' && !isArchived && (
                 <Button
@@ -327,7 +330,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
             </div>
           ) : (
             <>
-              <p className="text-xs md:text-sm text-slate-700 whitespace-pre-wrap break-words">{comment.content}</p>
+              <p className={`text-xs md:text-sm text-slate-700 whitespace-pre-wrap break-words ${comment.moderation_status === 'rejected' ? 'line-through text-slate-400' : ''}`}>{comment.content}</p>
 
               {comment.moderation_reason && (
                 <div className="mt-2 p-2 bg-red-100 rounded text-xs text-red-800">
@@ -487,9 +490,8 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
             <ResponsibilityAgreement accepted={responsibilityAccepted} onChange={setResponsibilityAccepted} />
             <div className="flex items-center justify-between flex-wrap gap-2">
               {!isInfomarianOrAdmin && (
-                <p className="text-xs text-amber-600 flex items-center">
-                  <AlertTriangle className="w-3 h-3 mr-1" />
-                  Comments require moderation
+                <p className="text-xs text-slate-500 flex items-center">
+                  Comments are published immediately
                 </p>
               )}
               <Button
