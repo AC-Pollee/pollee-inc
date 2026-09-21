@@ -12,6 +12,7 @@ import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import DiscussionHeader from './DiscussionHeader';
 import ResponsibilityAgreement from './ResponsibilityAgreement';
+import { useToast } from "@/components/ui/use-toast";
 
 export default function PollDiscussion({ pollId, currentUser, userAge, isClosed = false, poll }) {
   const [newComment, setNewComment] = useState('');
@@ -21,6 +22,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
   const [replyResponsibility, setReplyResponsibility] = useState(false);
   const [editingComment, setEditingComment] = useState(null);
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const isSuperAdmin = currentUser?.email === 'ac@acproductiondesign.com';
   const isArchived = isClosed || poll?.discussion_status === 'archived';
@@ -77,12 +79,25 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
 
   const addComment = useMutation({
     mutationFn: (data) => base44.entities.Comment.create(data),
-    onSuccess: () => {
+    onSuccess: (comment) => {
       queryClient.invalidateQueries(['comments', pollId]);
       queryClient.invalidateQueries(['poll-comments', pollId]);
       setNewComment('');
       setReplyingTo(null);
       setReplyResponsibility(false);
+      toast({
+        title: comment.moderation_status === 'approved' ? "Comment posted" : "Comment submitted for review",
+        description: comment.moderation_status === 'approved'
+          ? "Your comment is now visible."
+          : "Your comment will appear once a moderator approves it.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Failed to post comment",
+        description: error?.message || "Please try again.",
+        variant: "destructive",
+      });
     }
   });
 
