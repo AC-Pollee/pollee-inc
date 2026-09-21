@@ -31,13 +31,14 @@ export default function DiscussionHeader({ poll, isArchived }) {
     <div className="space-y-4">
       {/* Poll ID Banner */}
       <div className="flex items-center justify-between flex-wrap gap-3 p-4 bg-gradient-to-r from-slate-800 to-slate-900 rounded-xl text-white">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
             <Hash className="w-5 h-5" />
           </div>
-          <div>
-            <p className="text-xs text-slate-300 uppercase tracking-wide font-medium">Pollee Inc. Poll ID</p>
-            <p className="font-mono text-lg font-bold tracking-tight">{poll?.id || '—'}</p>
+          <div className="min-w-0">
+            <p className="text-base font-semibold leading-tight truncate">{poll?.title || 'Untitled Poll'}</p>
+            <p className="text-xs text-slate-300 uppercase tracking-wide font-medium mt-0.5">Pollee Inc. Poll ID</p>
+            <p className="font-mono text-xs font-medium tracking-tight text-slate-300">{poll?.id || '—'}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
