@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Vote, Plus, BarChart3, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PollCard from '@/components/polls/PollCard';
+import DiscussionPreview from '@/components/polls/DiscussionPreview';
 import ThemeToggle from '@/components/ThemeToggle';
 
 export default function Home() {
@@ -146,6 +147,9 @@ export default function Home() {
           </div>
         }
       </div>
+
+      {/* Discussion Preview */}
+      <DiscussionPreview />
 
       {/* Footer Explanatory Section */}
       <div className="max-w-6xl mx-auto px-4 pb-12">
