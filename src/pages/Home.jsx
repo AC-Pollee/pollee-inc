@@ -15,20 +15,20 @@ export default function Home() {
     queryKey: ['polls'],
     queryFn: () => base44.entities.Poll.list('-created_date')
   });
-  
+
   const { data: votes = [] } = useQuery({
     queryKey: ['votes'],
     queryFn: () => base44.entities.Vote.list()
   });
-  
-  const activePolls = polls.filter(p => p.status === 'active' && (p.moderation_status === 'approved' || !p.moderation_status));
-  
+
+  const activePolls = polls.filter((p) => p.status === 'active' && (p.moderation_status === 'approved' || !p.moderation_status));
+
   const getVoteCount = (pollId) => {
-    const pollVotes = votes.filter(v => v.poll_id === pollId && v.status === 'verified');
+    const pollVotes = votes.filter((v) => v.poll_id === pollId && v.status === 'verified');
     // Sum up all delegated votes
     return pollVotes.reduce((sum, vote) => sum + (vote.delegated_votes_count || 1), 0);
   };
-  
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
       {/* Hero Section */}
@@ -44,8 +44,8 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
-          >
+            className="text-center max-w-3xl mx-auto">
+            
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 mb-6">
               <Shield className="w-4 h-4 text-indigo-600" />
               <span className="text-sm font-medium text-indigo-700">Verified with Bank Transactions</span>
@@ -53,8 +53,8 @@ export default function Home() {
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 tracking-tight">
               Discuss, Decide, Make Change
-              <span className="block mt-2 bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
-                Voting with accountability
+              <span className="block mt-2 from-indigo-600 to-violet-600 bg-clip-text text-transparent text-xl">
+                Voting with accountability to you
               </span>
             </h1>
             
@@ -64,21 +64,21 @@ export default function Home() {
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link to={createPageUrl('Admin')}>
-                <Button 
-                  size="lg" 
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 h-12 rounded-xl shadow-lg shadow-indigo-200 hover:shadow-xl transition-all"
-                >
+                <Button
+                  size="lg"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 h-12 rounded-xl shadow-lg shadow-indigo-200 hover:shadow-xl transition-all">
+                  
                   <Plus className="w-5 h-5 mr-2" />
                   Create Poll
                 </Button>
               </Link>
               
               <Link to={createPageUrl('Results')}>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="lg"
-                  className="px-8 h-12 rounded-xl border-slate-200 hover:border-indigo-200 hover:bg-indigo-50"
-                >
+                  className="px-8 h-12 rounded-xl border-slate-200 hover:border-indigo-200 hover:bg-indigo-50">
+                  
                   <BarChart3 className="w-5 h-5 mr-2" />
                   View Results
                 </Button>
@@ -102,23 +102,23 @@ export default function Home() {
           </div>
         </div>
         
-        {loadingPolls ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white rounded-xl p-6 shadow-sm">
+        {loadingPolls ?
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) =>
+          <div key={i} className="bg-white rounded-xl p-6 shadow-sm">
                 <Skeleton className="h-6 w-20 mb-4" />
                 <Skeleton className="h-6 w-full mb-2" />
                 <Skeleton className="h-4 w-3/4 mb-4" />
                 <Skeleton className="h-10 w-full mt-4" />
               </div>
-            ))}
-          </div>
-        ) : activePolls.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center py-16 bg-white rounded-2xl border border-slate-100"
-          >
+          )}
+          </div> :
+        activePolls.length === 0 ?
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center py-16 bg-white rounded-2xl border border-slate-100">
+          
             <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
               <Vote className="w-8 h-8 text-slate-400" />
             </div>
@@ -130,21 +130,21 @@ export default function Home() {
                 Create Poll
               </Button>
             </Link>
-          </motion.div>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {activePolls.map((poll, index) => (
-              <motion.div
-                key={poll.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-              >
+          </motion.div> :
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {activePolls.map((poll, index) =>
+          <motion.div
+            key={poll.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: index * 0.1 }}>
+            
                 <PollCard poll={poll} voteCount={getVoteCount(poll.id)} />
               </motion.div>
-            ))}
+          )}
           </div>
-        )}
+        }
       </div>
 
       {/* Footer Explanatory Section */}
@@ -190,8 +190,8 @@ export default function Home() {
               href="https://pollee.net/code-of-conduct"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-slate-200 hover:border-indigo-300"
-            >
+              className="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-slate-200 hover:border-indigo-300">
+              
               <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center mb-3">
                 <Shield className="w-6 h-6 text-indigo-600" />
               </div>
@@ -203,8 +203,8 @@ export default function Home() {
               href="https://pollee.net/model-rules"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-slate-200 hover:border-indigo-300"
-            >
+              className="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-slate-200 hover:border-indigo-300">
+              
               <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mb-3">
                 <BarChart3 className="w-6 h-6 text-purple-600" />
               </div>
@@ -216,8 +216,8 @@ export default function Home() {
               href="https://pollee.net/code-of-practice"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-slate-200 hover:border-indigo-300"
-            >
+              className="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-slate-200 hover:border-indigo-300">
+              
               <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-3">
                 <Vote className="w-6 h-6 text-blue-600" />
               </div>
@@ -227,6 +227,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
