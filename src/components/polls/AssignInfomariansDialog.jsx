@@ -99,7 +99,7 @@ export default function AssignInfomariansDialog({ poll, open, onOpenChange }) {
                       <p className="text-xs text-slate-500 truncate">{inf.user_email}</p>
                     </div>
                     <div className="flex flex-wrap gap-1 justify-end">
-                      {(inf.moderation_level || []).map(level => (
+                      {(Array.isArray(inf.moderation_level) ? inf.moderation_level : inf.moderation_level ? [inf.moderation_level] : []).map(level => (
                         <Badge key={level} variant="outline" className="text-xs capitalize">
                           {level}
                         </Badge>
