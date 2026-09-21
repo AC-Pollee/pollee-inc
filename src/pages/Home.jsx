@@ -51,7 +51,7 @@ export default function Home() {
               <span className="text-sm font-medium text-indigo-700">Verified with Bank Transactions</span>
             </div>
             
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 tracking-tight whitespace-nowrap">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 tracking-tight whitespace-normal md:whitespace-nowrap">
               Discuss, Decide, Make Change
               <span className="block mt-2 pb-2 leading-tight bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent text-3xl md:text-4xl lg:text-5xl">
                 Verified, tamper-proof voting
