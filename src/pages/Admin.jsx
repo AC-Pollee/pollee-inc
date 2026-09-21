@@ -30,7 +30,6 @@ export default function Admin() {
   });
   
   const isSuperAdmin = currentUser?.email === 'ac@acproductiondesign.com';
-  const hasAccess = isSuperAdmin || currentUser?.role === 'admin' || currentUser?.user_role === 'master_franchiser' || currentUser?.user_role === 'franchise_manager';
   
   // Create Poll State
   const [assignPoll, setAssignPoll] = useState(null);
@@ -43,7 +42,7 @@ export default function Admin() {
   const [pollState, setPollState] = useState('');
   const [pollPostcodes, setPollPostcodes] = useState('');
 
-  const { data: franchises = [] } = useQuery({
+  const { data: franchises = [], isLoading: loadingFranchises } = useQuery({
     queryKey: ['franchises'],
     queryFn: () => base44.entities.Franchise.list()
   });
@@ -69,10 +68,21 @@ export default function Admin() {
     queryFn: () => base44.entities.Vote.list('-created_date')
   });
 
-  const { data: infomarians = [] } = useQuery({
+  const { data: infomarians = [], isLoading: loadingInfomarians } = useQuery({
     queryKey: ['infomarians-list'],
     queryFn: () => base44.entities.Infomarian.list()
   });
+
+  // Grant access to super admins, role-based admins, master franchisers,
+  // franchise managers, AND users who own a Franchise or have an Infomarian record.
+  const isInfomarian = infomarians.some(i => i.user_email === currentUser?.email);
+  const isFranchiseOwner = franchises.some(f => f.owner_email === currentUser?.email);
+  const hasAccess = isSuperAdmin
+    || currentUser?.role === 'admin'
+    || currentUser?.user_role === 'master_franchiser'
+    || currentUser?.user_role === 'franchise_manager'
+    || isInfomarian
+    || isFranchiseOwner;
   
   const createPoll = useMutation({
     mutationFn: (pollData) => base44.entities.Poll.create(pollData),
@@ -148,6 +158,14 @@ export default function Admin() {
 
   const pendingVotes = votes.filter(v => v.status === 'pending');
   
+  if (!currentUser || loadingFranchises || loadingInfomarians) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+      </div>
+    );
+  }
+
   if (!hasAccess) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 p-8">

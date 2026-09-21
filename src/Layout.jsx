@@ -23,6 +23,16 @@ export default function Layout({ children, currentPageName }) {
     enabled: !!user?.email
   });
 
+  const { data: ownedFranchise } = useQuery({
+    queryKey: ['myFranchise'],
+    queryFn: async () => {
+      if (!user?.email) return null;
+      const franchises = await base44.entities.Franchise.list();
+      return franchises.find(f => f.owner_email === user.email) || null;
+    },
+    enabled: !!user?.email
+  });
+
   const { data: pendingCount } = useQuery({
     queryKey: ['pendingModerationCount'],
     queryFn: async () => {
@@ -74,6 +84,17 @@ export default function Layout({ children, currentPageName }) {
       return [
         { name: 'InfomarianDashboard', icon: Shield, label: 'Dashboard', badge: pendingCount > 0 ? pendingCount : null },
         { name: 'Home', icon: Vote, label: 'Polls' },
+        { name: 'Admin', icon: Settings, label: 'Admin' },
+        { name: 'Results', icon: BarChart3, label: 'Results' },
+        { name: 'Profile', icon: User, label: 'Profile' },
+      ];
+    }
+
+    // Franchise owners (without an infomarian record) also get admin access to create polls
+    if (ownedFranchise) {
+      return [
+        { name: 'Home', icon: Vote, label: 'Polls' },
+        { name: 'Admin', icon: Settings, label: 'Admin' },
         { name: 'Results', icon: BarChart3, label: 'Results' },
         { name: 'Profile', icon: User, label: 'Profile' },
       ];
