@@ -54,7 +54,7 @@ export default function Home() {
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 tracking-tight">
               Discuss, Decide, Make Change
               <span className="block mt-2 bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
-                Voting with accountability to you
+                Voting with accountability
               </span>
             </h1>
             
