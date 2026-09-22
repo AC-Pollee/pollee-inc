@@ -21,23 +21,6 @@ export default function Vote() {
   
   const [submitted, setSubmitted] = useState(false);
 
-  // Center the discussion module in the viewport when arriving via #discussion hash
-  useEffect(() => {
-    if (isLoading || loadingUser) return;
-    if (window.location.hash !== '#discussion') return;
-
-    const scrollToDiscussion = () => {
-      const el = document.getElementById('discussion');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    };
-
-    // Wait for the discussion section to render after data loads
-    const t = setTimeout(scrollToDiscussion, 400);
-    return () => clearTimeout(t);
-  }, [isLoading, loadingUser, poll, user]);
-  
   const { data: user, isLoading: loadingUser, error: userError } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me()
@@ -75,6 +58,17 @@ export default function Vote() {
   });
 
   const lastVote = userVotes.length > 0 ? userVotes[0] : null;
+
+  // Center the discussion module in the viewport when arriving via #discussion hash
+  useEffect(() => {
+    if (isLoading || loadingUser) return;
+    if (window.location.hash !== '#discussion') return;
+
+    const el = document.getElementById('discussion');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [isLoading, loadingUser, poll, user]);
 
   const calculateAge = (dob) => {
     if (!dob) return null;
