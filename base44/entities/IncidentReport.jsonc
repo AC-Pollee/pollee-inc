@@ -1,0 +1,72 @@
+{
+  "name": "IncidentReport",
+  "type": "object",
+  "properties": {
+    "reporter_email": {
+      "type": "string",
+      "description": "Email of the user who filed the report"
+    },
+    "reporter_name": {
+      "type": "string",
+      "description": "Name of the user who filed the report"
+    },
+    "target_levels": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "board",
+          "infomarian",
+          "user"
+        ]
+      },
+      "description": "Levels the report is forwarded to"
+    },
+    "target_user_email": {
+      "type": "string",
+      "description": "Specific user email the report is forwarded to (when 'user' level selected)"
+    },
+    "description": {
+      "type": "string",
+      "description": "User-submitted description of the incident"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "urgent"
+      ],
+      "default": "medium",
+      "description": "Report priority"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "in_progress",
+        "resolved",
+        "closed"
+      ],
+      "default": "open",
+      "description": "Report status"
+    },
+    "resolution_notes": {
+      "type": "string",
+      "description": "Notes added when resolving the report"
+    },
+    "forwarded_to": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Email addresses the report was forwarded to"
+    }
+  },
+  "required": [
+    "reporter_email",
+    "target_levels",
+    "description"
+  ]
+}

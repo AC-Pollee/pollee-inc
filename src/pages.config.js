@@ -2,6 +2,7 @@ import Admin from './pages/Admin';
 import FranchiseAdmin from './pages/FranchiseAdmin';
 import FranchiseManagerDashboard from './pages/FranchiseManagerDashboard';
 import Home from './pages/Home';
+import IncidentReport from './pages/IncidentReport';
 import InfomarianDashboard from './pages/InfomarianDashboard';
 import MasterFranchiserDashboard from './pages/MasterFranchiserDashboard';
 import Profile from './pages/Profile';
@@ -15,6 +16,7 @@ export const PAGES = {
     "FranchiseAdmin": FranchiseAdmin,
     "FranchiseManagerDashboard": FranchiseManagerDashboard,
     "Home": Home,
+    "IncidentReport": IncidentReport,
     "InfomarianDashboard": InfomarianDashboard,
     "MasterFranchiserDashboard": MasterFranchiserDashboard,
     "Profile": Profile,
