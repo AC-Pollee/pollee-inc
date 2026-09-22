@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Link } from 'react-router-dom';
@@ -20,6 +20,23 @@ export default function Vote() {
   const queryClient = useQueryClient();
   
   const [submitted, setSubmitted] = useState(false);
+
+  // Center the discussion module in the viewport when arriving via #discussion hash
+  useEffect(() => {
+    if (isLoading || loadingUser) return;
+    if (window.location.hash !== '#discussion') return;
+
+    const scrollToDiscussion = () => {
+      const el = document.getElementById('discussion');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    };
+
+    // Wait for the discussion section to render after data loads
+    const t = setTimeout(scrollToDiscussion, 400);
+    return () => clearTimeout(t);
+  }, [isLoading, loadingUser, poll, user]);
   
   const { data: user, isLoading: loadingUser, error: userError } = useQuery({
     queryKey: ['currentUser'],
