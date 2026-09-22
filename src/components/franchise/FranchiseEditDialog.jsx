@@ -57,12 +57,12 @@ export default function FranchiseEditDialog({ franchise, open, onClose, onSave, 
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>Edit Franchise</DialogTitle>
+          <DialogTitle>Edit Constituency</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
           <div className="space-y-2">
-            <Label htmlFor="edit-franchise_name">Franchise Name</Label>
+            <Label htmlFor="edit-franchise_name">Constituency Name</Label>
             <Input
               id="edit-franchise_name"
               value={formData.franchise_name}

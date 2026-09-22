@@ -73,7 +73,7 @@ export default function AssignInfomariansDialog({ poll, open, onOpenChange }) {
             </div>
           ) : activeInfomarians.length === 0 ? (
             <p className="text-sm text-slate-500 text-center py-8">
-              No active Infomarians available. Create or activate Infomarians in Franchise Admin.
+              No active Infomarians available. Create or activate Infomarians in Constituency Admin.
             </p>
           ) : (
             <div className="space-y-2 max-h-72 overflow-y-auto">

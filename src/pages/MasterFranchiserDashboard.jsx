@@ -53,7 +53,7 @@ export default function MasterFranchiserDashboard() {
           <CardContent className="pt-12 pb-12">
             <Shield className="w-16 h-16 text-slate-400 mx-auto mb-4" />
             <h2 className="text-xl font-semibold text-slate-900 mb-2">Access Denied</h2>
-            <p className="text-slate-500">You don't have Master Franchiser access.</p>
+            <p className="text-slate-500">You don't have Master Constituency access.</p>
           </CardContent>
         </Card>
       </div>
@@ -66,7 +66,7 @@ export default function MasterFranchiserDashboard() {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <Shield className="w-8 h-8 text-purple-600" />
-            <h1 className="text-3xl font-bold text-slate-900">Master Franchiser Dashboard</h1>
+            <h1 className="text-3xl font-bold text-slate-900">Master Constituency Dashboard</h1>
           </div>
           <p className="text-slate-500">System-wide oversight and management</p>
         </div>
@@ -77,7 +77,7 @@ export default function MasterFranchiserDashboard() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 mb-1">Total Franchises</p>
+                  <p className="text-sm text-slate-500 mb-1">Total Constituencies</p>
                   <p className="text-3xl font-bold text-slate-900">{franchises.length}</p>
                 </div>
                 <Building2 className="w-10 h-10 text-blue-600 opacity-20" />
@@ -125,7 +125,7 @@ export default function MasterFranchiserDashboard() {
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="bg-white border border-slate-200 p-1 rounded-xl shadow-sm">
             <TabsTrigger value="overview" className="rounded-lg">Overview</TabsTrigger>
-            <TabsTrigger value="franchises" className="rounded-lg">Franchises</TabsTrigger>
+            <TabsTrigger value="franchises" className="rounded-lg">Constituencies</TabsTrigger>
             <TabsTrigger value="infomarians" className="rounded-lg">Infomarians</TabsTrigger>
             <TabsTrigger value="polls" className="rounded-lg">Polls</TabsTrigger>
             <TabsTrigger value="moderation" className="rounded-lg">
@@ -146,7 +146,7 @@ export default function MasterFranchiserDashboard() {
                   <Link to={createPageUrl('FranchiseAdmin')}>
                     <Button className="w-full h-20 flex flex-col gap-2" variant="outline">
                       <Building2 className="w-6 h-6" />
-                      <span>Manage Franchises</span>
+                      <span>Manage Constituencies</span>
                     </Button>
                   </Link>
                   <Link to={createPageUrl('Admin')}>
@@ -171,7 +171,7 @@ export default function MasterFranchiserDashboard() {
                 <CardContent>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
-                      <span className="text-slate-700">Active Franchises</span>
+                      <span className="text-slate-700">Active Constituencies</span>
                       <Badge className="bg-emerald-100 text-emerald-700">
                         {franchises.filter(f => f.status === 'active').length} Active
                       </Badge>
@@ -191,7 +191,7 @@ export default function MasterFranchiserDashboard() {
           <TabsContent value="franchises" className="mt-6">
             <Card className="border-0 shadow-lg">
               <CardHeader>
-                <CardTitle>All Franchises</CardTitle>
+                <CardTitle>All Constituencies</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">

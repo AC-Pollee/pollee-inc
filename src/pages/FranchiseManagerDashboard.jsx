@@ -50,7 +50,7 @@ export default function FranchiseManagerDashboard() {
           <CardContent className="pt-12 pb-12">
             <Building2 className="w-16 h-16 text-slate-400 mx-auto mb-4" />
             <h2 className="text-xl font-semibold text-slate-900 mb-2">Access Denied</h2>
-            <p className="text-slate-500">You don't have Franchise Manager access.</p>
+            <p className="text-slate-500">You don't have Constituency Manager access.</p>
           </CardContent>
         </Card>
       </div>
@@ -63,8 +63,8 @@ export default function FranchiseManagerDashboard() {
         <Card className="max-w-md mx-auto text-center">
           <CardContent className="pt-12 pb-12">
             <Building2 className="w-16 h-16 text-amber-400 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-slate-900 mb-2">No Franchise Assigned</h2>
-            <p className="text-slate-500">Contact your administrator to assign a franchise to your account.</p>
+            <h2 className="text-xl font-semibold text-slate-900 mb-2">No Constituency Assigned</h2>
+            <p className="text-slate-500">Contact your administrator to assign a constituency to your account.</p>
           </CardContent>
         </Card>
       </div>
@@ -77,7 +77,7 @@ export default function FranchiseManagerDashboard() {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <Building2 className="w-8 h-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-slate-900">Franchise Manager Dashboard</h1>
+            <h1 className="text-3xl font-bold text-slate-900">Constituency Manager Dashboard</h1>
           </div>
           <p className="text-slate-500">{myFranchise.franchise_name} • {myFranchise.postcode}</p>
         </div>
@@ -124,7 +124,7 @@ export default function FranchiseManagerDashboard() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 mb-1">Franchise Status</p>
+                  <p className="text-sm text-slate-500 mb-1">Constituency Status</p>
                   <Badge className={myFranchise.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}>
                     {myFranchise.status}
                   </Badge>
@@ -173,12 +173,12 @@ export default function FranchiseManagerDashboard() {
 
               <Card className="border-0 shadow-lg">
                 <CardHeader>
-                  <CardTitle>Franchise Information</CardTitle>
+                  <CardTitle>Constituency Information</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Franchise Name:</span>
+                      <span className="text-slate-500">Constituency Name:</span>
                       <span className="font-semibold">{myFranchise.franchise_name}</span>
                     </div>
                     <div className="flex justify-between">

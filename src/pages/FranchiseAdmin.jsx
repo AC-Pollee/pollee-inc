@@ -328,7 +328,7 @@ export default function FranchiseAdmin() {
           <CardContent className="pt-12 pb-12">
             <Building2 className="w-16 h-16 text-slate-400 mx-auto mb-4" />
             <h2 className="text-xl font-semibold text-slate-900 mb-2">Access Denied</h2>
-            <p className="text-slate-500">You don't have permission to manage franchises.</p>
+            <p className="text-slate-500">You don't have permission to manage constituencies.</p>
           </CardContent>
         </Card>
       </div>
@@ -346,15 +346,15 @@ export default function FranchiseAdmin() {
         </Link>
 
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Franchise Management</h1>
-          <p className="text-slate-500">Manage franchises and Infomarians</p>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">Constituency Management</h1>
+          <p className="text-slate-500">Manage constituencies and Infomarians</p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="bg-white border border-slate-200 p-1 rounded-xl shadow-sm">
             <TabsTrigger value="franchises" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-6">
               <Building2 className="w-4 h-4 mr-2" />
-              Franchises
+              Constituencies
             </TabsTrigger>
             <TabsTrigger value="infomarians" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-6">
               <Users className="w-4 h-4 mr-2" />
@@ -366,12 +366,12 @@ export default function FranchiseAdmin() {
           <TabsContent value="franchises" className="space-y-6">
             <Card className="border-0 shadow-xl">
               <CardHeader>
-                <CardTitle>Create New Franchise</CardTitle>
+                <CardTitle>Create New Constituency</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="franchise_name">Franchise Name</Label>
+                    <Label htmlFor="franchise_name">Constituency Name</Label>
                     <Input
                       id="franchise_name"
                       value={franchiseData.franchise_name}
@@ -412,7 +412,7 @@ export default function FranchiseAdmin() {
 
                 {/* Owner Search Section */}
                 <div className="border-t pt-4 space-y-4">
-                  <h4 className="font-semibold text-slate-900">Search & Select Franchise Owner</h4>
+                  <h4 className="font-semibold text-slate-900">Search & Select Constituency Owner</h4>
                   
                   <div className="space-y-2 relative">
                     <Label htmlFor="owner_email">Search Registered User</Label>
@@ -617,7 +617,7 @@ export default function FranchiseAdmin() {
 
                 {/* Create Franchise Section */}
                 <div className="border-t pt-6 mt-6">
-                  <h4 className="font-semibold text-slate-900 mb-4">Create Franchise</h4>
+                  <h4 className="font-semibold text-slate-900 mb-4">Create Constituency</h4>
                   <Button
                     onClick={handleCreateFranchise}
                     disabled={!franchiseData.franchise_name || !franchiseData.postcode || !franchiseData.state || !franchiseData.owner_email}
@@ -631,7 +631,7 @@ export default function FranchiseAdmin() {
             </Card>
 
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-slate-900">Existing Franchises</h3>
+              <h3 className="text-lg font-semibold text-slate-900">Existing Constituencies</h3>
               {franchises.map((franchise) => (
                 <Card key={franchise.id} className="border-0 shadow-lg">
                   <CardContent className="p-6">
@@ -654,7 +654,7 @@ export default function FranchiseAdmin() {
                           size="icon"
                           onClick={() => setEditingFranchise(franchise)}
                           className="text-slate-400 hover:text-indigo-600"
-                          title="Edit franchise"
+                          title="Edit constituency"
                         >
                           <Pencil className="w-4 h-4" />
                         </Button>
@@ -662,7 +662,7 @@ export default function FranchiseAdmin() {
                           variant="ghost"
                           size="icon"
                           onClick={() => {
-                            if (confirm('Delete this franchise?')) {
+                            if (confirm('Delete this constituency?')) {
                               deleteFranchise.mutate(franchise.id);
                             }
                           }}
@@ -793,10 +793,10 @@ export default function FranchiseAdmin() {
                       placeholder="Auto-generated"
                       className="bg-slate-50"
                     />
-                    <p className="text-xs text-slate-500">Auto-generated from Franchise + User + Sequential</p>
+                    <p className="text-xs text-slate-500">Auto-generated from Constituency + User + Sequential</p>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="franchise_id">Franchise ID</Label>
+                    <Label htmlFor="franchise_id">Constituency ID</Label>
                     <select
                       id="franchise_id"
                       value={infomarianData.franchise_id}
@@ -812,7 +812,7 @@ export default function FranchiseAdmin() {
                       }}
                       className="w-full h-10 px-3 rounded-md border border-slate-200"
                     >
-                      <option value="">Select franchise...</option>
+                      <option value="">Select constituency...</option>
                       {franchises.map(f => (
                         <option key={f.id} value={f.id}>{f.franchise_name} ({f.id})</option>
                       ))}

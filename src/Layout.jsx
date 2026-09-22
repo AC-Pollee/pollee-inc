@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Vote, BarChart3, Settings, User, Shield, AlertTriangle } from 'lucide-react';
+import { Vote, BarChart3, Settings, User, Shield, AlertTriangle, ShieldAlert } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Badge } from "@/components/ui/badge";
@@ -65,7 +65,7 @@ export default function Layout({ children, currentPageName }) {
     if (userRole === 'master_franchiser') {
       return [
         { name: 'MasterFranchiserDashboard', icon: Shield, label: 'Dashboard' },
-        { name: 'FranchiseAdmin', icon: Settings, label: 'Franchises' },
+        { name: 'FranchiseAdmin', icon: Settings, label: 'Constituencies' },
         { name: 'Admin', icon: Settings, label: 'Polls' },
         { name: 'Profile', icon: User, label: 'Profile' },
       ];
@@ -111,6 +111,13 @@ export default function Layout({ children, currentPageName }) {
   const navItems = getRoleNavItems();
   // Incident reporting is available to all users — pinned to the menu bar
   navItems.push({ name: 'IncidentReport', icon: AlertTriangle, label: 'Report' });
+
+  // Moderation Alerts — visible only to Infomarians and Constituency administrators
+  const isSuperAdmin = user?.email === 'ac@acproductiondesign.com';
+  const canModerate = isSuperAdmin || !!infomarian || !!ownedFranchise || user?.user_role === 'master_franchiser' || user?.user_role === 'franchise_manager';
+  if (canModerate) {
+    navItems.push({ name: 'ModerationAlerts', icon: ShieldAlert, label: 'Moderation', badge: pendingCount > 0 ? pendingCount : null });
+  }
 
   // Note: Infomarian moderation and help features accessible via Profile page
   

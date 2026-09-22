@@ -73,8 +73,8 @@ export default function Admin() {
     queryFn: () => base44.entities.Infomarian.list()
   });
 
-  // Grant access to super admins, role-based admins, master franchisers,
-  // franchise managers, AND users who own a Franchise or have an Infomarian record.
+  // Grant access to super admins, role-based admins, master constituency admins,
+  // constituency managers, AND users who own a Constituency or have an Infomarian record.
   const isInfomarian = infomarians.some(i => i.user_email === currentUser?.email);
   const isFranchiseOwner = franchises.some(f => f.owner_email === currentUser?.email);
   const hasAccess = isSuperAdmin
@@ -236,7 +236,7 @@ export default function Admin() {
             <Link to={createPageUrl('FranchiseAdmin')}>
               <Button variant="outline" className="border-indigo-200 text-indigo-700 hover:bg-indigo-50">
                 <Building2 className="w-4 h-4 mr-2" />
-                Manage Franchises & Infomarians
+                Manage Constituencies & Infomarians
               </Button>
             </Link>
           </div>
@@ -271,14 +271,14 @@ export default function Admin() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="franchise">Franchise</Label>
+                  <Label htmlFor="franchise">Constituency</Label>
                   <select
                     id="franchise"
                     value={franchiseId}
                     onChange={(e) => setFranchiseId(e.target.value)}
                     className="w-full h-12 px-3 rounded-xl border border-slate-200 bg-background text-foreground"
                   >
-                    <option value="">Select Franchise</option>
+                    <option value="">Select Constituency</option>
                     {franchises.map((f) => (
                       <option key={f.id} value={f.id}>
                         {f.franchise_name} ({f.postcode})
@@ -657,7 +657,7 @@ export default function Admin() {
                                     <span className="font-semibold">${vote.payment_breakdown.pollee_incorporated?.toFixed(2)}</span>
                                   </div>
                                   <div className="flex justify-between">
-                                    <span>Local Franchise:</span>
+                                    <span>Local Constituency:</span>
                                     <span className="font-semibold">${vote.payment_breakdown.local_franchise?.toFixed(2)}</span>
                                   </div>
                                   <div className="flex justify-between border-t border-emerald-300 pt-1">
