@@ -12,6 +12,7 @@ import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import DiscussionHeader from './DiscussionHeader';
 import ResponsibilityAgreement from './ResponsibilityAgreement';
+import ClapButton from './ClapButton';
 import { useToast } from "@/components/ui/use-toast";
 
 export default function PollDiscussion({ pollId, currentUser, userAge, isClosed = false, poll }) {
@@ -76,6 +77,14 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
     queryFn: () => base44.entities.Comment.filter({ poll_id: pollId }, '-created_date'),
     enabled: !!pollId
   });
+
+  const { data: claps = [] } = useQuery({
+    queryKey: ['claps', pollId],
+    queryFn: () => base44.entities.Clap.filter({ poll_id: pollId }),
+    enabled: !!pollId
+  });
+
+  const clapsForComment = (commentId) => claps.filter(c => c.comment_id === commentId);
 
   const addComment = useMutation({
     mutationFn: (data) => base44.entities.Comment.create(data),
@@ -339,21 +348,29 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
                 </div>
               )}
 
-              {currentUser && comment.moderation_status === 'approved' && !isArchived && userAge >= 12 && !isUserSuspended() && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setReplyingTo(comment.id);
-                    setNewComment('');
-                    setReplyResponsibility(false);
-                  }}
-                  className="mt-2 h-6 md:h-7 text-xs text-slate-600 hover:text-indigo-600 px-2"
-                >
-                  <Reply className="w-3 h-3 mr-1" />
-                  Reply
-                </Button>
-              )}
+              <div className="mt-2 flex items-center gap-2">
+                <ClapButton
+                  comment={comment}
+                  currentUser={currentUser}
+                  claps={clapsForComment(comment.id)}
+                  disabled={isArchived}
+                />
+                {currentUser && comment.moderation_status === 'approved' && !isArchived && userAge >= 12 && !isUserSuspended() && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setReplyingTo(comment.id);
+                      setNewComment('');
+                      setReplyResponsibility(false);
+                    }}
+                    className="h-6 md:h-7 text-xs text-slate-600 hover:text-indigo-600 px-2"
+                  >
+                    <Reply className="w-3 h-3 mr-1" />
+                    Reply
+                  </Button>
+                )}
+              </div>
             </>
           )}
         </div>

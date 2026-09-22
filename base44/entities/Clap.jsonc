@@ -1,0 +1,35 @@
+{
+  "name": "Clap",
+  "type": "object",
+  "properties": {
+    "comment_id": {
+      "type": "string",
+      "description": "The comment being applauded"
+    },
+    "poll_id": {
+      "type": "string",
+      "description": "Poll the commented belongs to"
+    },
+    "clapper_user_id": {
+      "type": "string",
+      "description": "User ID of the person who clapped"
+    },
+    "clapper_email": {
+      "type": "string",
+      "description": "Email of the person who clapped"
+    },
+    "clapper_name": {
+      "type": "string",
+      "description": "Display name of the person who clapped"
+    },
+    "target_user_email": {
+      "type": "string",
+      "description": "Email of the comment author who receives the clap"
+    }
+  },
+  "required": [
+    "comment_id",
+    "clapper_email",
+    "target_user_email"
+  ]
+}
