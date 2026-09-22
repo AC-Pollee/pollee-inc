@@ -234,7 +234,7 @@ export default function Home() {
 
           {/* Licensed work notice */}
           <div className="max-w-6xl mx-auto px-4 py-6 flex items-center justify-center gap-3">
-          <span className="text-sm text-slate-600">Licenced work under:</span>
+          <span className="text-sm text-slate-600">Sharealike Conditions</span>
           <a
           href="https://creativecommons.org/licenses/by-nc-nd/4.0/"
           target="_blank"
