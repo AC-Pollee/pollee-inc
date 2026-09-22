@@ -229,8 +229,25 @@ export default function Home() {
               <p className="text-sm text-slate-600 text-center mt-2">Best practices for voting and participation</p>
             </a>
           </div>
-        </div>
-      </div>
-    </div>);
+          </div>
+          </div>
 
-}
+          {/* Licensed work notice */}
+          <div className="max-w-6xl mx-auto px-4 py-6 flex items-center justify-center gap-3">
+          <span className="text-sm text-slate-600">licenced work under:</span>
+          <a
+          href="https://creativecommons.org/licenses/by-nc-nd/4.0/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center hover:opacity-80 transition-opacity"
+          >
+          <img
+            src="https://media.base44.com/images/public/69415ee66a530550d1e35558/5ff2514cb_by_nc_nd.svg"
+            alt="Creative Commons BY-NC-ND 4.0"
+            className="h-10 w-auto"
+          />
+          </a>
+          </div>
+          </div>);
+
+          }
