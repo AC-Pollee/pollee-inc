@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -29,13 +30,19 @@ export default function Profile() {
     phone_number: '',
     bsb: '',
     account_number: '',
-    account_name: ''
+    account_name: '',
+    personal_bio: ''
   });
   const [successMessage, setSuccessMessage] = useState('');
   const [validationInitiated, setValidationInitiated] = useState(false);
   const [depositAmount, setDepositAmount] = useState('');
   const [validationError, setValidationError] = useState('');
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [bioError, setBioError] = useState('');
+
+  const containsExternalUrl = (text) => {
+    return /\b(https?:\/\/|www\.)\S+/i.test(text);
+  };
 
   const { data: user, isLoading } = useQuery({
     queryKey: ['currentUser'],
@@ -56,7 +63,8 @@ export default function Profile() {
         phone_number: user.phone_number || '',
         bsb: user.bsb || '',
         account_number: user.account_number || '',
-        account_name: user.account_name || ''
+        account_name: user.account_name || '',
+        personal_bio: user.personal_bio || ''
       });
     }
   }, [user]);
@@ -74,6 +82,11 @@ export default function Profile() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (containsExternalUrl(formData.personal_bio)) {
+      setBioError('External URLs are not allowed in your biography.');
+      return;
+    }
+    setBioError('');
     updateProfile.mutate({
       full_name: formData.full_name,
       last_name: formData.last_name,
@@ -82,7 +95,8 @@ export default function Profile() {
       phone_number: formData.phone_number,
       bsb: formData.bsb,
       account_number: formData.account_number,
-      account_name: formData.account_name
+      account_name: formData.account_name,
+      personal_bio: formData.personal_bio
     });
   };
 
@@ -174,22 +188,33 @@ export default function Profile() {
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-lg mb-8 bg-gradient-to-br from-blue-50 to-indigo-50">
+        <Card className="border-0 shadow-lg mb-8">
           <CardContent className="p-6">
-            <h3 className="text-lg font-semibold text-indigo-900 mb-3">Welcome to Pollee</h3>
-            <div className="text-slate-700 space-y-3 leading-relaxed">
-              <p>
-                We believe in transparent and accountable Democracy built on trust and respect for all. Infomarians are professional users who are paid out of your voting to provide poll discussion content, to moderate discussions to ensure civility and respect are maintained, and to provide real help with using the system.
-              </p>
-              <p>
-                We work on three strikes and your commenting rights are curtailed or removed, depending on the severity of any offense. You will be warned and the issue discussed on each notification of a complaint by another user or your Infomarian.
-              </p>
-              <p>
-                If you appreciate the assistance an Infomarian provides you or applaud the quality of their work, you can "Tip" them by adding any amount to the base 55c vote transaction. You can also rate your interactions to help the community identify Infomarians who consistently deliver you truthful information, maintain a civilised discussion, and assist you when you have problems.
-              </p>
-              <p className="font-semibold text-indigo-800">
-                With a vote, you can change your world, one poll at a time.
-              </p>
+            <div className="space-y-2">
+              <Label htmlFor="personal_bio" className="text-base font-semibold">
+                Personal Biography
+              </Label>
+              <Textarea
+                id="personal_bio"
+                value={formData.personal_bio}
+                onChange={(e) => {
+                  let value = e.target.value;
+                  if (value.length > 350) value = value.slice(0, 350);
+                  setFormData({ ...formData, personal_bio: value });
+                  setBioError(containsExternalUrl(value) ? 'External URLs are not allowed.' : '');
+                }}
+                placeholder="Tell the community a little about yourself (max 350 characters)..."
+                maxLength={350}
+                className="rounded-lg min-h-[120px] resize-none"
+              />
+              <div className="flex items-center justify-between text-xs">
+                <p className={bioError ? 'text-red-600 font-medium' : 'text-slate-500'}>
+                  {bioError || 'No external links or URLs allowed.'}
+                </p>
+                <p className={formData.personal_bio.length >= 350 ? 'text-amber-600 font-medium' : 'text-slate-500'}>
+                  {formData.personal_bio.length}/350
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -811,6 +836,26 @@ export default function Profile() {
             </div>
           </div>
         </div>
+
+        <Card className="border-0 shadow-lg mt-8 bg-gradient-to-br from-blue-50 to-indigo-50">
+          <CardContent className="p-6">
+            <h3 className="text-lg font-semibold text-indigo-900 mb-3">Welcome to Pollee</h3>
+            <div className="text-slate-700 space-y-3 leading-relaxed">
+              <p>
+                We believe in transparent and accountable Democracy built on trust and respect for all. Infomarians are professional users who are paid out of your voting to provide poll discussion content, to moderate discussions to ensure civility and respect are maintained, and to provide real help with using the system.
+              </p>
+              <p>
+                We work on three strikes and your commenting rights are curtailed or removed, depending on the severity of any offense. You will be warned and the issue discussed on each notification of a complaint by another user or your Infomarian.
+              </p>
+              <p>
+                If you appreciate the assistance an Infomarian provides you or applaud the quality of their work, you can "Tip" them by adding any amount to the base 55c vote transaction. You can also rate your interactions to help the community identify Infomarians who consistently deliver you truthful information, maintain a civilised discussion, and assist you when you have problems.
+              </p>
+              <p className="font-semibold text-indigo-800">
+                With a vote, you can change your world, one poll at a time.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
