@@ -18,6 +18,7 @@ import UserManagement from '@/components/infomarian/UserManagement';
 import UserSupport from '@/components/infomarian/UserSupport';
 import TaskAssignment from '@/components/infomarian/TaskAssignment';
 import PollModeration from '@/components/infomarian/PollModeration';
+import InfomarianHelp from '@/components/help/InfomarianHelp';
 
 export default function InfomarianDashboard() {
   const [activeTab, setActiveTab] = useState('queue');
@@ -239,6 +240,9 @@ export default function InfomarianDashboard() {
               <DollarSign className="w-4 h-4 mr-2" />
               Earnings
             </TabsTrigger>
+            <TabsTrigger value="help" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
+              Help
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="queue">
@@ -275,6 +279,10 @@ export default function InfomarianDashboard() {
 
           <TabsContent value="earnings">
             <EarningsTracker infomarian={infomarian} />
+          </TabsContent>
+
+          <TabsContent value="help">
+            <InfomarianHelp />
           </TabsContent>
         </Tabs>
       </div>

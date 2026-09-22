@@ -19,6 +19,7 @@ import DelegationsHeldRegister from '@/components/profile/DelegationsHeldRegiste
 import VoteHistory from '@/components/profile/VoteHistory';
 import ReputationScore from '@/components/profile/ReputationScore';
 import ReputationBadge from '@/components/profile/ReputationBadge';
+import UserHelp from '@/components/help/UserHelp';
 import AvatarUploader from '@/components/profile/AvatarUploader';
 
 export default function Profile() {
@@ -678,6 +679,11 @@ export default function Profile() {
           {/* Reputation Score */}
           <div className="mt-6">
             <ReputationScore user={user} />
+          </div>
+
+          {/* User Guide */}
+          <div className="mt-6">
+            <UserHelp />
           </div>
 
           {age >= 18 && (

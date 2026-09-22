@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Building2, Users, Vote, BarChart3, UserPlus, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import ConstituencyHelp from '@/components/help/ConstituencyHelp';
 
 export default function FranchiseManagerDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -141,6 +142,7 @@ export default function FranchiseManagerDashboard() {
             <TabsTrigger value="infomarians" className="rounded-lg">Infomarians</TabsTrigger>
             <TabsTrigger value="polls" className="rounded-lg">Polls</TabsTrigger>
             <TabsTrigger value="registration" className="rounded-lg">User Registration</TabsTrigger>
+            <TabsTrigger value="help" className="rounded-lg">Help</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="mt-6">
@@ -290,6 +292,10 @@ export default function FranchiseManagerDashboard() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="help" className="mt-6">
+            <ConstituencyHelp />
           </TabsContent>
         </Tabs>
       </div>
