@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -709,6 +711,18 @@ export default function Profile() {
                     <p className="text-red-100 text-sm mt-1">
                       {user.strikes.length} strike{user.strikes.length > 1 ? 's' : ''} on record
                     </p>
+                    <p className="text-red-100 text-xs mt-1">
+                      {user.permanently_banned
+                        ? 'Commenting rights suspended (voting unaffected).'
+                        : user.strikes.length === 2
+                        ? 'Next strike suspends commenting rights.'
+                        : user.strikes.length === 1
+                        ? 'Next strike: 1-week commenting suspension.'
+                        : 'Three strikes and you\'re out.'}
+                    </p>
+                    <Link to={createPageUrl('IncidentReport')} className="inline-block mt-2 text-xs underline text-white">
+                      Appeal a strike
+                    </Link>
                   </div>
                 </div>
               </CardHeader>

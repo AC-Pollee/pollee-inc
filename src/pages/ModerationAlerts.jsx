@@ -102,14 +102,24 @@ export default function ModerationAlerts() {
     toast({ title: 'Post removed' });
   };
 
-  const strikeComment = (c) => {
+  const strikeComment = async (c) => {
     const reason = prompt('Reason for striking this comment:');
     if (!reason) return;
-    updateComment.mutate({
-      id: c.id,
-      data: { moderation_status: 'rejected', moderated_by: moderatorId, moderation_reason: reason }
-    });
-    toast({ title: 'Comment struck through' });
+    try {
+      const res = await base44.functions.invoke('issue-strike', {
+        target_type: 'comment',
+        target_id: c.id,
+        reason
+      });
+      queryClient.invalidateQueries(['comments-all']);
+      queryClient.invalidateQueries(['comments', c.poll_id]);
+      toast({
+        title: res.data?.strike_issued ? `Strike ${res.data.strike_count} of 3 issued` : 'Comment struck through',
+        description: res.data?.consequence
+      });
+    } catch (err) {
+      toast({ title: 'Failed to strike comment', description: err?.message, variant: 'destructive' });
+    }
   };
   const approveComment = (c) => {
     updateComment.mutate({ id: c.id, data: { moderation_status: 'approved', moderated_by: moderatorId } });
