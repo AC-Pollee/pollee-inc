@@ -64,6 +64,17 @@
       "default": "voter",
       "description": "User role in the system"
     },
+    "language": {
+      "type": "string",
+      "enum": [
+        "en",
+        "fr",
+        "de",
+        "es"
+      ],
+      "default": "en",
+      "description": "User's preferred UI language"
+    },
     "strikes": {
       "type": "array",
       "default": [],

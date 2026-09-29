@@ -1,12 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { createPageUrl } from '@/utils';
 import { Vote, BarChart3, Settings, User, Shield, AlertTriangle, ShieldAlert } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Badge } from "@/components/ui/badge";
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 export default function Layout({ children, currentPageName }) {
+  const { t } = useTranslation();
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me(),
@@ -54,69 +57,69 @@ export default function Layout({ children, currentPageName }) {
 
     if (isSuperAdmin) {
       return [
-        { name: 'Home', icon: Vote, label: 'Polls' },
-        { name: 'Results', icon: BarChart3, label: 'Results' },
-        { name: 'MasterFranchiserDashboard', icon: Shield, label: 'Master' },
-        { name: 'Admin', icon: Settings, label: 'Admin' },
-        { name: 'Profile', icon: User, label: 'Profile' },
+        { name: 'Home', icon: Vote, label: 'nav.polls' },
+        { name: 'Results', icon: BarChart3, label: 'nav.results' },
+        { name: 'MasterFranchiserDashboard', icon: Shield, label: 'nav.master' },
+        { name: 'Admin', icon: Settings, label: 'nav.admin' },
+        { name: 'Profile', icon: User, label: 'nav.profile' },
       ];
     }
 
     if (userRole === 'master_franchiser') {
       return [
-        { name: 'MasterFranchiserDashboard', icon: Shield, label: 'Dashboard' },
-        { name: 'FranchiseAdmin', icon: Settings, label: 'Constituencies' },
-        { name: 'Admin', icon: Settings, label: 'Polls' },
-        { name: 'Profile', icon: User, label: 'Profile' },
+        { name: 'MasterFranchiserDashboard', icon: Shield, label: 'nav.dashboard' },
+        { name: 'FranchiseAdmin', icon: Settings, label: 'nav.constituencies' },
+        { name: 'Admin', icon: Settings, label: 'nav.admin' },
+        { name: 'Profile', icon: User, label: 'nav.profile' },
       ];
     }
 
     if (userRole === 'franchise_manager') {
       return [
-        { name: 'FranchiseManagerDashboard', icon: Vote, label: 'Dashboard' },
-        { name: 'FranchiseAdmin', icon: Settings, label: 'Infomarians' },
-        { name: 'Admin', icon: Settings, label: 'Polls' },
-        { name: 'Profile', icon: User, label: 'Profile' },
+        { name: 'FranchiseManagerDashboard', icon: Vote, label: 'nav.dashboard' },
+        { name: 'FranchiseAdmin', icon: Settings, label: 'nav.infomarians' },
+        { name: 'Admin', icon: Settings, label: 'nav.admin' },
+        { name: 'Profile', icon: User, label: 'nav.profile' },
       ];
     }
 
     if (userRole === 'infomarian' || infomarian) {
       return [
-        { name: 'InfomarianDashboard', icon: Shield, label: 'Dashboard', badge: pendingCount > 0 ? pendingCount : null },
-        { name: 'Home', icon: Vote, label: 'Polls' },
-        { name: 'Admin', icon: Settings, label: 'Admin' },
-        { name: 'Results', icon: BarChart3, label: 'Results' },
-        { name: 'Profile', icon: User, label: 'Profile' },
+        { name: 'InfomarianDashboard', icon: Shield, label: 'nav.dashboard', badge: pendingCount > 0 ? pendingCount : null },
+        { name: 'Home', icon: Vote, label: 'nav.polls' },
+        { name: 'Admin', icon: Settings, label: 'nav.admin' },
+        { name: 'Results', icon: BarChart3, label: 'nav.results' },
+        { name: 'Profile', icon: User, label: 'nav.profile' },
       ];
     }
 
     // Franchise owners (without an infomarian record) also get admin access to create polls
     if (ownedFranchise) {
       return [
-        { name: 'Home', icon: Vote, label: 'Polls' },
-        { name: 'Admin', icon: Settings, label: 'Admin' },
-        { name: 'Results', icon: BarChart3, label: 'Results' },
-        { name: 'Profile', icon: User, label: 'Profile' },
+        { name: 'Home', icon: Vote, label: 'nav.polls' },
+        { name: 'Admin', icon: Settings, label: 'nav.admin' },
+        { name: 'Results', icon: BarChart3, label: 'nav.results' },
+        { name: 'Profile', icon: User, label: 'nav.profile' },
       ];
     }
 
     // Default voter navigation
     return [
-      { name: 'Home', icon: Vote, label: 'Polls' },
-      { name: 'Results', icon: BarChart3, label: 'Results' },
-      { name: 'Profile', icon: User, label: 'Profile' },
+      { name: 'Home', icon: Vote, label: 'nav.polls' },
+      { name: 'Results', icon: BarChart3, label: 'nav.results' },
+      { name: 'Profile', icon: User, label: 'nav.profile' },
     ];
   };
 
   const navItems = getRoleNavItems();
   // Incident reporting is available to all users — pinned to the menu bar
-  navItems.push({ name: 'IncidentReport', icon: AlertTriangle, label: 'Report' });
+  navItems.push({ name: 'IncidentReport', icon: AlertTriangle, label: 'nav.report' });
 
   // Moderation Alerts — visible only to Infomarians and Constituency administrators
   const isSuperAdmin = user?.email === 'ac@acproductiondesign.com';
   const canModerate = isSuperAdmin || !!infomarian || !!ownedFranchise || user?.user_role === 'master_franchiser' || user?.user_role === 'franchise_manager';
   if (canModerate) {
-    navItems.push({ name: 'ModerationAlerts', icon: ShieldAlert, label: 'Moderation', badge: pendingCount > 0 ? pendingCount : null });
+    navItems.push({ name: 'ModerationAlerts', icon: ShieldAlert, label: 'nav.moderation', badge: pendingCount > 0 ? pendingCount : null });
   }
 
   // Note: Infomarian moderation and help features accessible via Profile page
@@ -140,7 +143,7 @@ export default function Layout({ children, currentPageName }) {
               </Link>
               <Link to={createPageUrl('NewUserRegistration')}>
                 <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
-                  New User
+                  {t('nav.newUser')}
                 </button>
               </Link>
             </div>
@@ -162,7 +165,7 @@ export default function Layout({ children, currentPageName }) {
                     `}
                   >
                     <Icon className="w-4 h-4" />
-                    <span className="hidden sm:inline">{item.label}</span>
+                    <span className="hidden sm:inline">{t(item.label)}</span>
                     {item.badge && (
                       <Badge className="ml-1 h-5 min-w-5 px-1.5 bg-red-500 text-white text-xs">
                         {item.badge}
@@ -171,6 +174,7 @@ export default function Layout({ children, currentPageName }) {
                   </Link>
                 );
               })}
+              <LanguageSwitcher />
             </div>
           </div>
         </div>

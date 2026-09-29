@@ -1,5 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { base44 } from '@/api/base44Client';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -12,6 +13,7 @@ import DiscussionPreview from '@/components/polls/DiscussionPreview';
 import ThemeToggle from '@/components/ThemeToggle';
 
 export default function Home() {
+  const { t } = useTranslation();
   const { data: polls = [], isLoading: loadingPolls } = useQuery({
     queryKey: ['polls'],
     queryFn: () => base44.entities.Poll.list('-created_date')
@@ -34,7 +36,7 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
       {/* Development Banner */}
       <div className="bg-amber-500 text-white text-center text-sm md:text-base font-medium px-4 py-2.5">
-        This site is in development, the transaction layer is suspended, it is only to demonstrate usability and develop capability
+        {t('home.devBanner')}
       </div>
 
       {/* Hero Section */}
@@ -54,18 +56,18 @@ export default function Home() {
             
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 mb-6">
               <Shield className="w-4 h-4 text-indigo-600" />
-              <span className="text-sm font-medium text-indigo-700">Verified with Bank Transactions</span>
+              <span className="text-sm font-medium text-indigo-700">{t('home.verifiedBadge')}</span>
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 tracking-tight whitespace-normal md:whitespace-nowrap">
-              Discuss, Decide, Make Change
+              {t('home.title1')}
               <span className="block mt-2 pb-2 leading-tight bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent text-3xl md:text-4xl lg:text-5xl">
-                Verified, tamper-proof voting
+                {t('home.title2')}
               </span>
             </h1>
             
             <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-              Convey your vote securely and accountably, to support the people who guide the conversations we need to have.
+              {t('home.subtitle')}
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -75,7 +77,7 @@ export default function Home() {
                   className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 h-12 rounded-xl shadow-lg shadow-indigo-200 hover:shadow-xl transition-all">
                   
                   <Plus className="w-5 h-5 mr-2" />
-                  Create Poll
+                  {t('home.createPoll')}
                 </Button>
               </Link>
               
@@ -86,7 +88,7 @@ export default function Home() {
                   className="px-8 h-12 rounded-xl border-slate-200 hover:border-indigo-200 hover:bg-indigo-50">
                   
                   <BarChart3 className="w-5 h-5 mr-2" />
-                  View Results
+                  {t('home.viewResults')}
                 </Button>
               </Link>
             </div>
@@ -98,13 +100,13 @@ export default function Home() {
       <div className="max-w-6xl mx-auto px-4 pb-20">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-2xl font-bold text-slate-900">Active Polls</h2>
-            <p className="text-slate-500 mt-1">Cast your vote on current polls</p>
+            <h2 className="text-2xl font-bold text-slate-900">{t('home.activePolls')}</h2>
+            <p className="text-slate-500 mt-1">{t('home.activePollsSub')}</p>
           </div>
           
           <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-100">
             <Vote className="w-4 h-4 text-emerald-600" />
-            <span className="text-sm font-medium text-emerald-700">{activePolls.length} Active</span>
+            <span className="text-sm font-medium text-emerald-700">{t('home.activeCount', { count: activePolls.length })}</span>
           </div>
         </div>
         
@@ -128,12 +130,12 @@ export default function Home() {
             <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
               <Vote className="w-8 h-8 text-slate-400" />
             </div>
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">No Active Polls</h3>
-            <p className="text-slate-500 mb-6">Create a new poll to get started</p>
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">{t('home.noPolls')}</h3>
+            <p className="text-slate-500 mb-6">{t('home.noPollsSub')}</p>
             <Link to={createPageUrl('Admin')}>
               <Button className="bg-indigo-600 hover:bg-indigo-700">
                 <Plus className="w-4 h-4 mr-2" />
-                Create Poll
+                {t('home.createPoll')}
               </Button>
             </Link>
           </motion.div> :
@@ -160,29 +162,29 @@ export default function Home() {
       <div className="max-w-6xl mx-auto px-4 pb-12">
         <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 border border-slate-100">
           <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">
-            How Pollee Democracy Works
+            {t('home.howWorks')}
           </h2>
           
           <div className="prose prose-slate max-w-none space-y-4 text-slate-700">
             <p className="text-base leading-relaxed">
-              Pollee Democracy is based on some very simple premises:
+              {t('home.premises')}
             </p>
             
             <ol className="list-decimal list-inside space-y-3 text-base leading-relaxed ml-2">
-              <li>A Poll and discussion can be about any subject that requires a decision.</li>
-              <li>A Poll remains open for 720 hours (30 days) from the date of validation.</li>
-              <li>A registered user can vote on a poll at any time over the polling period, a user can change their vote at any time.</li>
-              <li>At the close of the Poll a decision is made by a simple majority of 50% +1 votes drawn from the total number of votes cast in the Poll.</li>
+              <li>{t('home.premise1')}</li>
+              <li>{t('home.premise2')}</li>
+              <li>{t('home.premise3')}</li>
+              <li>{t('home.premise4')}</li>
             </ol>
 
             <div className="bg-blue-50 border-l-4 border-blue-600 p-4 my-6 rounded-r-lg">
               <p className="text-base leading-relaxed text-slate-900 font-medium">
-                The legal age for a vote in Australia is 18 years and above. Until the age is changed legislatively, any member between the ages of 12 - 18 years (Junior) can participate in the discussions and "vote" in a live poll of sentiment, the vote cannot be counted in the total that decides. Your opinions and information are important and it will inform the outcome until you come of age and can vote for yourself.
+                {t('home.juniorNote')}
               </p>
             </div>
 
             <p className="text-lg font-semibold text-indigo-700 italic text-center mt-6">
-              Voting creates change, it's the one power we are promised
+              {t('home.votingQuote')}
             </p>
           </div>
         </div>
@@ -192,7 +194,7 @@ export default function Home() {
       <div className="max-w-6xl mx-auto px-4 pb-20">
         <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl shadow-lg p-8 border border-indigo-100">
           <h2 className="text-xl font-bold text-slate-900 mb-6 text-center">
-            Important Documents & Guidelines
+            {t('home.docsTitle')}
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
             <a
@@ -204,8 +206,8 @@ export default function Home() {
               <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center mb-3">
                 <Shield className="w-6 h-6 text-indigo-600" />
               </div>
-              <h3 className="font-semibold text-slate-900 text-center">Code of Conduct</h3>
-              <p className="text-sm text-slate-600 text-center mt-2">Community standards and behavior guidelines</p>
+              <h3 className="font-semibold text-slate-900 text-center">{t('home.codeOfConduct')}</h3>
+              <p className="text-sm text-slate-600 text-center mt-2">{t('home.codeOfConductDesc')}</p>
             </a>
             
             <a
@@ -217,8 +219,8 @@ export default function Home() {
               <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mb-3">
                 <BarChart3 className="w-6 h-6 text-purple-600" />
               </div>
-              <h3 className="font-semibold text-slate-900 text-center">Model Rules</h3>
-              <p className="text-sm text-slate-600 text-center mt-2">Platform governance and operational rules</p>
+              <h3 className="font-semibold text-slate-900 text-center">{t('home.modelRules')}</h3>
+              <p className="text-sm text-slate-600 text-center mt-2">{t('home.modelRulesDesc')}</p>
             </a>
             
             <a
@@ -230,8 +232,8 @@ export default function Home() {
               <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-3">
                 <Vote className="w-6 h-6 text-blue-600" />
               </div>
-              <h3 className="font-semibold text-slate-900 text-center">Code of Practice</h3>
-              <p className="text-sm text-slate-600 text-center mt-2">Best practices for voting and participation</p>
+              <h3 className="font-semibold text-slate-900 text-center">{t('home.codeOfPractice')}</h3>
+              <p className="text-sm text-slate-600 text-center mt-2">{t('home.codeOfPracticeDesc')}</p>
             </a>
           </div>
           </div>
@@ -239,7 +241,7 @@ export default function Home() {
 
           {/* Licensed work notice */}
           <div className="max-w-6xl mx-auto px-4 py-6 flex items-center justify-center gap-3">
-          <span className="text-sm text-slate-600">Sharealike Conditions</span>
+          <span className="text-sm text-slate-600">{t('home.sharealike')}</span>
           <a
           href="https://creativecommons.org/licenses/by-nc-nd/4.0/"
           target="_blank"
@@ -247,12 +249,13 @@ export default function Home() {
           className="inline-flex items-center hover:opacity-80 transition-opacity"
           >
           <img
-            src="https://media.base44.com/images/public/69415ee66a530550d1e35558/5ff2514cb_by_nc_nd.svg"
-            alt="Creative Commons BY-NC-ND 4.0"
-            className="h-10 w-auto"
+          src="https://media.base44.com/images/public/69415ee66a530550d1e35558/5ff2514cb_by_nc_nd.svg"
+          alt="Creative Commons BY-NC-ND 4.0"
+          className="h-10 w-auto"
           />
           </a>
           </div>
-          </div>);
+          </div>
 
-          }
+          );
+  }
