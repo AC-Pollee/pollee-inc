@@ -106,7 +106,7 @@
     "requestNew": "Request new link"
   },
   "home": {
-    "devBanner": "🚧 This site is under development — some features may not work as expected.",
+    "devBanner": "Transaction layer disabled",
     "verifiedBadge": "Verified Democratic Platform",
     "title1": "Your Voice.",
     "title2": "Your Vote. Your World.",

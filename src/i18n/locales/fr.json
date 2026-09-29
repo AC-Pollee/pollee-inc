@@ -106,7 +106,7 @@
     "requestNew": "Demander un nouveau lien"
   },
   "home": {
-    "devBanner": "🚧 Ce site est en cours de développement — certaines fonctionnalités peuvent ne pas fonctionner correctement.",
+    "devBanner": "Transaction layer disabled",
     "verifiedBadge": "Plateforme démocratique vérifiée",
     "title1": "Votre voix.",
     "title2": "Votre vote. Votre monde.",

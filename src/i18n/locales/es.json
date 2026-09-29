@@ -106,7 +106,7 @@
     "requestNew": "Solicitar nuevo enlace"
   },
   "home": {
-    "devBanner": "🚧 Este sitio está en desarrollo — algunas funciones pueden no funcionar como se espera.",
+    "devBanner": "Transaction layer disabled",
     "verifiedBadge": "Plataforma democrática verificada",
     "title1": "Tu voz.",
     "title2": "Tu voto. Tu mundo.",
