@@ -1,0 +1,63 @@
+{
+  "name": "DiscussionEvidence",
+  "type": "object",
+  "properties": {
+    "poll_id": {
+      "type": "string",
+      "description": "Poll discussion this evidence is attached to"
+    },
+    "title": {
+      "type": "string",
+      "description": "Title of the evidence item"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description or summary"
+    },
+    "content_type": {
+      "type": "string",
+      "enum": [
+        "url",
+        "image",
+        "video",
+        "text",
+        "audio"
+      ],
+      "description": "Type of content"
+    },
+    "url": {
+      "type": "string",
+      "description": "External URL"
+    },
+    "file_uri": {
+      "type": "string",
+      "description": "URI of uploaded file in private storage"
+    },
+    "text_content": {
+      "type": "string",
+      "description": "Text content"
+    },
+    "content_item_id": {
+      "type": "string",
+      "description": "Reference to the ContentLibraryItem if attached from library"
+    },
+    "infomarian_id": {
+      "type": "string",
+      "description": "Infomarian who attached this evidence"
+    },
+    "infomarian_name": {
+      "type": "string",
+      "description": "Name of the attaching Infomarian"
+    },
+    "display_note": {
+      "type": "string",
+      "description": "Note explaining why this evidence is relevant to the discussion"
+    }
+  },
+  "required": [
+    "poll_id",
+    "title",
+    "content_type",
+    "infomarian_id"
+  ]
+}

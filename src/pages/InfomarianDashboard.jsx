@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, BarChart3, MessageSquare, Image, DollarSign, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, BarChart3, MessageSquare, Image, DollarSign, AlertCircle, CheckCircle2, Library } from 'lucide-react';
 import { motion } from 'framer-motion';
 import AssignedPolls from '@/components/infomarian/AssignedPolls';
 import CommentsModeration from '@/components/infomarian/CommentsModeration';
@@ -18,6 +18,7 @@ import UserManagement from '@/components/infomarian/UserManagement';
 import UserSupport from '@/components/infomarian/UserSupport';
 import TaskAssignment from '@/components/infomarian/TaskAssignment';
 import PollModeration from '@/components/infomarian/PollModeration';
+import ContentLibraryPanel from '@/components/infomarian/ContentLibraryPanel';
 import InfomarianHelp from '@/components/help/InfomarianHelp';
 import { useTranslation } from 'react-i18next';
 
@@ -238,6 +239,10 @@ export default function InfomarianDashboard() {
             <TabsTrigger value="tasks" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
               {t('infomarianDash.tasks')}
             </TabsTrigger>
+            <TabsTrigger value="library" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
+              <Library className="w-4 h-4 mr-2" />
+              {t('infomarianDash.library')}
+            </TabsTrigger>
             <TabsTrigger value="earnings" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
               <DollarSign className="w-4 h-4 mr-2" />
               {t('infomarianDash.earnings')}
@@ -277,6 +282,10 @@ export default function InfomarianDashboard() {
 
           <TabsContent value="tasks">
             <TaskAssignment infomarian={infomarian} />
+          </TabsContent>
+
+          <TabsContent value="library">
+            <ContentLibraryPanel infomarian={infomarian} />
           </TabsContent>
 
           <TabsContent value="earnings">

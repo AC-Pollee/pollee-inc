@@ -1,0 +1,88 @@
+{
+  "name": "ContentLibraryItem",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Title of the content item"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description or summary of the content"
+    },
+    "content_type": {
+      "type": "string",
+      "enum": [
+        "url",
+        "image",
+        "video",
+        "text",
+        "audio"
+      ],
+      "description": "Type of content"
+    },
+    "url": {
+      "type": "string",
+      "description": "External URL (for url or video link types)"
+    },
+    "file_uri": {
+      "type": "string",
+      "description": "URI of uploaded file in private storage (for image, video, audio types)"
+    },
+    "text_content": {
+      "type": "string",
+      "description": "Text content (for text type)"
+    },
+    "infomarian_id": {
+      "type": "string",
+      "description": "Infomarian who owns this library item"
+    },
+    "infomarian_name": {
+      "type": "string",
+      "description": "Name of the owning Infomarian"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tags for categorization and search"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "infomarian",
+        "member_forward"
+      ],
+      "default": "infomarian",
+      "description": "Whether created by the Infomarian or forwarded by a member"
+    },
+    "forwarded_by_name": {
+      "type": "string",
+      "description": "Name of the member who forwarded this content"
+    },
+    "forwarded_by_email": {
+      "type": "string",
+      "description": "Email of the member who forwarded this content"
+    },
+    "forwarded_poll_id": {
+      "type": "string",
+      "description": "Poll discussion where this was forwarded from"
+    },
+    "moderation_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected"
+      ],
+      "default": "approved",
+      "description": "Moderation status \u2014 pending for member-forwarded items"
+    }
+  },
+  "required": [
+    "title",
+    "content_type",
+    "infomarian_id"
+  ]
+}

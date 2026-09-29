@@ -14,6 +14,9 @@ import DiscussionHeader from './DiscussionHeader';
 import ResponsibilityAgreement from './ResponsibilityAgreement';
 import ClapButton from './ClapButton';
 import CommentTranslation from './CommentTranslation';
+import EvidenceDisplay from './EvidenceDisplay';
+import EvidenceManager from './EvidenceManager';
+import MemberForwardContent from './MemberForwardContent';
 import { useToast } from "@/components/ui/use-toast";
 import { useTranslation } from 'react-i18next';
 
@@ -464,6 +467,19 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
 
       <CardContent className="space-y-4 md:space-y-6">
         <DiscussionHeader poll={poll} isArchived={isArchived} />
+
+        <EvidenceDisplay pollId={pollId} canManage={isInfomarianOrAdmin} />
+
+        {currentUser && !isArchived && (
+          <div className="flex items-center gap-2 flex-wrap">
+            {isInfomarianOrAdmin && (
+              <EvidenceManager pollId={pollId} infomarian={infomarian} />
+            )}
+            {!isInfomarianOrAdmin && (
+              <MemberForwardContent poll={poll} currentUser={currentUser} />
+            )}
+          </div>
+        )}
 
         {isArchived && (
           <div className="flex items-start gap-3 p-4 bg-slate-100 border border-slate-200 rounded-lg">
