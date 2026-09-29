@@ -1072,5 +1072,12 @@
     "alreadyClapped": "You applauded this",
     "canClap": "Applaud this comment (+3 points to author)",
     "loginToClap": "Log in to applaud"
+  },
+  "commentTranslation": {
+    "translate": "Translate to {{lang}}",
+    "translating": "Translating...",
+    "showTranslation": "Show {{lang}} translation",
+    "showOriginal": "Show original",
+    "error": "Translation failed. Please try again."
   }
 }

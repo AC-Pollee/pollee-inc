@@ -1072,5 +1072,12 @@
     "alreadyClapped": "Vous avez applaudi ceci",
     "canClap": "Applaudir ce commentaire (+3 points à l'auteur)",
     "loginToClap": "Connectez-vous pour applaudir"
+  },
+  "commentTranslation": {
+    "translate": "Traduire en {{lang}}",
+    "translating": "Traduction...",
+    "showTranslation": "Afficher la traduction en {{lang}}",
+    "showOriginal": "Afficher l'original",
+    "error": "La traduction a échoué. Veuillez réessayer."
   }
 }

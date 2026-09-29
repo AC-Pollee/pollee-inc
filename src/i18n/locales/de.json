@@ -1072,5 +1072,12 @@
     "alreadyClapped": "Sie haben applaudiert",
     "canClap": "Diesen Kommentar applaudieren (+3 Punkte für den Autor)",
     "loginToClap": "Anmelden zum Applaudieren"
+  },
+  "commentTranslation": {
+    "translate": "Ins {{lang}} übersetzen",
+    "translating": "Übersetzung läuft...",
+    "showTranslation": "{{lang}}-Übersetzung anzeigen",
+    "showOriginal": "Original anzeigen",
+    "error": "Übersetzung fehlgeschlagen. Bitte erneut versuchen."
   }
 }

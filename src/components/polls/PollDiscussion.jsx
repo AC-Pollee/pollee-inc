@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import DiscussionHeader from './DiscussionHeader';
 import ResponsibilityAgreement from './ResponsibilityAgreement';
 import ClapButton from './ClapButton';
+import CommentTranslation from './CommentTranslation';
 import { useToast } from "@/components/ui/use-toast";
 import { useTranslation } from 'react-i18next';
 
@@ -343,6 +344,8 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
           ) : (
             <>
               <p className={`text-xs md:text-sm text-slate-700 whitespace-pre-wrap break-words ${comment.moderation_status === 'rejected' ? 'line-through text-slate-400' : ''}`}>{comment.content}</p>
+
+              <CommentTranslation comment={comment} />
 
               {comment.moderation_reason && (
                 <div className="mt-2 p-2 bg-red-100 rounded text-xs text-red-800">
