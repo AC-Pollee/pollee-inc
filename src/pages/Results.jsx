@@ -11,8 +11,10 @@ import { ArrowLeft, BarChart3, Users, Calendar, ChevronDown, ChevronUp } from 'l
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import ResultsChart from '@/components/polls/ResultsChart';
+import { useTranslation } from 'react-i18next';
 
 export default function Results() {
+  const { t } = useTranslation();
   const [expandedPoll, setExpandedPoll] = useState(null);
   
   const { data: polls = [], isLoading: loadingPolls } = useQuery({
@@ -49,13 +51,13 @@ export default function Results() {
         <Link to={createPageUrl('Home')}>
           <Button variant="ghost" className="mb-6 text-slate-600 hover:text-slate-900 -ml-2">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Polls
-          </Button>
-        </Link>
-        
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Poll Results</h1>
-          <p className="text-slate-500">View live voting results and statistics</p>
+            {t('results.backToPolls')}
+            </Button>
+            </Link>
+
+            <div className="mb-8">
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">{t('results.title')}</h1>
+            <p className="text-slate-500">{t('results.subtitle')}</p>
         </div>
         
         {isLoading ? (
@@ -78,11 +80,11 @@ export default function Results() {
               <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
                 <BarChart3 className="w-8 h-8 text-slate-400" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">No Polls Yet</h3>
-              <p className="text-slate-500 mb-6">Create a poll to start collecting votes</p>
+              <h3 className="text-lg font-semibold text-slate-900 mb-2">{t('results.noPollsYet')}</h3>
+              <p className="text-slate-500 mb-6">{t('results.noPollsDesc')}</p>
               <Link to={createPageUrl('Admin')}>
                 <Button className="bg-indigo-600 hover:bg-indigo-700">
-                  Create Poll
+                  {t('results.createPoll')}
                 </Button>
               </Link>
             </CardContent>
@@ -116,14 +118,14 @@ export default function Results() {
                                   : 'bg-slate-100 text-slate-600 border-slate-200'
                               } border`}
                             >
-                              {poll.status === 'active' ? 'Active' : 'Closed'}
+                              {poll.status === 'active' ? t('results.verified') : t('common.closed')}
                             </Badge>
                           </div>
                           
                           <div className="flex items-center gap-4 text-sm text-slate-500">
                             <span className="flex items-center gap-1">
                               <Users className="w-4 h-4" />
-                              {stats.verified} verified votes
+                              {stats.verified} {t('results.verifiedVotes')}
                             </span>
                             {poll.end_date && (
                               <span className="flex items-center gap-1">
@@ -156,19 +158,19 @@ export default function Results() {
                             <div className="grid md:grid-cols-4 gap-4 mb-6 pt-4">
                               <div className="bg-indigo-50 rounded-xl p-4 text-center">
                                 <p className="text-2xl font-bold text-indigo-600">{stats.total}</p>
-                                <p className="text-sm text-slate-500">Total Votes</p>
+                                <p className="text-sm text-slate-500">{t('results.totalVotes')}</p>
                               </div>
                               <div className="bg-emerald-50 rounded-xl p-4 text-center">
                                 <p className="text-2xl font-bold text-emerald-600">{stats.verified}</p>
-                                <p className="text-sm text-slate-500">Verified</p>
+                                <p className="text-sm text-slate-500">{t('results.verified')}</p>
                               </div>
                               <div className="bg-amber-50 rounded-xl p-4 text-center">
                                 <p className="text-2xl font-bold text-amber-600">{stats.pending}</p>
-                                <p className="text-sm text-slate-500">Pending</p>
+                                <p className="text-sm text-slate-500">{t('results.pending')}</p>
                               </div>
                               <div className="bg-slate-50 rounded-xl p-4 text-center">
                                 <p className="text-2xl font-bold text-slate-600">{stats.transactions}</p>
-                                <p className="text-sm text-slate-500">Transactions</p>
+                                <p className="text-sm text-slate-500">{t('results.transactions')}</p>
                               </div>
                             </div>
                             

@@ -10,8 +10,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Users, Plus, Trash2, CheckCircle2, Clock, XCircle, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 export default function DelegationManager({ user }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -89,14 +91,14 @@ export default function DelegationManager({ user }) {
               <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
                 <Users className="w-5 h-5 text-indigo-600" />
               </div>
-              <CardTitle>My Delegations</CardTitle>
+              <CardTitle>{t('delegationManager.myDelegations')}</CardTitle>
             </div>
             <Button
               onClick={() => setShowForm(!showForm)}
               className="bg-indigo-600 hover:bg-indigo-700"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Add Delegation
+              {t('delegationManager.addDelegation')}
             </Button>
           </div>
         </CardHeader>
@@ -112,7 +114,7 @@ export default function DelegationManager({ user }) {
                 className="bg-slate-50 rounded-lg p-4 space-y-4"
               >
                 <div className="space-y-2">
-                  <Label htmlFor="delegate_full_name">Delegate Full Name</Label>
+                  <Label htmlFor="delegate_full_name">{t('delegationManager.delegateFullName')}</Label>
                   <Input
                     id="delegate_full_name"
                     value={formData.delegate_full_name}
@@ -123,7 +125,7 @@ export default function DelegationManager({ user }) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="delegate_user_id">Delegate User ID</Label>
+                  <Label htmlFor="delegate_user_id">{t('delegationManager.delegateUserId')}</Label>
                   <Input
                     id="delegate_user_id"
                     value={formData.delegate_user_id}
@@ -134,7 +136,7 @@ export default function DelegationManager({ user }) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="delegation_type">Delegation Type</Label>
+                  <Label htmlFor="delegation_type">{t('delegationManager.delegationType')}</Label>
                   <Select
                     value={formData.delegation_type}
                     onValueChange={(value) => setFormData({...formData, delegation_type: value})}
@@ -143,8 +145,8 @@ export default function DelegationManager({ user }) {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="open">Open (All Polls)</SelectItem>
-                      <SelectItem value="specific_poll">Specific Poll Only</SelectItem>
+                      <SelectItem value="open">{t('delegationManager.openAllPolls')}</SelectItem>
+                      <SelectItem value="specific_poll">{t('delegationManager.specificPollOnly')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -170,10 +172,10 @@ export default function DelegationManager({ user }) {
 
                 <div className="flex gap-2">
                   <Button type="submit" disabled={createDelegation.isPending}>
-                    Create Delegation
+                    {t('delegationManager.createDelegation')}
                   </Button>
                   <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
-                    Cancel
+                    {t('common.cancel')}
                   </Button>
                 </div>
               </motion.form>
@@ -181,7 +183,7 @@ export default function DelegationManager({ user }) {
           </AnimatePresence>
 
           {delegations.length === 0 ? (
-            <p className="text-sm text-slate-500 text-center py-8">No delegations created yet</p>
+            <p className="text-sm text-slate-500 text-center py-8">{t('delegationManager.noDelegations')}</p>
           ) : (
             <div className="space-y-3">
               {delegations.map(delegation => {
@@ -232,8 +234,8 @@ export default function DelegationManager({ user }) {
       {receivedDelegations.length > 0 && (
         <Card className="border-0 shadow-lg">
           <CardHeader>
-            <CardTitle>Delegations to Verify</CardTitle>
-            <p className="text-sm text-slate-500">People who want to delegate their vote to you</p>
+            <CardTitle>{t('delegationManager.delegationsToVerify')}</CardTitle>
+            <p className="text-sm text-slate-500">{t('delegationManager.delegationsToVerifyDesc')}</p>
           </CardHeader>
 
           <CardContent className="space-y-3">

@@ -21,8 +21,10 @@ import ReputationScore from '@/components/profile/ReputationScore';
 import ReputationBadge from '@/components/profile/ReputationBadge';
 import UserHelp from '@/components/help/UserHelp';
 import AvatarUploader from '@/components/profile/AvatarUploader';
+import { useTranslation } from 'react-i18next';
 
 export default function Profile() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     full_name: '',
@@ -179,10 +181,10 @@ export default function Profile() {
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">My Profile</h1>
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">{t('profile.title')}</h1>
             <ReputationBadge user={user} />
           </div>
-          <p className="text-slate-500">Manage your account information</p>
+          <p className="text-slate-500">{t('profile.subtitle')}</p>
         </div>
 
         <Card className="border-0 shadow-lg mb-8">
@@ -195,7 +197,7 @@ export default function Profile() {
           <CardContent className="p-6">
             <div className="space-y-2">
               <Label htmlFor="personal_bio" className="text-base font-semibold">
-                Personal Biography
+                {t('profile.personalBiography')}
               </Label>
               <Textarea
                 id="personal_bio"
@@ -206,13 +208,13 @@ export default function Profile() {
                   setFormData({ ...formData, personal_bio: value });
                   setBioError(containsExternalUrl(value) ? 'External URLs are not allowed.' : '');
                 }}
-                placeholder="Tell the community a little about yourself (max 350 characters)..."
+                placeholder={t('profile.bioPlaceholder')}
                 maxLength={350}
                 className="rounded-lg min-h-[120px] resize-none"
               />
               <div className="flex items-center justify-between text-xs">
                 <p className={bioError ? 'text-red-600 font-medium' : 'text-slate-500'}>
-                  {bioError || 'No external links or URLs allowed.'}
+                  {bioError || t('profile.noExternalLinks')}
                 </p>
                 <p className={formData.personal_bio.length >= 350 ? 'text-amber-600 font-medium' : 'text-slate-500'}>
                   {formData.personal_bio.length}/350
@@ -312,7 +314,7 @@ export default function Profile() {
               <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
                 <User className="w-6 h-6" />
               </div>
-              <CardTitle className="text-2xl">Profile Information</CardTitle>
+              <CardTitle className="text-2xl">{t('profile.profileInfo')}</CardTitle>
             </div>
           </CardHeader>
 
@@ -321,7 +323,7 @@ export default function Profile() {
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="full_name" className="text-base font-semibold">
-                    First Name <span className="text-red-500">*</span>
+                    {t('profile.firstName')} <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="full_name"
@@ -335,7 +337,7 @@ export default function Profile() {
 
                 <div className="space-y-2">
                   <Label htmlFor="last_name" className="text-base font-semibold">
-                    Last Name <span className="text-red-500">*</span>
+                    {t('profile.lastName')} <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="last_name"
@@ -350,7 +352,7 @@ export default function Profile() {
 
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-base font-semibold">
-                  Email Address
+                  {t('profile.emailAddress')}
                 </Label>
                 <Input
                   id="email"
@@ -359,12 +361,12 @@ export default function Profile() {
                   disabled
                   className="h-12 rounded-lg bg-slate-50"
                 />
-                <p className="text-xs text-slate-500">Email cannot be changed</p>
+                <p className="text-xs text-slate-500">{t('profile.emailCannotChange')}</p>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="date_of_birth" className="text-base font-semibold">
-                  Date of Birth <span className="text-red-500">*</span>
+                  {t('profile.dateOfBirth')} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="date_of_birth"
@@ -400,7 +402,7 @@ export default function Profile() {
 
               <div className="space-y-2">
                 <Label htmlFor="infomarian_id" className="text-base font-semibold">
-                  Infomarian ID <span className="text-red-500">*</span>
+                  {t('profile.infomarianIdLabel')} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="infomarian_id"
@@ -414,7 +416,7 @@ export default function Profile() {
 
               <div className="space-y-2">
                 <Label htmlFor="phone_number" className="text-base font-semibold">
-                  Phone Number
+                  {t('profile.phoneNumber')}
                 </Label>
                 <Input
                   id="phone_number"
@@ -432,12 +434,12 @@ export default function Profile() {
                     We use banks transactions because they are secure, confidential and fully accountable by both Parties. It is also a serious crime to interfere with financial transactions
                   </p>
                 </div>
-                <h3 className="text-lg font-semibold text-slate-900 mb-4">Australian Bank Details</h3>
+                <h3 className="text-lg font-semibold text-slate-900 mb-4">{t('profile.bankDetails')}</h3>
                 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="bsb" className="text-base font-semibold">
-                      BSB Number
+                      {t('profile.bsbNumber')}
                     </Label>
                     <Input
                       id="bsb"
@@ -451,7 +453,7 @@ export default function Profile() {
 
                   <div className="space-y-2">
                     <Label htmlFor="account_number" className="text-base font-semibold">
-                      Account Number
+                      {t('profile.accountNumber')}
                     </Label>
                     <Input
                       id="account_number"
@@ -465,7 +467,7 @@ export default function Profile() {
 
                 <div className="space-y-2 mt-6">
                   <Label htmlFor="account_name" className="text-base font-semibold">
-                    Account Name
+                    {t('profile.accountNameLabel')}
                   </Label>
                   <Input
                     id="account_name"
@@ -515,7 +517,7 @@ export default function Profile() {
                   ) : (
                     <>
                       <Save className="w-5 h-5 mr-2" />
-                      Save Changes
+                      {t('profile.saveChanges')}
                     </>
                   )}
                 </Button>
@@ -532,7 +534,7 @@ export default function Profile() {
                 <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
                   <BadgeCheck className="w-6 h-6" />
                 </div>
-                <CardTitle className="text-2xl">Account Validation</CardTitle>
+                <CardTitle className="text-2xl">{t('profile.accountValidation')}</CardTitle>
               </div>
             </CardHeader>
 
@@ -810,7 +812,7 @@ export default function Profile() {
 
         <Card className="border-0 shadow-lg mt-8 bg-gradient-to-br from-blue-50 to-indigo-50">
           <CardContent className="p-6">
-            <h3 className="text-lg font-semibold text-indigo-900 mb-3">Welcome to Pollee</h3>
+            <h3 className="text-lg font-semibold text-indigo-900 mb-3">{t('profile.welcomeToPollee')}</h3>
             <div className="text-slate-700 space-y-3 leading-relaxed">
               <p>
                 We believe in transparent and accountable Democracy built on trust and respect for all. Infomarians are professional users who are paid out of your voting to provide poll discussion content, to moderate discussions to ensure civility and respect are maintained, and to provide real help with using the system.

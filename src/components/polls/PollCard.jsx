@@ -8,8 +8,10 @@ import { Calendar, Users, ChevronRight, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { format } from "date-fns";
+import { useTranslation } from 'react-i18next';
 
 export default function PollCard({ poll, voteCount }) {
+  const { t } = useTranslation();
   const isActive = poll.status === 'active';
   
   const { data: comments = [] } = useQuery({
@@ -35,7 +37,7 @@ export default function PollCard({ poll, voteCount }) {
                 : 'bg-slate-100 text-slate-600 border border-slate-200'
             }`}
           >
-            {isActive ? 'Active' : 'Closed'}
+            {isActive ? t('pollCard.active') : t('pollCard.closed')}
           </Badge>
           
           <div className="flex items-center gap-1.5 text-slate-400">
@@ -59,7 +61,7 @@ export default function PollCard({ poll, voteCount }) {
             {poll.end_date && (
               <div className="flex items-center gap-2 text-slate-400">
                 <Calendar className="w-4 h-4" />
-                <span className="text-xs">Ends {format(new Date(poll.end_date), 'MMM d, yyyy')}</span>
+                <span className="text-xs">{t('pollCard.ends', { date: format(new Date(poll.end_date), 'MMM d, yyyy') })}</span>
               </div>
             )}
             
@@ -69,7 +71,7 @@ export default function PollCard({ poll, voteCount }) {
                 size="sm" 
                 className="text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 gap-1 -mr-2"
               >
-                Vote Now
+                {t('pollCard.voteNow')}
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
@@ -79,7 +81,7 @@ export default function PollCard({ poll, voteCount }) {
             <div className="flex items-center gap-2 p-3 bg-slate-50 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer">
               <MessageCircle className="w-4 h-4 text-slate-500" />
               <span className="text-sm font-medium text-slate-700">
-                {commentCount === 0 ? 'Start Discussion' : `${commentCount} ${commentCount === 1 ? 'Comment' : 'Comments'}`}
+                {commentCount === 0 ? t('pollCard.startDiscussion') : `${commentCount} ${commentCount === 1 ? t('pollCard.comment') : t('pollCard.comments')}`}
               </span>
               <ChevronRight className="w-4 h-4 text-slate-400 ml-auto" />
             </div>

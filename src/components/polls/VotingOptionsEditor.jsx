@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Trash2, GripVertical } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 export default function VotingOptionsEditor({ options, onChange, onAdd, onRemove, onUpdate, minOptions = 2 }) {
+  const { t } = useTranslation();
   const handleDragEnd = (result) => {
     if (!result.destination) return;
     if (result.destination.index === result.source.index) return;
@@ -45,7 +47,7 @@ export default function VotingOptionsEditor({ options, onChange, onAdd, onRemove
                         <div
                           {...dragProvided.dragHandleProps}
                           className="mt-1 cursor-grab active:cursor-grabbing text-slate-400 hover:text-indigo-600 transition-colors p-1"
-                          title="Drag to reorder"
+                          title={t('votingOptionsEditor.dragToReorder')}
                         >
                           <GripVertical className="w-5 h-5" />
                         </div>
@@ -55,7 +57,7 @@ export default function VotingOptionsEditor({ options, onChange, onAdd, onRemove
                         </span>
 
                         <Textarea
-                          placeholder={`Option ${index + 1}`}
+                          placeholder={t('votingOptionsEditor.option', { num: index + 1 })}
                           value={option.label}
                           onChange={(e) => onUpdate(option.id, e.target.value)}
                           className="flex-1 rounded-xl resize-none min-h-[48px] max-h-32 leading-snug"
@@ -89,7 +91,7 @@ export default function VotingOptionsEditor({ options, onChange, onAdd, onRemove
         className="w-full h-12 rounded-xl border-dashed"
       >
         <Plus className="w-4 h-4 mr-2" />
-        Add Option
+        {t('votingOptionsEditor.addOption')}
       </Button>
     </div>
   );

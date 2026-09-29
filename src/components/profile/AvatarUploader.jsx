@@ -4,11 +4,13 @@ import { base44 } from '@/api/base44Client';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Loader2, Upload, Camera } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const MAX_SIZE_MB = 2;
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 export default function AvatarUploader({ user }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const inputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
@@ -20,12 +22,12 @@ export default function AvatarUploader({ user }) {
     setError('');
 
     if (!ACCEPTED_TYPES.includes(file.type)) {
-      setError('Please upload a JPG, PNG, or WebP image.');
+      setError(t('avatarUploader.invalidType'));
       e.target.value = '';
       return;
     }
     if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-      setError(`Image must be ${MAX_SIZE_MB}MB or smaller.`);
+      setError(t('avatarUploader.tooLarge', { size: MAX_SIZE_MB }));
       e.target.value = '';
       return;
     }
@@ -36,7 +38,7 @@ export default function AvatarUploader({ user }) {
       await base44.auth.updateMe({ avatar_url: file_url });
       queryClient.invalidateQueries(['currentUser']);
     } catch (err) {
-      setError('Upload failed. Please try again.');
+      setError(t('avatarUploader.uploadFailed'));
     } finally {
       setUploading(false);
       if (inputRef.current) inputRef.current.value = '';
@@ -61,7 +63,7 @@ export default function AvatarUploader({ user }) {
           onClick={() => inputRef.current?.click()}
           disabled={uploading}
           className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-md hover:bg-indigo-700 transition-colors disabled:opacity-50"
-          title="Upload avatar"
+          title={t('avatarUploader.uploadAvatar')}
         >
           {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
         </button>
@@ -85,18 +87,18 @@ export default function AvatarUploader({ user }) {
         {uploading ? (
           <>
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            Uploading...
+            {t('avatarUploader.uploading')}
           </>
         ) : (
           <>
             <Upload className="w-4 h-4 mr-2" />
-            {user?.avatar_url ? 'Change Avatar' : 'Upload Avatar'}
+            {user?.avatar_url ? t('avatarUploader.changeAvatar') : t('avatarUploader.uploadAvatar')}
           </>
         )}
       </Button>
 
       <p className="text-xs text-slate-500 text-center max-w-xs">
-        JPG or PNG, square (1:1) recommended, at least 256×256px, max {MAX_SIZE_MB}MB.
+        {t('avatarUploader.hint', { size: MAX_SIZE_MB })}
       </p>
 
       {error && <p className="text-xs text-red-600 text-center">{error}</p>}

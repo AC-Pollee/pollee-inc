@@ -1,8 +1,10 @@
 import React from 'react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { AlertTriangle, ShieldCheck } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function ResponsibilityAgreement({ accepted, onChange, compact = false }) {
+  const { t } = useTranslation();
   if (compact) {
     return (
       <div className="flex items-start gap-2 p-2 bg-amber-50 border border-amber-200 rounded-lg">
@@ -13,7 +15,7 @@ export default function ResponsibilityAgreement({ accepted, onChange, compact = 
           className="mt-0.5"
         />
         <label htmlFor="resp-compact" className="text-xs text-amber-800 cursor-pointer leading-snug">
-          I take responsibility for my commentary
+          {t('responsibilityAgreement.compact')}
         </label>
       </div>
     );
@@ -41,20 +43,20 @@ export default function ResponsibilityAgreement({ accepted, onChange, compact = 
               onCheckedChange={onChange}
             />
             <label htmlFor="responsibility-agreement" className="text-sm font-medium text-slate-800 cursor-pointer leading-snug">
-              I take responsibility for my commentary on this post and agree to abide by the{' '}
+              {t('responsibilityAgreement.full')}{' '}
               <a
                 href="https://pollee.net/code-of-conduct"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-indigo-600 hover:text-indigo-700 underline font-semibold"
               >
-                Code of Conduct
+                {t('responsibilityAgreement.codeOfConduct')}
               </a>
             </label>
           </div>
           {!accepted && (
             <p className="text-xs text-amber-700 pl-7">
-              You must accept responsibility before posting or replying.
+              {t('responsibilityAgreement.mustAccept')}
             </p>
           )}
         </div>

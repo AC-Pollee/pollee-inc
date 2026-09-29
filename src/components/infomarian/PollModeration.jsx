@@ -10,8 +10,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CheckCircle2, XCircle, Clock, AlertCircle, FileText } from 'lucide-react';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 export default function PollModeration({ infomarian }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [rejectionReasons, setRejectionReasons] = useState({});
 
@@ -134,7 +136,7 @@ export default function PollModeration({ infomarian }) {
         <CardHeader>
           <div className="flex items-center gap-2">
             <AlertCircle className="w-5 h-5 text-amber-600" />
-            <CardTitle>Polls Awaiting Moderation</CardTitle>
+            <CardTitle>{t('pollModeration.pollsAwaiting')}</CardTitle>
           </div>
           <p className="text-sm text-slate-500 mt-2">
             Review new poll submissions and approve or reject them

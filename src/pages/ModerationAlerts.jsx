@@ -9,6 +9,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { ShieldAlert, Trash2, Ban, CheckCircle2, MessageSquare, FileText, Inbox } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 const POLL_STATUS = {
   pending: { label: 'Pending', color: 'bg-amber-100 text-amber-700' },
@@ -24,6 +25,7 @@ const COMMENT_STATUS = {
 };
 
 export default function ModerationAlerts() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [tab, setTab] = useState('comments');
@@ -137,8 +139,8 @@ export default function ModerationAlerts() {
         <Card className="max-w-md text-center">
           <CardContent className="pt-12 pb-12">
             <ShieldAlert className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">Access Denied</h2>
-            <p className="text-slate-500">Moderation access is restricted to Infomarians and Constituency administrators.</p>
+            <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">{t('moderationAlerts.accessDenied')}</h2>
+            <p className="text-slate-500">{t('moderationAlerts.accessDeniedDesc')}</p>
           </CardContent>
         </Card>
       </div>
@@ -153,8 +155,8 @@ export default function ModerationAlerts() {
             <ShieldAlert className="w-6 h-6 text-amber-600 dark:text-amber-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Moderation Alerts</h1>
-            <p className="text-sm text-slate-500">Review pending posts and comments. Strike through or remove as needed.</p>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{t('moderationAlerts.title')}</h1>
+            <p className="text-sm text-slate-500">{t('moderationAlerts.subtitle')}</p>
           </div>
         </div>
 
@@ -162,19 +164,19 @@ export default function ModerationAlerts() {
           <TabsList>
             <TabsTrigger value="comments" className="gap-2">
               <MessageSquare className="w-4 h-4" />
-              Comments
+              {t('moderationAlerts.comments')}
               {flaggedComments.length > 0 && <Badge className="bg-red-500 text-white">{flaggedComments.length}</Badge>}
             </TabsTrigger>
             <TabsTrigger value="posts" className="gap-2">
               <FileText className="w-4 h-4" />
-              Posts
+              {t('moderationAlerts.posts')}
               {pendingPolls.length > 0 && <Badge className="bg-amber-500 text-white">{pendingPolls.length}</Badge>}
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="comments" className="mt-4 space-y-3">
             {flaggedComments.length === 0 ? (
-              <EmptyState text="No comments pending moderation." />
+              <EmptyState text={t('moderationAlerts.noCommentsPending')} />
             ) : (
               flaggedComments.map(c => {
                 const poll = polls.find(p => p.id === c.poll_id);
@@ -195,13 +197,13 @@ export default function ModerationAlerts() {
                     )}
                     <div className="flex gap-2 pt-1">
                       <Button size="sm" variant="outline" onClick={() => approveComment(c)} className="text-green-700 border-green-300 hover:bg-green-50">
-                        <CheckCircle2 className="w-4 h-4 mr-1" /> Approve
+                        <CheckCircle2 className="w-4 h-4 mr-1" /> {t('moderationAlerts.approve')}
                       </Button>
                       <Button size="sm" variant="outline" onClick={() => strikeComment(c)} className="text-amber-700 border-amber-300 hover:bg-amber-50">
-                        <Ban className="w-4 h-4 mr-1" /> Strike Through
+                        <Ban className="w-4 h-4 mr-1" /> {t('moderationAlerts.strikeThrough')}
                       </Button>
                       <Button size="sm" variant="outline" onClick={() => removeComment(c)} className="text-red-700 border-red-300 hover:bg-red-50">
-                        <Trash2 className="w-4 h-4 mr-1" /> Remove
+                        <Trash2 className="w-4 h-4 mr-1" /> {t('moderationAlerts.remove')}
                       </Button>
                     </div>
                   </motion.div>
@@ -212,7 +214,7 @@ export default function ModerationAlerts() {
 
           <TabsContent value="posts" className="mt-4 space-y-3">
             {pendingPolls.length === 0 ? (
-              <EmptyState text="No posts pending moderation." />
+              <EmptyState text={t('moderationAlerts.noPostsPending')} />
             ) : (
               pendingPolls.map(p => (
                 <motion.div key={p.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
@@ -233,13 +235,13 @@ export default function ModerationAlerts() {
                   </div>
                   <div className="flex gap-2 pt-1">
                     <Button size="sm" variant="outline" onClick={() => approvePoll(p)} className="text-green-700 border-green-300 hover:bg-green-50">
-                      <CheckCircle2 className="w-4 h-4 mr-1" /> Approve
+                      <CheckCircle2 className="w-4 h-4 mr-1" /> {t('moderationAlerts.approve')}
                     </Button>
                     <Button size="sm" variant="outline" onClick={() => strikePoll(p)} className="text-amber-700 border-amber-300 hover:bg-amber-50">
-                      <Ban className="w-4 h-4 mr-1" /> Strike Through
+                      <Ban className="w-4 h-4 mr-1" /> {t('moderationAlerts.strikeThrough')}
                     </Button>
                     <Button size="sm" variant="outline" onClick={() => removePoll(p)} className="text-red-700 border-red-300 hover:bg-red-50">
-                      <Trash2 className="w-4 h-4 mr-1" /> Remove
+                      <Trash2 className="w-4 h-4 mr-1" /> {t('moderationAlerts.remove')}
                     </Button>
                   </div>
                 </motion.div>

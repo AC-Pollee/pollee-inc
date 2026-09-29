@@ -8,8 +8,10 @@ import { Input } from "@/components/ui/input";
 import { History, CheckCircle2, Clock, XCircle, RefreshCw, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 export default function VoteHistory({ userId, voterEmail }) {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const { data: votes = [], isLoading } = useQuery({
     queryKey: ['vote-history', userId],
@@ -73,7 +75,7 @@ export default function VoteHistory({ userId, voterEmail }) {
         <CardHeader>
           <div className="flex items-center gap-2">
             <History className="w-5 h-5 text-indigo-600" />
-            <CardTitle>Vote History & Change Log</CardTitle>
+            <CardTitle>{t('voteHistory.title')}</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
@@ -95,9 +97,9 @@ export default function VoteHistory({ userId, voterEmail }) {
             <History className="w-5 h-5" />
           </div>
           <div>
-            <CardTitle>Vote History & Change Log</CardTitle>
+            <CardTitle>{t('voteHistory.title')}</CardTitle>
             <p className="text-indigo-100 text-sm mt-1">
-              All your voting transactions are recorded here
+              {t('voteHistory.subtitle')}
             </p>
           </div>
         </div>
@@ -107,7 +109,7 @@ export default function VoteHistory({ userId, voterEmail }) {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
-              placeholder="Search by poll name or poll ID..."
+              placeholder={t('voteHistory.searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -119,7 +121,7 @@ export default function VoteHistory({ userId, voterEmail }) {
             <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
               <History className="w-8 h-8 text-slate-400" />
             </div>
-            <p className="text-slate-500">No voting history yet</p>
+            <p className="text-slate-500">{t('voteHistory.noHistory')}</p>
           </div>
         ) : filteredVotesByPoll.length === 0 ? (
           <div className="text-center py-8">
@@ -167,15 +169,15 @@ export default function VoteHistory({ userId, voterEmail }) {
 
                   <div className="bg-slate-50 rounded-lg p-3 space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-slate-600">Current Vote:</span>
+                      <span className="text-slate-600">{t('voteHistory.currentVote')}</span>
                       <span className="font-semibold text-slate-900">{latestVote.option_label}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-slate-600">Votes Cast:</span>
+                      <span className="text-slate-600">{t('voteHistory.votesCast')}</span>
                       <span className="font-semibold text-slate-900">{latestVote.delegated_votes_count || 1}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-slate-600">Amount:</span>
+                      <span className="text-slate-600">{t('voteHistory.amount')}</span>
                       <span className="font-semibold text-slate-900">${latestVote.transaction_amount?.toFixed(2) || '0.00'}</span>
                     </div>
                   </div>

@@ -8,8 +8,10 @@ import { Label } from "@/components/ui/label";
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 export default function TransactionForm({ pollId, pollOptions, onSubmit, currentUser, poll, franchise }) {
+  const { t } = useTranslation();
   const [selectedChoice, setSelectedChoice] = useState(null);
   const [carryingDelegation, setCarryingDelegation] = useState(false);
   const [selectedDelegations, setSelectedDelegations] = useState([]);
@@ -81,10 +83,9 @@ export default function TransactionForm({ pollId, pollOptions, onSubmit, current
               <AlertCircle className="w-5 h-5 text-amber-600" />
             </div>
             <div className="space-y-2">
-              <h3 className="font-semibold text-amber-900">Vote Change</h3>
+              <h3 className="font-semibold text-amber-900">{t('transactionForm.voteChange')}</h3>
               <p className="text-sm text-amber-700">
-                You previously voted for <span className="font-bold">{lastVote?.option_label}</span>.
-                You can change your vote by selecting a new option. Only your most recent vote will count.
+                {t('transactionForm.voteChangeDesc', { choice: lastVote?.option_label })}
               </p>
             </div>
           </div>
@@ -94,8 +95,7 @@ export default function TransactionForm({ pollId, pollOptions, onSubmit, current
       <Alert className="bg-blue-50 border-blue-200">
         <AlertCircle className="h-4 w-4 text-blue-600" />
         <AlertDescription className="text-blue-800">
-          <span className="font-semibold">Development mode:</span> The $0.55 transaction layer is suspended.
-          Selecting an option records your vote directly in the live tally — no bank transaction is processed.
+          <span className="font-semibold">{t('transactionForm.devMode')}</span>
         </AlertDescription>
       </Alert>
 
@@ -111,13 +111,13 @@ export default function TransactionForm({ pollId, pollOptions, onSubmit, current
               }}
             />
             <Label htmlFor="carryingDelegation" className="font-semibold text-blue-900 cursor-pointer">
-              Carrying Delegation
+              {t('transactionForm.carryingDelegation')}
             </Label>
           </div>
 
           {carryingDelegation && (
             <div className="space-y-2 ml-6">
-              <p className="text-sm text-blue-700 mb-2">Select delegations to carry:</p>
+              <p className="text-sm text-blue-700 mb-2">{t('transactionForm.selectDelegations')}</p>
               {availableDelegations.map(delegation => (
                 <div key={delegation.id} className="flex items-center gap-2">
                   <Checkbox
@@ -142,7 +142,7 @@ export default function TransactionForm({ pollId, pollOptions, onSubmit, current
       )}
 
       <Card className="p-6 bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-200">
-        <h3 className="font-semibold text-indigo-900 mb-4">Cast Your Vote</h3>
+        <h3 className="font-semibold text-indigo-900 mb-4">{t('transactionForm.castYourVote')}</h3>
         <div className="grid gap-3 mb-4">
           {pollOptions.map((option) => {
             const isSelected = selectedChoice === option.id;
@@ -159,7 +159,7 @@ export default function TransactionForm({ pollId, pollOptions, onSubmit, current
               >
                 {option.label}
                 {isLast && !isSelected && (
-                  <span className="ml-auto text-xs font-normal text-slate-400">current vote</span>
+                  <span className="ml-auto text-xs font-normal text-slate-400">{t('transactionForm.currentVote')}</span>
                 )}
                 {isSelected && <CheckCircle2 className="w-5 h-5 ml-auto" />}
               </Button>
@@ -175,14 +175,14 @@ export default function TransactionForm({ pollId, pollOptions, onSubmit, current
           >
             <div className="bg-white rounded-lg p-4 space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-slate-600">Your Choice:</span>
+                <span className="text-slate-600">{t('transactionForm.yourChoice')}</span>
                 <span className="font-semibold text-indigo-900">
                   {pollOptions.find(o => o.id === selectedChoice)?.label}
                 </span>
               </div>
               {carryingDelegation && (
                 <div className="flex justify-between">
-                  <span className="text-slate-600">Delegated Votes:</span>
+                  <span className="text-slate-600">{t('transactionForm.delegatedVotes')}</span>
                   <span className="font-semibold text-indigo-900">{totalVotes}</span>
                 </div>
               )}
@@ -192,7 +192,7 @@ export default function TransactionForm({ pollId, pollOptions, onSubmit, current
               className="w-full h-12 bg-indigo-600 hover:bg-indigo-700"
             >
               <CheckCircle2 className="w-5 h-5 mr-2" />
-              Submit Vote
+              {t('transactionForm.submitVote')}
             </Button>
           </motion.div>
         )}

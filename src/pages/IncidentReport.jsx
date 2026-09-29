@@ -18,6 +18,7 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import { motion } from 'framer-motion';
 import { AlertTriangle, Send, Inbox, FileText, Shield, Users, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const BOARD_EMAIL = 'ac@acproductiondesign.com';
 
@@ -42,6 +43,7 @@ const STATUS_META = {
 };
 
 export default function IncidentReport() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -182,8 +184,8 @@ You are receiving this because the report was forwarded to your level. Please re
             <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Report an Incident</h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400">File a report and forward it to the appropriate level.</p>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{t('incident.title')}</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">{t('incident.subtitle')}</p>
           </div>
         </div>
 
@@ -192,14 +194,14 @@ You are receiving this because the report was forwarded to your level. Please re
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <FileText className="w-5 h-5 text-indigo-600" />
-              New Report
+              {t('incident.newReport')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-5">
             {/* Level multi-select */}
             <div className="space-y-2">
-              <Label>Forward to <span className="text-red-500">*</span></Label>
-              <p className="text-xs text-slate-500">Select one or more levels to receive this report.</p>
+              <Label>{t('incident.forwardTo')} <span className="text-red-500">*</span></Label>
+              <p className="text-xs text-slate-500">{t('incident.forwardToHint')}</p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
                 {Object.entries(LEVEL_META).map(([key, meta]) => {
                   const Icon = meta.icon;
@@ -245,7 +247,7 @@ You are receiving this because the report was forwarded to your level. Please re
 
             {/* Priority */}
             <div className="space-y-2">
-              <Label>Priority</Label>
+              <Label>{t('incident.priority')}</Label>
               <Select value={priority} onValueChange={setPriority}>
                 <SelectTrigger className="w-full sm:w-56">
                   <SelectValue />
@@ -260,7 +262,7 @@ You are receiving this because the report was forwarded to your level. Please re
 
             {/* Description */}
             <div className="space-y-2">
-              <Label htmlFor="description">Describe the incident <span className="text-red-500">*</span></Label>
+              <Label htmlFor="description">{t('incident.describeIncident')} <span className="text-red-500">*</span></Label>
               <Textarea
                 id="description"
                 rows={6}
@@ -276,7 +278,7 @@ You are receiving this because the report was forwarded to your level. Please re
               className="w-full sm:w-auto"
             >
               <Send className="w-4 h-4 mr-2" />
-              {submitReport.isPending ? 'Submitting...' : 'Submit & Forward Report'}
+              {submitReport.isPending ? t('incident.submitting') : t('incident.submitForward')}
             </Button>
           </CardContent>
         </Card>
@@ -287,7 +289,7 @@ You are receiving this because the report was forwarded to your level. Please re
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Inbox className="w-5 h-5 text-amber-600" />
-                Inbox — Reports Forwarded to You
+                {t('incident.inbox')}
                 <Badge className="ml-1">{inboxReports.length}</Badge>
               </CardTitle>
             </CardHeader>
@@ -304,13 +306,13 @@ You are receiving this because the report was forwarded to your level. Please re
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <FileText className="w-5 h-5 text-slate-600" />
-              My Submitted Reports
+              {t('incident.myReports')}
               <Badge className="ml-1">{myReports.length}</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
             {myReports.length === 0 ? (
-              <p className="text-sm text-slate-500 py-6 text-center">You haven't submitted any reports yet.</p>
+              <p className="text-sm text-slate-500 py-6 text-center">{t('incident.noReports')}</p>
             ) : (
               <div className="space-y-3">
                 {myReports.map(r => <ReportRow key={r.id} report={r} canManage={false} onUpdate={() => {}} />)}

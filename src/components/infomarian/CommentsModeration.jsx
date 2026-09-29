@@ -9,8 +9,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CheckCircle2, XCircle, Flag, Edit2, Trash2, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 export default function CommentsModeration({ infomarian }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [editingComment, setEditingComment] = useState(null);
   const [editContent, setEditContent] = useState('');

@@ -19,8 +19,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import VotingOptionsEditor from '@/components/polls/VotingOptionsEditor';
 import AssignInfomariansDialog from '@/components/polls/AssignInfomariansDialog';
+import { useTranslation } from 'react-i18next';
 
 export default function Admin() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('create');
   
@@ -186,13 +188,13 @@ export default function Admin() {
         <Link to={createPageUrl('Home')}>
           <Button variant="ghost" className="mb-6 text-slate-600 hover:text-slate-900 -ml-2">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Polls
-          </Button>
-        </Link>
-        
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Admin Panel</h1>
-          <p className="text-slate-500">Create polls and verify votes</p>
+            {t('admin.backToPolls')}
+            </Button>
+            </Link>
+
+            <div className="mb-8">
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">{t('admin.title')}</h1>
+            <p className="text-slate-500">{t('admin.subtitle')}</p>
         </div>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
@@ -202,21 +204,21 @@ export default function Admin() {
               className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-6"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Create Poll
+              {t('admin.createPoll')}
             </TabsTrigger>
             <TabsTrigger 
               value="manage" 
               className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-6"
             >
               <Settings className="w-4 h-4 mr-2" />
-              Manage Polls
+              {t('admin.managePolls')}
             </TabsTrigger>
             <TabsTrigger 
               value="verify" 
               className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-6 relative"
             >
               <Vote className="w-4 h-4 mr-2" />
-              Verify Votes
+              {t('admin.verifyVotes')}
               {pendingVotes.length > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
                   {pendingVotes.length}
@@ -228,7 +230,7 @@ export default function Admin() {
               className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-6"
             >
               <Building2 className="w-4 h-4 mr-2" />
-              Banking
+              {t('admin.banking')}
             </TabsTrigger>
           </TabsList>
 
@@ -236,7 +238,7 @@ export default function Admin() {
             <Link to={createPageUrl('FranchiseAdmin')}>
               <Button variant="outline" className="border-indigo-200 text-indigo-700 hover:bg-indigo-50">
                 <Building2 className="w-4 h-4 mr-2" />
-                Manage Constituencies & Infomarians
+                {t('admin.manageConstituencies')}
               </Button>
             </Link>
           </div>
@@ -245,14 +247,14 @@ export default function Admin() {
           <TabsContent value="create">
             <Card className="border-0 shadow-xl">
               <CardHeader>
-                <CardTitle>Create New Poll</CardTitle>
+                <CardTitle>{t('admin.createNewPoll')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="title">Poll Question</Label>
+                  <Label htmlFor="title">{t('admin.pollQuestion')}</Label>
                   <Input
                     id="title"
-                    placeholder="What would you like to ask?"
+                    placeholder={t('admin.pollQuestionPlaceholder')}
                     value={pollTitle}
                     onChange={(e) => setPollTitle(e.target.value)}
                     className="h-12 rounded-xl"
@@ -260,10 +262,10 @@ export default function Admin() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="description">Description (optional)</Label>
+                  <Label htmlFor="description">{t('admin.description')}</Label>
                   <Textarea
                     id="description"
-                    placeholder="Add more context about this poll..."
+                    placeholder={t('admin.descriptionPlaceholder')}
                     value={pollDescription}
                     onChange={(e) => setPollDescription(e.target.value)}
                     className="rounded-xl min-h-[100px]"
@@ -271,14 +273,14 @@ export default function Admin() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="franchise">Constituency</Label>
+                  <Label htmlFor="franchise">{t('admin.constituency')}</Label>
                   <select
                     id="franchise"
                     value={franchiseId}
                     onChange={(e) => setFranchiseId(e.target.value)}
                     className="w-full h-12 px-3 rounded-xl border border-slate-200 bg-background text-foreground"
                   >
-                    <option value="">Select Constituency</option>
+                    <option value="">{t('admin.selectConstituency')}</option>
                     {franchises.map((f) => (
                       <option key={f.id} value={f.id}>
                         {f.franchise_name} ({f.postcode})
@@ -288,16 +290,16 @@ export default function Admin() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="pollLevel">Poll Level</Label>
+                  <Label htmlFor="pollLevel">{t('admin.pollLevel')}</Label>
                   <select
                     id="pollLevel"
                     value={pollLevel}
                     onChange={(e) => setPollLevel(e.target.value)}
                     className="w-full h-12 px-3 rounded-xl border border-slate-200 bg-background text-foreground"
                   >
-                    <option value="local">Local (Specific Postcodes)</option>
-                    <option value="state">State</option>
-                    <option value="federal">Federal</option>
+                    <option value="local">{t('admin.localLevel')}</option>
+                    <option value="state">{t('admin.stateLevel')}</option>
+                    <option value="federal">{t('admin.federalLevel')}</option>
                   </select>
                 </div>
 

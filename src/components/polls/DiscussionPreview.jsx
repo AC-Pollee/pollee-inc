@@ -10,8 +10,10 @@ import { Badge } from "@/components/ui/badge";
 import { Search, MessageCircle, MessageSquare, ArrowRight, Flame } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 export default function DiscussionPreview() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [selectedPollId, setSelectedPollId] = useState(null);
 
@@ -76,9 +78,9 @@ export default function DiscussionPreview() {
         <div>
           <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
             <MessageSquare className="w-6 h-6 text-indigo-600" />
-            Discussions
+            {t('discussionPreview.discussions')}
           </h2>
-          <p className="text-slate-500 mt-1">Join the conversation on active polls</p>
+          <p className="text-slate-500 mt-1">{t('discussionPreview.subtitle')}</p>
         </div>
       </div>
 
@@ -91,7 +93,7 @@ export default function DiscussionPreview() {
             setSearch(e.target.value);
             setSelectedPollId(null);
           }}
-          placeholder="Search discussions by title or ID..."
+          placeholder={t('discussionPreview.searchPlaceholder')}
           className="pl-10 bg-white"
         />
       </div>
@@ -108,7 +110,7 @@ export default function DiscussionPreview() {
       ) : filtered.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-slate-100">
           <MessageCircle className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-          <p className="text-slate-500">No discussions found matching your search.</p>
+          <p className="text-slate-500">{t('discussionPreview.noDiscussions')}</p>
         </div>
       ) : (
         <div className="grid lg:grid-cols-3 gap-6">
@@ -138,7 +140,7 @@ export default function DiscussionPreview() {
                   <div className="flex items-center gap-2 mt-2">
                     <Badge variant="secondary" className="text-xs">
                       <MessageCircle className="w-3 h-3 mr-1" />
-                      {poll.commentCount} {poll.commentCount === 1 ? 'comment' : 'comments'}
+                      {poll.commentCount} {poll.commentCount === 1 ? t('discussionPreview.comment') : t('discussionPreview.comments')}
                     </Badge>
                     <span className="text-xs text-slate-400 truncate">{poll.id}</span>
                   </div>
@@ -163,7 +165,7 @@ export default function DiscussionPreview() {
                     {discussions[0]?.id === previewPoll.id && previewPoll.commentCount > 0 && (
                       <Badge className="text-xs bg-orange-100 text-orange-700 hover:bg-orange-100">
                         <Flame className="w-3 h-3 mr-1" />
-                        Most active
+                        {t('discussionPreview.mostActive')}
                       </Badge>
                     )}
                   </div>
@@ -177,7 +179,7 @@ export default function DiscussionPreview() {
                   {previewComments.length === 0 ? (
                     <div className="text-center py-8">
                       <MessageCircle className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                      <p className="text-sm text-slate-500">No comments yet. Be the first to join the discussion.</p>
+                      <p className="text-sm text-slate-500">{t('discussionPreview.noCommentsYet')}</p>
                     </div>
                   ) : (
                     previewComments.map((c) => (
@@ -214,14 +216,14 @@ export default function DiscussionPreview() {
                 <div className="p-5 border-t border-slate-100">
                   <Link to={createPageUrl('Vote') + `?pollId=${previewPoll.id}#discussion`}>
                     <Button className="w-full bg-indigo-600 hover:bg-indigo-700">
-                      Join Discussion
+                      {t('discussionPreview.joinDiscussion')}
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </Link>
                 </div>
               </>
             ) : (
-              <div className="p-8 text-center text-slate-500">Select a discussion to preview.</div>
+              <div className="p-8 text-center text-slate-500">{t('discussionPreview.selectDiscussion')}</div>
             )}
           </div>
         </div>

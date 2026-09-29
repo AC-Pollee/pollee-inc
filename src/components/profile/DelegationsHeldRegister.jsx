@@ -5,8 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users, CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 export default function DelegationsHeldRegister({ userId }) {
+  const { t } = useTranslation();
   const { data: delegationsHeld = [], isLoading } = useQuery({
     queryKey: ['delegations-held', userId],
     queryFn: async () => {
@@ -37,7 +39,7 @@ export default function DelegationsHeldRegister({ userId }) {
     return (
       <Card className="border-0 shadow-lg mt-6">
         <CardContent className="pt-6 text-center text-slate-500">
-          Loading delegations...
+          {t('delegationsHeld.loading')}
         </CardContent>
       </Card>
     );
@@ -51,7 +53,7 @@ export default function DelegationsHeldRegister({ userId }) {
             <Users className="w-6 h-6" />
           </div>
           <div>
-            <CardTitle className="text-2xl">Delegations Held</CardTitle>
+            <CardTitle className="text-2xl">{t('delegationsHeld.title')}</CardTitle>
             <p className="text-purple-100 text-sm mt-1">
               {delegationsHeld.length} verified delegation{delegationsHeld.length !== 1 ? 's' : ''}
             </p>
@@ -63,9 +65,9 @@ export default function DelegationsHeldRegister({ userId }) {
         {delegationsHeld.length === 0 ? (
           <div className="text-center py-8">
             <Users className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-            <p className="text-slate-500">No delegations held</p>
+            <p className="text-slate-500">{t('delegationsHeld.noDelegations')}</p>
             <p className="text-sm text-slate-400 mt-1">
-              Users can delegate their voting power to you
+              {t('delegationsHeld.noDelegationsDesc')}
             </p>
           </div>
         ) : (

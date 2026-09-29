@@ -14,8 +14,10 @@ import DiscussionHeader from './DiscussionHeader';
 import ResponsibilityAgreement from './ResponsibilityAgreement';
 import ClapButton from './ClapButton';
 import { useToast } from "@/components/ui/use-toast";
+import { useTranslation } from 'react-i18next';
 
 export default function PollDiscussion({ pollId, currentUser, userAge, isClosed = false, poll }) {
+  const { t } = useTranslation();
   const [newComment, setNewComment] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [responsibilityAccepted, setResponsibilityAccepted] = useState(false);
@@ -367,7 +369,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
                     className="h-6 md:h-7 text-xs text-slate-600 hover:text-indigo-600 px-2"
                   >
                     <Reply className="w-3 h-3 mr-1" />
-                    Reply
+                    {t('pollDiscussion.reply')}
                   </Button>
                 )}
               </div>
@@ -392,7 +394,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
             <Textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Write your reply..."
+              placeholder={t('pollDiscussion.writeReply')}
               className="min-h-[80px] text-sm"
             />
             <ResponsibilityAgreement accepted={replyResponsibility} onChange={setReplyResponsibility} compact />
@@ -404,7 +406,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
                 onClick={handleSubmit}
                 className="bg-indigo-600 hover:bg-indigo-700 h-8 text-xs"
               >
-                Post Reply
+                {t('pollDiscussion.postReply')}
               </Button>
               <Button
                 type="button"
@@ -437,7 +439,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
         <div className="flex items-center justify-between flex-wrap gap-2">
           <CardTitle className="flex items-center gap-2 text-base md:text-lg">
             <MessageCircle className="w-5 h-5 text-indigo-600" />
-            Discussion Board
+            {t('pollDiscussion.discussionBoard')}
             {isArchived ? (
               <Badge className="bg-slate-200 text-slate-700 border-slate-300 text-xs gap-1">
                 <Archive className="w-3 h-3" />
@@ -451,7 +453,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
           </CardTitle>
           {isInfomarianOrAdmin && !isArchived && (
             <Badge className="bg-indigo-100 text-indigo-700 text-xs">
-              Moderator
+              {t('pollDiscussion.moderator')}
             </Badge>
           )}
         </div>
@@ -464,9 +466,9 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
           <div className="flex items-start gap-3 p-4 bg-slate-100 border border-slate-200 rounded-lg">
             <Archive className="w-5 h-5 text-slate-500 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-semibold text-slate-700">Discussion Archived</p>
+              <p className="text-sm font-semibold text-slate-700">{t('pollDiscussion.discussionArchived')}</p>
               <p className="text-xs text-slate-500 mt-1">
-                This poll's vote has concluded. The discussion thread is preserved here for future reference and is read-only.
+                {t('pollDiscussion.discussionArchivedDesc')}
               </p>
             </div>
           </div>
@@ -502,14 +504,14 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
             <Textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              placeholder={infomarian ? "Share insights as an Infomarian..." : "Share your thoughts on this issue..."}
+              placeholder={infomarian ? t('pollDiscussion.infomarianPlaceholder') : t('pollDiscussion.memberPlaceholder')}
               className="min-h-[100px] text-sm"
             />
             <ResponsibilityAgreement accepted={responsibilityAccepted} onChange={setResponsibilityAccepted} />
             <div className="flex items-center justify-between flex-wrap gap-2">
               {!isInfomarianOrAdmin && (
                 <p className="text-xs text-slate-500 flex items-center">
-                  Comments are published immediately
+                  {t('pollDiscussion.commentsPublishedImmediately')}
                 </p>
               )}
               <Button
@@ -518,7 +520,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
                 className="ml-auto bg-indigo-600 hover:bg-indigo-700 h-9 text-sm"
               >
                 <Send className="w-4 h-4 mr-2" />
-                {infomarian ? 'Post as Infomarian' : authorType === 'public' ? 'Post as Public' : 'Post Comment'}
+                {infomarian ? t('pollDiscussion.postAsInfomarian') : authorType === 'public' ? t('pollDiscussion.postAsPublic') : t('pollDiscussion.postComment')}
               </Button>
             </div>
           </form>
@@ -528,7 +530,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
           <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg text-center">
             <Lock className="w-6 h-6 text-slate-400 mx-auto mb-2" />
             <p className="text-sm text-slate-600">
-              Log in to participate in the discussion. General public and members are welcome to share their views.
+              {t('pollDiscussion.loginToParticipate')}
             </p>
           </div>
         )}
@@ -537,7 +539,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
           {topLevelComments.length === 0 ? (
             <div className="text-center py-8 text-slate-400">
               <MessageCircle className="w-8 h-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">No comments yet. Start the discussion!</p>
+              <p className="text-sm">{t('pollDiscussion.noCommentsYet')}</p>
             </div>
           ) : (
             <AnimatePresence>

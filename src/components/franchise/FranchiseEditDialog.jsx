@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function FranchiseEditDialog({ franchise, open, onClose, onSave, saving }) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     franchise_name: '',
     postcode: '',
@@ -57,12 +59,12 @@ export default function FranchiseEditDialog({ franchise, open, onClose, onSave, 
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>Edit Constituency</DialogTitle>
+          <DialogTitle>{t('franchiseEditDialog.title')}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
           <div className="space-y-2">
-            <Label htmlFor="edit-franchise_name">Constituency Name</Label>
+            <Label htmlFor="edit-franchise_name">{t('franchiseEditDialog.constituencyName')}</Label>
             <Input
               id="edit-franchise_name"
               value={formData.franchise_name}
@@ -72,7 +74,7 @@ export default function FranchiseEditDialog({ franchise, open, onClose, onSave, 
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-postcode">Primary Postcode</Label>
+              <Label htmlFor="edit-postcode">{t('franchiseEditDialog.primaryPostcode')}</Label>
               <Input
                 id="edit-postcode"
                 value={formData.postcode}
@@ -80,7 +82,7 @@ export default function FranchiseEditDialog({ franchise, open, onClose, onSave, 
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-state">State/Territory</Label>
+              <Label htmlFor="edit-state">{t('franchiseEditDialog.stateTerritory')}</Label>
               <Input
                 id="edit-state"
                 value={formData.state}
@@ -90,7 +92,7 @@ export default function FranchiseEditDialog({ franchise, open, onClose, onSave, 
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="edit-postcodes_served">Postcodes Served (comma-separated)</Label>
+            <Label htmlFor="edit-postcodes_served">{t('franchiseEditDialog.postcodesServed')}</Label>
             <Input
               id="edit-postcodes_served"
               value={formData.postcodes_served}
@@ -100,7 +102,7 @@ export default function FranchiseEditDialog({ franchise, open, onClose, onSave, 
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="edit-owner_email">Owner Email</Label>
+            <Label htmlFor="edit-owner_email">{t('franchiseEditDialog.ownerEmail')}</Label>
             <Input
               id="edit-owner_email"
               type="email"
@@ -111,7 +113,7 @@ export default function FranchiseEditDialog({ franchise, open, onClose, onSave, 
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-contact_phone">Contact Phone</Label>
+              <Label htmlFor="edit-contact_phone">{t('franchiseEditDialog.contactPhone')}</Label>
               <Input
                 id="edit-contact_phone"
                 value={formData.contact_phone}
@@ -119,7 +121,7 @@ export default function FranchiseEditDialog({ franchise, open, onClose, onSave, 
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-status">Status</Label>
+              <Label htmlFor="edit-status">{t('franchiseEditDialog.status')}</Label>
               <select
                 id="edit-status"
                 value={formData.status}
@@ -136,7 +138,7 @@ export default function FranchiseEditDialog({ franchise, open, onClose, onSave, 
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose} disabled={saving}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button
             onClick={handleSubmit}
@@ -144,7 +146,7 @@ export default function FranchiseEditDialog({ franchise, open, onClose, onSave, 
             className="bg-indigo-600 hover:bg-indigo-700"
           >
             {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
-            Save Changes
+            {t('franchiseEditDialog.saveChanges')}
           </Button>
         </DialogFooter>
       </DialogContent>

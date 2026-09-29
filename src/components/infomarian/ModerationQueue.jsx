@@ -12,8 +12,10 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 export default function ModerationQueue({ infomarian }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('pending');
 
@@ -190,33 +192,33 @@ export default function ModerationQueue({ infomarian }) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <MessageCircle className="w-5 h-5 text-indigo-600" />
-            Moderation Queue
+            {t('modQueue.moderationQueue')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-3 mb-6">
               <TabsTrigger value="pending" className="relative">
-                Pending
+                {t('modQueue.pending')}
                 {pendingComments.length > 0 && (
                   <Badge className="ml-2 bg-amber-500 text-white">{pendingComments.length}</Badge>
                 )}
               </TabsTrigger>
               <TabsTrigger value="flagged" className="relative">
-                Flagged
+                {t('modQueue.flagged')}
                 {flaggedComments.length > 0 && (
                   <Badge className="ml-2 bg-red-500 text-white">{flaggedComments.length}</Badge>
                 )}
               </TabsTrigger>
-              <TabsTrigger value="recent">Recent Actions</TabsTrigger>
+              <TabsTrigger value="recent">{t('modQueue.recentActions')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="pending" className="space-y-4">
               {pendingComments.length === 0 ? (
                 <div className="text-center py-12">
                   <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-slate-900 mb-2">All Caught Up!</h3>
-                  <p className="text-slate-500">No pending comments at this time.</p>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2">{t('modQueue.allCaughtUp')}</h3>
+                  <p className="text-slate-500">{t('modQueue.noPending')}</p>
                 </div>
               ) : (
                 pendingComments.map(comment => renderCommentCard(comment))

@@ -3,15 +3,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
-/**
- * Clap button for a comment.
- * - Shows a clap icon + total clap count.
- * - Illuminates when the current user has clapped.
- * - On clap: records the clap and awards the poster +3 reputation points.
- * - Disabled for guests, archived context, or the comment's own author.
- */
 export default function ClapButton({ comment, currentUser, claps = [], disabled = false }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const count = claps.length;
@@ -21,7 +16,6 @@ export default function ClapButton({ comment, currentUser, claps = [], disabled 
 
   const awardPoints = useMutation({
     mutationFn: async () => {
-      // Award the poster +3 reputation points
       if (!comment.user_email) return;
       const users = await base44.entities.User.filter({ email: comment.user_email });
       const poster = users[0];
@@ -71,12 +65,12 @@ export default function ClapButton({ comment, currentUser, claps = [], disabled 
       }`}
       title={
         isOwnComment
-          ? "You can't clap your own comment"
+          ? t('clapButton.ownComment')
           : hasClapped
-            ? 'You applauded this'
+            ? t('clapButton.alreadyClapped')
             : canClap
-              ? 'Applaud this comment (+3 points to author)'
-              : 'Log in to applaud'
+              ? t('clapButton.canClap')
+              : t('clapButton.loginToClap')
       }
     >
       <motion.span

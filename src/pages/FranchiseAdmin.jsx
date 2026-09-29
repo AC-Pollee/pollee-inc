@@ -11,8 +11,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Building2, Users, Plus, Trash2, Search, Pencil, Loader2, FileText } from 'lucide-react';
 import FranchiseEditDialog from '@/components/franchise/FranchiseEditDialog';
+import { useTranslation } from 'react-i18next';
 
 export default function FranchiseAdmin() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   
   const { data: currentUser } = useQuery({
@@ -327,8 +329,8 @@ export default function FranchiseAdmin() {
         <Card className="max-w-md mx-auto text-center">
           <CardContent className="pt-12 pb-12">
             <Building2 className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-slate-900 mb-2">Access Denied</h2>
-            <p className="text-slate-500">You don't have permission to manage constituencies.</p>
+            <h2 className="text-xl font-semibold text-slate-900 mb-2">{t('franchiseAdmin.accessDenied')}</h2>
+            <p className="text-slate-500">{t('franchiseAdmin.accessDeniedDesc')}</p>
           </CardContent>
         </Card>
       </div>
@@ -341,24 +343,24 @@ export default function FranchiseAdmin() {
         <Link to={createPageUrl('Admin')}>
           <Button variant="ghost" className="mb-6 text-slate-600 hover:text-slate-900 -ml-2">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Admin
-          </Button>
-        </Link>
+            {t('franchiseAdmin.backToAdmin')}
+            </Button>
+            </Link>
 
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Constituency Management</h1>
-          <p className="text-slate-500">Manage constituencies and Infomarians</p>
+            <div className="mb-8">
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">{t('franchiseAdmin.title')}</h1>
+            <p className="text-slate-500">{t('franchiseAdmin.subtitle')}</p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="bg-white border border-slate-200 p-1 rounded-xl shadow-sm">
             <TabsTrigger value="franchises" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-6">
               <Building2 className="w-4 h-4 mr-2" />
-              Constituencies
+              {t('franchiseAdmin.constituencies')}
             </TabsTrigger>
             <TabsTrigger value="infomarians" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-6">
               <Users className="w-4 h-4 mr-2" />
-              Infomarians
+              {t('franchiseAdmin.infomarians')}
             </TabsTrigger>
           </TabsList>
 
@@ -366,12 +368,12 @@ export default function FranchiseAdmin() {
           <TabsContent value="franchises" className="space-y-6">
             <Card className="border-0 shadow-xl">
               <CardHeader>
-                <CardTitle>Create New Constituency</CardTitle>
+                <CardTitle>{t('franchiseAdmin.createNewConstituency')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="franchise_name">Constituency Name</Label>
+                    <Label htmlFor="franchise_name">{t('franchiseAdmin.constituencyName')}</Label>
                     <Input
                       id="franchise_name"
                       value={franchiseData.franchise_name}
@@ -380,7 +382,7 @@ export default function FranchiseAdmin() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="postcode">Primary Postcode</Label>
+                    <Label htmlFor="postcode">{t('franchiseAdmin.primaryPostcode')}</Label>
                     <Input
                       id="postcode"
                       value={franchiseData.postcode}
@@ -391,7 +393,7 @@ export default function FranchiseAdmin() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="postcodes_served">Postcodes Served (comma-separated)</Label>
+                  <Label htmlFor="postcodes_served">{t('franchiseAdmin.postcodesServed')}</Label>
                   <Input
                     id="postcodes_served"
                     value={franchiseData.postcodes_served}
@@ -401,7 +403,7 @@ export default function FranchiseAdmin() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="state">State/Territory</Label>
+                  <Label htmlFor="state">{t('franchiseAdmin.stateTerritory')}</Label>
                   <Input
                     id="state"
                     value={franchiseData.state}
@@ -690,7 +692,7 @@ export default function FranchiseAdmin() {
           <TabsContent value="infomarians" className="space-y-6">
             <Card className="border-0 shadow-xl">
               <CardHeader>
-                <CardTitle>Add New Infomarian</CardTitle>
+                <CardTitle>{t('franchiseAdmin.addNewInfomarian')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">

@@ -10,8 +10,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Vote, Eye, MessageSquare, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 export default function AssignedPolls({ infomarian }) {
+  const { t } = useTranslation();
   const { data: polls = [], isLoading } = useQuery({
     queryKey: ['assignedPolls', infomarian.id],
     queryFn: async () => {
@@ -59,8 +61,8 @@ export default function AssignedPolls({ infomarian }) {
       <Card className="border-0 shadow-xl text-center">
         <CardContent className="pt-12 pb-12">
           <Vote className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-slate-900 mb-2">No Assigned Polls</h3>
-          <p className="text-slate-500">You don't have any polls assigned to moderate yet.</p>
+          <h3 className="text-lg font-semibold text-slate-900 mb-2">{t('assignedPolls.noAssignedPolls')}</h3>
+          <p className="text-slate-500">{t('assignedPolls.noAssignedPollsDesc')}</p>
         </CardContent>
       </Card>
     );

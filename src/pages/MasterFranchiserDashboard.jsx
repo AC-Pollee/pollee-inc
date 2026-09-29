@@ -9,8 +9,10 @@ import { Shield, Building2, Users, Vote, BarChart3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import ConstituencyHelp from '@/components/help/ConstituencyHelp';
+import { useTranslation } from 'react-i18next';
 
 export default function MasterFranchiserDashboard() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('overview');
 
   const { data: user } = useQuery({
@@ -53,8 +55,8 @@ export default function MasterFranchiserDashboard() {
         <Card className="max-w-md mx-auto text-center">
           <CardContent className="pt-12 pb-12">
             <Shield className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-slate-900 mb-2">Access Denied</h2>
-            <p className="text-slate-500">You don't have Master Constituency access.</p>
+            <h2 className="text-xl font-semibold text-slate-900 mb-2">{t('masterDash.accessDenied')}</h2>
+            <p className="text-slate-500">{t('masterDash.accessDeniedDesc')}</p>
           </CardContent>
         </Card>
       </div>
@@ -67,9 +69,9 @@ export default function MasterFranchiserDashboard() {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <Shield className="w-8 h-8 text-purple-600" />
-            <h1 className="text-3xl font-bold text-slate-900">Master Constituency Dashboard</h1>
+            <h1 className="text-3xl font-bold text-slate-900">{t('masterDash.title')}</h1>
           </div>
-          <p className="text-slate-500">System-wide oversight and management</p>
+          <p className="text-slate-500">{t('masterDash.subtitle')}</p>
         </div>
 
         {/* Overview Stats */}
@@ -78,7 +80,7 @@ export default function MasterFranchiserDashboard() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 mb-1">Total Constituencies</p>
+                  <p className="text-sm text-slate-500 mb-1">{t('masterDash.totalConstituencies')}</p>
                   <p className="text-3xl font-bold text-slate-900">{franchises.length}</p>
                 </div>
                 <Building2 className="w-10 h-10 text-blue-600 opacity-20" />
@@ -90,7 +92,7 @@ export default function MasterFranchiserDashboard() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 mb-1">Total Infomarians</p>
+                  <p className="text-sm text-slate-500 mb-1">{t('masterDash.totalInfomarians')}</p>
                   <p className="text-3xl font-bold text-slate-900">{infomarians.length}</p>
                 </div>
                 <Users className="w-10 h-10 text-emerald-600 opacity-20" />
@@ -102,7 +104,7 @@ export default function MasterFranchiserDashboard() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 mb-1">Active Polls</p>
+                  <p className="text-sm text-slate-500 mb-1">{t('masterDash.activePolls')}</p>
                   <p className="text-3xl font-bold text-slate-900">{activePolls.length}</p>
                 </div>
                 <Vote className="w-10 h-10 text-indigo-600 opacity-20" />
@@ -114,7 +116,7 @@ export default function MasterFranchiserDashboard() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 mb-1">Total Votes</p>
+                  <p className="text-sm text-slate-500 mb-1">{t('masterDash.totalVotes')}</p>
                   <p className="text-3xl font-bold text-slate-900">{totalVotes}</p>
                 </div>
                 <BarChart3 className="w-10 h-10 text-purple-600 opacity-20" />
@@ -125,42 +127,42 @@ export default function MasterFranchiserDashboard() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="bg-white border border-slate-200 p-1 rounded-xl shadow-sm">
-            <TabsTrigger value="overview" className="rounded-lg">Overview</TabsTrigger>
-            <TabsTrigger value="franchises" className="rounded-lg">Constituencies</TabsTrigger>
-            <TabsTrigger value="infomarians" className="rounded-lg">Infomarians</TabsTrigger>
-            <TabsTrigger value="polls" className="rounded-lg">Polls</TabsTrigger>
+            <TabsTrigger value="overview" className="rounded-lg">{t('masterDash.overview')}</TabsTrigger>
+            <TabsTrigger value="franchises" className="rounded-lg">{t('masterDash.constituencies')}</TabsTrigger>
+            <TabsTrigger value="infomarians" className="rounded-lg">{t('masterDash.infomarians')}</TabsTrigger>
+            <TabsTrigger value="polls" className="rounded-lg">{t('masterDash.polls')}</TabsTrigger>
             <TabsTrigger value="moderation" className="rounded-lg">
-              Moderation
+              {t('masterDash.moderation')}
               {pendingComments.length > 0 && (
                 <Badge className="ml-2 bg-red-500 text-white">{pendingComments.length}</Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="help" className="rounded-lg">Help</TabsTrigger>
+            <TabsTrigger value="help" className="rounded-lg">{t('masterDash.help')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="mt-6">
             <div className="grid gap-6">
               <Card className="border-0 shadow-lg">
                 <CardHeader>
-                  <CardTitle>Quick Actions</CardTitle>
+                  <CardTitle>{t('masterDash.quickActions')}</CardTitle>
                 </CardHeader>
                 <CardContent className="grid md:grid-cols-3 gap-4">
                   <Link to={createPageUrl('FranchiseAdmin')}>
                     <Button className="w-full h-20 flex flex-col gap-2" variant="outline">
                       <Building2 className="w-6 h-6" />
-                      <span>Manage Constituencies</span>
+                      <span>{t('masterDash.manageConstituencies')}</span>
                     </Button>
                   </Link>
                   <Link to={createPageUrl('Admin')}>
                     <Button className="w-full h-20 flex flex-col gap-2" variant="outline">
                       <Vote className="w-6 h-6" />
-                      <span>Manage Polls</span>
+                      <span>{t('masterDash.managePolls')}</span>
                     </Button>
                   </Link>
                   <Link to={createPageUrl('Results')}>
                     <Button className="w-full h-20 flex flex-col gap-2" variant="outline">
                       <BarChart3 className="w-6 h-6" />
-                      <span>View All Results</span>
+                      <span>{t('masterDash.viewAllResults')}</span>
                     </Button>
                   </Link>
                 </CardContent>
@@ -168,18 +170,18 @@ export default function MasterFranchiserDashboard() {
 
               <Card className="border-0 shadow-lg">
                 <CardHeader>
-                  <CardTitle>System Status</CardTitle>
+                  <CardTitle>{t('masterDash.systemStatus')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
-                      <span className="text-slate-700">Active Constituencies</span>
+                      <span className="text-slate-700">{t('masterDash.activeConstituencies')}</span>
                       <Badge className="bg-emerald-100 text-emerald-700">
                         {franchises.filter(f => f.status === 'active').length} Active
                       </Badge>
                     </div>
                     <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
-                      <span className="text-slate-700">Pending Moderation</span>
+                      <span className="text-slate-700">{t('masterDash.pendingModeration')}</span>
                       <Badge className={pendingComments.length > 0 ? "bg-amber-100 text-amber-700" : "bg-slate-100 text-slate-600"}>
                         {pendingComments.length} Items
                       </Badge>
@@ -193,7 +195,7 @@ export default function MasterFranchiserDashboard() {
           <TabsContent value="franchises" className="mt-6">
             <Card className="border-0 shadow-lg">
               <CardHeader>
-                <CardTitle>All Constituencies</CardTitle>
+                <CardTitle>{t('masterDash.allConstituencies')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -220,7 +222,7 @@ export default function MasterFranchiserDashboard() {
           <TabsContent value="infomarians" className="mt-6">
             <Card className="border-0 shadow-lg">
               <CardHeader>
-                <CardTitle>All Infomarians</CardTitle>
+                <CardTitle>{t('masterDash.allInfomarians')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -248,9 +250,9 @@ export default function MasterFranchiserDashboard() {
             <Card className="border-0 shadow-lg">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle>All Polls</CardTitle>
+                  <CardTitle>{t('masterDash.allPolls')}</CardTitle>
                   <Link to={createPageUrl('Admin')}>
-                    <Button size="sm">Create Poll</Button>
+                    <Button size="sm">{t('masterDash.createPoll')}</Button>
                   </Link>
                 </div>
               </CardHeader>
@@ -275,12 +277,12 @@ export default function MasterFranchiserDashboard() {
           <TabsContent value="moderation" className="mt-6">
             <Card className="border-0 shadow-lg">
               <CardHeader>
-                <CardTitle>Pending Moderation</CardTitle>
+                <CardTitle>{t('masterDash.pendingModerationTitle')}</CardTitle>
               </CardHeader>
               <CardContent>
                 {pendingComments.length === 0 ? (
                   <div className="text-center py-8 text-slate-500">
-                    No items pending moderation
+                    {t('masterDash.noItemsPending')}
                   </div>
                 ) : (
                   <div className="space-y-3">

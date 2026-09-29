@@ -19,8 +19,10 @@ import UserSupport from '@/components/infomarian/UserSupport';
 import TaskAssignment from '@/components/infomarian/TaskAssignment';
 import PollModeration from '@/components/infomarian/PollModeration';
 import InfomarianHelp from '@/components/help/InfomarianHelp';
+import { useTranslation } from 'react-i18next';
 
 export default function InfomarianDashboard() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('queue');
 
   const { data: user } = useQuery({
@@ -66,11 +68,11 @@ export default function InfomarianDashboard() {
           <Card className="border-0 shadow-xl">
             <CardContent className="pt-12 pb-12">
               <AlertCircle className="w-16 h-16 text-amber-500 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">Not an Infomarian</h2>
-              <p className="text-slate-600">You need Infomarian credentials to access this dashboard.</p>
+              <h2 className="text-2xl font-bold text-slate-900 mb-2">{t('infomarianDash.notInfomarian')}</h2>
+              <p className="text-slate-600">{t('infomarianDash.notInfomarianDesc')}</p>
               <Link to={createPageUrl('Home')}>
                 <Button className="mt-6 bg-indigo-600 hover:bg-indigo-700">
-                  Go to Home
+                  {t('infomarianDash.goToHome')}
                 </Button>
               </Link>
             </CardContent>
@@ -86,15 +88,15 @@ export default function InfomarianDashboard() {
         <Link to={createPageUrl('Home')}>
           <Button variant="ghost" className="mb-6 text-slate-600 hover:text-slate-900 -ml-2">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Home
-          </Button>
-        </Link>
+            {t('infomarianDash.backToHome')}
+            </Button>
+            </Link>
 
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
+            <div className="mb-8">
+            <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-slate-900 mb-2">Infomarian Dashboard</h1>
-              <p className="text-slate-500">Welcome, {infomarian.full_name}</p>
+              <h1 className="text-3xl font-bold text-slate-900 mb-2">{t('infomarianDash.title')}</h1>
+              <p className="text-slate-500">{t('infomarianDash.welcome', { name: infomarian.full_name })}</p>
             </div>
             <Badge className="bg-purple-100 text-purple-700 px-4 py-2 text-base">
               {infomarian.infomarian_id}
@@ -113,7 +115,7 @@ export default function InfomarianDashboard() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-600 mb-1">Total Earnings</p>
+                    <p className="text-sm text-slate-600 mb-1">{t('infomarianDash.totalEarnings')}</p>
                     <p className="text-2xl font-bold text-emerald-700">
                       ${(infomarian.total_earnings || 0).toFixed(2)}
                     </p>
@@ -135,7 +137,7 @@ export default function InfomarianDashboard() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-600 mb-1">Pending Comments</p>
+                    <p className="text-sm text-slate-600 mb-1">{t('infomarianDash.pendingComments')}</p>
                     <p className="text-2xl font-bold text-amber-700">{pendingComments.length}</p>
                   </div>
                   <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
@@ -155,7 +157,7 @@ export default function InfomarianDashboard() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-600 mb-1">Pending Media</p>
+                    <p className="text-sm text-slate-600 mb-1">{t('infomarianDash.pendingMedia')}</p>
                     <p className="text-2xl font-bold text-blue-700">{pendingMedia.length}</p>
                   </div>
                   <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
@@ -175,7 +177,7 @@ export default function InfomarianDashboard() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-600 mb-1">Moderation Level</p>
+                    <p className="text-sm text-slate-600 mb-1">{t('infomarianDash.moderationLevel')}</p>
                     <p className="text-lg font-bold text-purple-700 capitalize">
                       {infomarian.moderation_level}
                     </p>
@@ -194,7 +196,7 @@ export default function InfomarianDashboard() {
           <TabsList className="bg-white border border-slate-200 p-1 rounded-xl shadow-sm flex-wrap">
             <TabsTrigger value="queue" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4 relative">
               <AlertCircle className="w-4 h-4 mr-2" />
-              Queue
+              {t('infomarianDash.queue')}
               {pendingComments.length > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
                   {pendingComments.length}
@@ -203,7 +205,7 @@ export default function InfomarianDashboard() {
             </TabsTrigger>
             <TabsTrigger value="poll-moderation" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4 relative">
               <AlertCircle className="w-4 h-4 mr-2" />
-              Poll Review
+              {t('infomarianDash.pollReview')}
               {pendingPolls.length > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
                   {pendingPolls.length}
@@ -212,15 +214,15 @@ export default function InfomarianDashboard() {
             </TabsTrigger>
             <TabsTrigger value="polls" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
               <BarChart3 className="w-4 h-4 mr-2" />
-              My Polls
+              {t('infomarianDash.myPolls')}
             </TabsTrigger>
             <TabsTrigger value="comments" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
               <MessageSquare className="w-4 h-4 mr-2" />
-              Moderate
+              {t('infomarianDash.moderate')}
             </TabsTrigger>
             <TabsTrigger value="media" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4 relative">
               <Image className="w-4 h-4 mr-2" />
-              Media
+              {t('infomarianDash.media')}
               {pendingMedia.length > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
                   {pendingMedia.length}
@@ -228,20 +230,20 @@ export default function InfomarianDashboard() {
               )}
             </TabsTrigger>
             <TabsTrigger value="users" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
-              Users
+              {t('infomarianDash.users')}
             </TabsTrigger>
             <TabsTrigger value="support" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
-              Support
+              {t('infomarianDash.support')}
             </TabsTrigger>
             <TabsTrigger value="tasks" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
-              Tasks
+              {t('infomarianDash.tasks')}
             </TabsTrigger>
             <TabsTrigger value="earnings" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
               <DollarSign className="w-4 h-4 mr-2" />
-              Earnings
+              {t('infomarianDash.earnings')}
             </TabsTrigger>
             <TabsTrigger value="help" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
-              Help
+              {t('infomarianDash.help')}
             </TabsTrigger>
           </TabsList>
 

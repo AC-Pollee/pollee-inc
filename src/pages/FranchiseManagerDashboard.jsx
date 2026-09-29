@@ -9,8 +9,10 @@ import { Building2, Users, Vote, BarChart3, UserPlus, Shield } from 'lucide-reac
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import ConstituencyHelp from '@/components/help/ConstituencyHelp';
+import { useTranslation } from 'react-i18next';
 
 export default function FranchiseManagerDashboard() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('overview');
 
   const { data: user } = useQuery({
@@ -50,8 +52,8 @@ export default function FranchiseManagerDashboard() {
         <Card className="max-w-md mx-auto text-center">
           <CardContent className="pt-12 pb-12">
             <Building2 className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-slate-900 mb-2">Access Denied</h2>
-            <p className="text-slate-500">You don't have Constituency Manager access.</p>
+            <h2 className="text-xl font-semibold text-slate-900 mb-2">{t('franchiseManagerDash.accessDenied')}</h2>
+            <p className="text-slate-500">{t('franchiseManagerDash.accessDeniedDesc')}</p>
           </CardContent>
         </Card>
       </div>
@@ -64,8 +66,8 @@ export default function FranchiseManagerDashboard() {
         <Card className="max-w-md mx-auto text-center">
           <CardContent className="pt-12 pb-12">
             <Building2 className="w-16 h-16 text-amber-400 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-slate-900 mb-2">No Constituency Assigned</h2>
-            <p className="text-slate-500">Contact your administrator to assign a constituency to your account.</p>
+            <h2 className="text-xl font-semibold text-slate-900 mb-2">{t('franchiseManagerDash.noConstituency')}</h2>
+            <p className="text-slate-500">{t('franchiseManagerDash.noConstituencyDesc')}</p>
           </CardContent>
         </Card>
       </div>
@@ -78,7 +80,7 @@ export default function FranchiseManagerDashboard() {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <Building2 className="w-8 h-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-slate-900">Constituency Manager Dashboard</h1>
+            <h1 className="text-3xl font-bold text-slate-900">{t('franchiseManagerDash.title')}</h1>
           </div>
           <p className="text-slate-500">{myFranchise.franchise_name} • {myFranchise.postcode}</p>
         </div>
@@ -89,7 +91,7 @@ export default function FranchiseManagerDashboard() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 mb-1">My Infomarians</p>
+                  <p className="text-sm text-slate-500 mb-1">{t('franchiseManagerDash.myInfomarians')}</p>
                   <p className="text-3xl font-bold text-slate-900">{myFranchiseInfomarians.length}</p>
                 </div>
                 <Users className="w-10 h-10 text-emerald-600 opacity-20" />
@@ -101,7 +103,7 @@ export default function FranchiseManagerDashboard() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 mb-1">Active Polls</p>
+                  <p className="text-sm text-slate-500 mb-1">{t('franchiseManagerDash.activePolls')}</p>
                   <p className="text-3xl font-bold text-slate-900">{activePolls.length}</p>
                 </div>
                 <Vote className="w-10 h-10 text-indigo-600 opacity-20" />
@@ -113,7 +115,7 @@ export default function FranchiseManagerDashboard() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 mb-1">Total Polls</p>
+                  <p className="text-sm text-slate-500 mb-1">{t('franchiseManagerDash.totalPolls')}</p>
                   <p className="text-3xl font-bold text-slate-900">{myFranchisePolls.length}</p>
                 </div>
                 <BarChart3 className="w-10 h-10 text-purple-600 opacity-20" />
@@ -125,7 +127,7 @@ export default function FranchiseManagerDashboard() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500 mb-1">Constituency Status</p>
+                  <p className="text-sm text-slate-500 mb-1">{t('franchiseManagerDash.constituencyStatus')}</p>
                   <Badge className={myFranchise.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}>
                     {myFranchise.status}
                   </Badge>
@@ -138,36 +140,36 @@ export default function FranchiseManagerDashboard() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="bg-white border border-slate-200 p-1 rounded-xl shadow-sm">
-            <TabsTrigger value="overview" className="rounded-lg">Overview</TabsTrigger>
-            <TabsTrigger value="infomarians" className="rounded-lg">Infomarians</TabsTrigger>
-            <TabsTrigger value="polls" className="rounded-lg">Polls</TabsTrigger>
-            <TabsTrigger value="registration" className="rounded-lg">User Registration</TabsTrigger>
-            <TabsTrigger value="help" className="rounded-lg">Help</TabsTrigger>
+            <TabsTrigger value="overview" className="rounded-lg">{t('franchiseManagerDash.overview')}</TabsTrigger>
+            <TabsTrigger value="infomarians" className="rounded-lg">{t('franchiseManagerDash.infomarians')}</TabsTrigger>
+            <TabsTrigger value="polls" className="rounded-lg">{t('franchiseManagerDash.polls')}</TabsTrigger>
+            <TabsTrigger value="registration" className="rounded-lg">{t('franchiseManagerDash.userRegistration')}</TabsTrigger>
+            <TabsTrigger value="help" className="rounded-lg">{t('franchiseManagerDash.help')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="mt-6">
             <div className="grid gap-6">
               <Card className="border-0 shadow-lg">
                 <CardHeader>
-                  <CardTitle>Quick Actions</CardTitle>
+                  <CardTitle>{t('franchiseManagerDash.quickActions')}</CardTitle>
                 </CardHeader>
                 <CardContent className="grid md:grid-cols-3 gap-4">
                   <Link to={createPageUrl('FranchiseAdmin')}>
                     <Button className="w-full h-20 flex flex-col gap-2" variant="outline">
                       <Users className="w-6 h-6" />
-                      <span>Manage Infomarians</span>
+                      <span>{t('franchiseManagerDash.manageInfomarians')}</span>
                     </Button>
                   </Link>
                   <Link to={createPageUrl('Admin')}>
                     <Button className="w-full h-20 flex flex-col gap-2" variant="outline">
                       <Vote className="w-6 h-6" />
-                      <span>Create Poll</span>
+                      <span>{t('franchiseManagerDash.createPoll')}</span>
                     </Button>
                   </Link>
                   <Link to={createPageUrl('Results')}>
                     <Button className="w-full h-20 flex flex-col gap-2" variant="outline">
                       <BarChart3 className="w-6 h-6" />
-                      <span>View Results</span>
+                      <span>{t('franchiseManagerDash.viewResults')}</span>
                     </Button>
                   </Link>
                 </CardContent>
@@ -175,24 +177,24 @@ export default function FranchiseManagerDashboard() {
 
               <Card className="border-0 shadow-lg">
                 <CardHeader>
-                  <CardTitle>Constituency Information</CardTitle>
+                  <CardTitle>{t('franchiseManagerDash.constituencyInfo')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Constituency Name:</span>
+                      <span className="text-slate-500">{t('franchiseManagerDash.constituencyName')}</span>
                       <span className="font-semibold">{myFranchise.franchise_name}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Primary Postcode:</span>
+                      <span className="text-slate-500">{t('franchiseManagerDash.primaryPostcode')}</span>
                       <span className="font-semibold">{myFranchise.postcode}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500">State:</span>
+                      <span className="text-slate-500">{t('franchiseManagerDash.state')}</span>
                       <span className="font-semibold">{myFranchise.state}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Contact:</span>
+                      <span className="text-slate-500">{t('franchiseManagerDash.contact')}</span>
                       <span className="font-semibold">{myFranchise.contact_phone || 'Not set'}</span>
                     </div>
                   </div>
@@ -205,11 +207,11 @@ export default function FranchiseManagerDashboard() {
             <Card className="border-0 shadow-lg">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle>My Infomarians</CardTitle>
+                  <CardTitle>{t('franchiseManagerDash.myInfomariansTitle')}</CardTitle>
                   <Link to={createPageUrl('FranchiseAdmin')}>
                     <Button size="sm">
                       <UserPlus className="w-4 h-4 mr-2" />
-                      Add Infomarian
+                      {t('franchiseManagerDash.addInfomarian')}
                     </Button>
                   </Link>
                 </div>
@@ -217,7 +219,7 @@ export default function FranchiseManagerDashboard() {
               <CardContent>
                 {myFranchiseInfomarians.length === 0 ? (
                   <div className="text-center py-8 text-slate-500">
-                    No infomarians assigned yet
+                    {t('franchiseManagerDash.noInfomarians')}
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -245,16 +247,16 @@ export default function FranchiseManagerDashboard() {
             <Card className="border-0 shadow-lg">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle>My Polls</CardTitle>
+                  <CardTitle>{t('franchiseManagerDash.myPolls')}</CardTitle>
                   <Link to={createPageUrl('Admin')}>
-                    <Button size="sm">Create Poll</Button>
+                    <Button size="sm">{t('franchiseManagerDash.createPoll')}</Button>
                   </Link>
                 </div>
               </CardHeader>
               <CardContent>
                 {myFranchisePolls.length === 0 ? (
                   <div className="text-center py-8 text-slate-500">
-                    No polls created yet
+                    {t('franchiseManagerDash.noPollsCreated')}
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -278,16 +280,16 @@ export default function FranchiseManagerDashboard() {
           <TabsContent value="registration" className="mt-6">
             <Card className="border-0 shadow-lg">
               <CardHeader>
-                <CardTitle>User Registration</CardTitle>
+                <CardTitle>{t('franchiseManagerDash.userRegistrationTitle')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-center py-8">
                   <UserPlus className="w-16 h-16 text-slate-400 mx-auto mb-4" />
                   <p className="text-slate-600 mb-4">
-                    Users can self-register through the main application.
+                    {t('franchiseManagerDash.usersSelfRegister')}
                   </p>
                   <p className="text-sm text-slate-500">
-                    New users will go through the standard registration and validation process.
+                    {t('franchiseManagerDash.newUsersProcess')}
                   </p>
                 </div>
               </CardContent>

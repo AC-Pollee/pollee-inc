@@ -10,8 +10,10 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Search, Flag, CheckCircle2, User } from 'lucide-react';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 export default function UserManagement({ infomarian }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [searchEmail, setSearchEmail] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
@@ -100,7 +102,7 @@ export default function UserManagement({ infomarian }) {
     <div className="space-y-6">
       <Card className="border-0 shadow-lg">
         <CardHeader>
-          <CardTitle>User Search & Management</CardTitle>
+          <CardTitle>{t('userMgmt.title')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex gap-3">
@@ -114,7 +116,7 @@ export default function UserManagement({ infomarian }) {
             </div>
             <Button onClick={searchUser}>
               <Search className="w-4 h-4 mr-2" />
-              Search
+              {t('userMgmt.search')}
             </Button>
           </div>
 
@@ -188,7 +190,7 @@ export default function UserManagement({ infomarian }) {
           <CardHeader className="bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-t-xl">
             <CardTitle className="flex items-center gap-2">
               <Flag className="w-5 h-5" />
-              Issue Conduct Strike
+              {t('userMgmt.issueStrike')}
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-6 space-y-4">

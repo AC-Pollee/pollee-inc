@@ -10,8 +10,10 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ClipboardList, Plus, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 export default function TaskAssignment({ infomarian }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('assigned');
   const [taskData, setTaskData] = useState({
@@ -110,7 +112,7 @@ export default function TaskAssignment({ infomarian }) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Plus className="w-5 h-5" />
-            Assign New Task
+            {t('taskAssignment.assignNewTask')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">

@@ -2,11 +2,12 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Badge } from "@/components/ui/badge";
 import { Trophy, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function ResultsChart({ poll, votes }) {
+  const { t } = useTranslation();
   const verifiedVotes = votes.filter(v => v.status === 'verified');
   
-  // Only count the latest vote per voter (allows vote changes)
   const latestVotesByVoter = {};
   verifiedVotes.forEach(vote => {
     const voterKey = vote.voter_id || vote.created_by;
@@ -18,7 +19,6 @@ export default function ResultsChart({ poll, votes }) {
   
   const latestVotes = Object.values(latestVotesByVoter);
   
-  // Count votes including delegated votes
   const optionCounts = poll.options?.reduce((acc, option) => {
     const optionVotes = latestVotes.filter(v => v.poll_item_id === option.id);
     acc[option.id] = optionVotes.reduce((sum, vote) => sum + (vote.delegated_votes_count || 1), 0);
@@ -27,7 +27,6 @@ export default function ResultsChart({ poll, votes }) {
   
   const totalVotes = Object.values(optionCounts).reduce((a, b) => a + b, 0);
   
-  // Determine winner: simple majority (50% + 1) and minimum 4 voters
   const hasQuorum = totalVotes > 3;
   const majorityThreshold = Math.floor(totalVotes / 2) + 1;
   const maxVotes = Math.max(...Object.values(optionCounts), 0);
@@ -50,7 +49,7 @@ export default function ResultsChart({ poll, votes }) {
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2">
           <AlertCircle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
           <div className="text-sm text-amber-800">
-            <span className="font-semibold">Quorum not met.</span> Need more than 3 valid voters. Currently: {totalVotes}
+            <span className="font-semibold">{t('resultsChart.quorumNotMet', { count: totalVotes })}</span>
           </div>
         </div>
       )}
@@ -59,7 +58,7 @@ export default function ResultsChart({ poll, votes }) {
         <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 flex items-start gap-2">
           <Trophy className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
           <div className="text-sm text-emerald-800">
-            <span className="font-semibold">Winner: {winningOptions.map(o => o.label).join(', ')}</span> with {maxVotes} votes ({((maxVotes / totalVotes) * 100).toFixed(1)}% - Simple majority achieved)
+            <span className="font-semibold">{t('resultsChart.winner', { names: winningOptions.map(o => o.label).join(', '), votes: maxVotes, percent: ((maxVotes / totalVotes) * 100).toFixed(1) })}</span>
           </div>
         </div>
       )}
@@ -68,7 +67,7 @@ export default function ResultsChart({ poll, votes }) {
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
           <AlertCircle className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
           <div className="text-sm text-blue-800">
-            <span className="font-semibold">No majority yet.</span> Need {majorityThreshold} votes for simple majority (50% + 1).
+            <span className="font-semibold">{t('resultsChart.noMajorityYet', { threshold: majorityThreshold })}</span>
           </div>
         </div>
       )}
@@ -86,12 +85,12 @@ export default function ResultsChart({ poll, votes }) {
                 {isWinner && (
                   <Badge className="bg-emerald-100 text-emerald-700 border-emerald-300 h-5">
                     <Trophy className="w-3 h-3 mr-1" />
-                    Winner
+                    {t('resultsChart.winnerBadge')}
                   </Badge>
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-slate-500">{count} votes</span>
+                <span className="text-slate-500">{count} {t('resultsChart.votes')}</span>
                 <span className="font-semibold text-slate-900">{percentage.toFixed(1)}%</span>
               </div>
             </div>
@@ -111,10 +110,10 @@ export default function ResultsChart({ poll, votes }) {
       <div className="pt-4 border-t border-slate-100">
         <div className="flex items-center justify-between text-sm">
           <p className="text-slate-500">
-            Total verified votes: <span className="font-semibold text-slate-700">{totalVotes}</span>
+            {t('resultsChart.totalVerifiedVotes')} <span className="font-semibold text-slate-700">{totalVotes}</span>
           </p>
           <p className="text-slate-500">
-            Required for Majority: <span className="font-semibold text-slate-700">3 or more</span>
+            {t('resultsChart.requiredForMajority')} <span className="font-semibold text-slate-700">{t('resultsChart.threeOrMore')}</span>
           </p>
         </div>
       </div>

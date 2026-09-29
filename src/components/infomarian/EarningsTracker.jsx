@@ -7,8 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { DollarSign, TrendingUp, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 export default function EarningsTracker({ infomarian }) {
+  const { t } = useTranslation();
   const { data: votes = [], isLoading } = useQuery({
     queryKey: ['infomarianVotes', infomarian.infomarian_id],
     queryFn: async () => {
@@ -69,7 +71,7 @@ export default function EarningsTracker({ infomarian }) {
           <Card className="border-0 shadow-lg bg-gradient-to-br from-emerald-50 to-green-50">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-sm text-slate-600">Total Earnings</p>
+                <p className="text-sm text-slate-600">{t('earnings.totalEarnings')}</p>
                 <DollarSign className="w-5 h-5 text-emerald-600" />
               </div>
               <p className="text-3xl font-bold text-emerald-700">
@@ -90,7 +92,7 @@ export default function EarningsTracker({ infomarian }) {
           <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-indigo-50">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-sm text-slate-600">This Month</p>
+                <p className="text-sm text-slate-600">{t('earnings.thisMonth')}</p>
                 <Calendar className="w-5 h-5 text-blue-600" />
               </div>
               <p className="text-3xl font-bold text-blue-700">
@@ -111,7 +113,7 @@ export default function EarningsTracker({ infomarian }) {
           <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-violet-50">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-sm text-slate-600">Tips Received</p>
+                <p className="text-sm text-slate-600">{t('earnings.tipsReceived')}</p>
                 <TrendingUp className="w-5 h-5 text-purple-600" />
               </div>
               <p className="text-3xl font-bold text-purple-700">${totalTips.toFixed(2)}</p>
@@ -126,13 +128,13 @@ export default function EarningsTracker({ infomarian }) {
       {/* Transaction History */}
       <Card className="border-0 shadow-xl">
         <CardHeader>
-          <CardTitle>Transaction History</CardTitle>
+          <CardTitle>{t('earnings.transactionHistory')}</CardTitle>
         </CardHeader>
         <CardContent>
           {votes.length === 0 ? (
             <div className="text-center py-12">
               <DollarSign className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-              <p className="text-slate-500">No transactions yet</p>
+              <p className="text-slate-500">{t('earnings.noTransactions')}</p>
             </div>
           ) : (
             <div className="space-y-3">

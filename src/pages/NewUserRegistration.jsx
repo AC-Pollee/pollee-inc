@@ -10,8 +10,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { UserPlus, Save, CheckCircle2, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 export default function NewUserRegistration() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
@@ -95,20 +97,20 @@ export default function NewUserRegistration() {
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">New User Registration</h1>
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">{t('newUserReg.title')}</h1>
           </div>
-          <p className="text-slate-500">Welcome, {user?.email}. Complete your details to join Pollee.</p>
+          <p className="text-slate-500">{t('newUserReg.welcome', { email: user?.email })}</p>
         </div>
 
         <Card className="border-0 shadow-lg mb-8 bg-gradient-to-br from-blue-50 to-indigo-50">
           <CardContent className="p-6">
-            <h3 className="text-lg font-semibold text-indigo-900 mb-3">Welcome to Pollee</h3>
+            <h3 className="text-lg font-semibold text-indigo-900 mb-3">{t('newUserReg.welcomeToPollee')}</h3>
             <div className="text-slate-700 space-y-3 leading-relaxed">
               <p>
                 We believe in transparent and accountable Democracy built on trust and respect for all. Infomarians are professional users who are paid out of your voting to provide poll discussion content, to moderate discussions to ensure civility and respect are maintained, and to provide real help with using the system.
               </p>
               <p className="font-semibold text-indigo-800">
-                With a vote, you can change your world, one poll at a time.
+                {t('newUserReg.welcomeQuote')}
               </p>
             </div>
           </CardContent>
@@ -119,7 +121,7 @@ export default function NewUserRegistration() {
             <Alert className="mb-6 bg-red-50 border-red-200">
               <AlertCircle className="h-4 w-4 text-red-600" />
               <AlertDescription className="text-red-800">
-                You must be at least 12 years old to participate in this platform.
+                {t('newUserReg.tooYoung')}
               </AlertDescription>
             </Alert>
           </motion.div>
@@ -130,7 +132,7 @@ export default function NewUserRegistration() {
             <Alert className="mb-6 bg-red-50 border-red-200" variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                Registration failed. Please try again.
+                {t('newUserReg.registrationFailed')}
               </AlertDescription>
             </Alert>
           </motion.div>
@@ -142,22 +144,22 @@ export default function NewUserRegistration() {
               <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
                 <UserPlus className="w-6 h-6" />
               </div>
-              <CardTitle className="text-2xl">Your Details</CardTitle>
+              <CardTitle className="text-2xl">{t('newUserReg.yourDetails')}</CardTitle>
             </div>
           </CardHeader>
 
           <CardContent className="p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-base font-semibold">Email Address</Label>
+                <Label htmlFor="email" className="text-base font-semibold">{t('newUserReg.emailAddress')}</Label>
                 <Input id="email" type="email" value={user?.email || ''} disabled className="h-12 rounded-lg bg-slate-50" />
-                <p className="text-xs text-slate-500">Email cannot be changed</p>
+                <p className="text-xs text-slate-500">{t('newUserReg.emailCannotChange')}</p>
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="full_name" className="text-base font-semibold">
-                    First Name <span className="text-red-500">*</span>
+                    {t('newUserReg.firstName')} <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="full_name"
@@ -171,7 +173,7 @@ export default function NewUserRegistration() {
 
                 <div className="space-y-2">
                   <Label htmlFor="last_name" className="text-base font-semibold">
-                    Last Name <span className="text-red-500">*</span>
+                    {t('newUserReg.lastName')} <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="last_name"
@@ -186,7 +188,7 @@ export default function NewUserRegistration() {
 
               <div className="space-y-2">
                 <Label htmlFor="date_of_birth" className="text-base font-semibold">
-                  Date of Birth <span className="text-red-500">*</span>
+                  {t('newUserReg.dateOfBirth')} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="date_of_birth"
@@ -210,7 +212,7 @@ export default function NewUserRegistration() {
 
               <div className="space-y-2">
                 <Label htmlFor="infomarian_id" className="text-base font-semibold">
-                  Infomarian ID <span className="text-red-500">*</span>
+                  {t('newUserReg.infomarianId')} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="infomarian_id"
@@ -223,7 +225,7 @@ export default function NewUserRegistration() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone_number" className="text-base font-semibold">Phone Number</Label>
+                <Label htmlFor="phone_number" className="text-base font-semibold">{t('newUserReg.phoneNumber')}</Label>
                 <Input
                   id="phone_number"
                   type="tel"
@@ -238,9 +240,7 @@ export default function NewUserRegistration() {
                 <Alert className="bg-amber-50 border-amber-200">
                   <AlertCircle className="h-4 w-4 text-amber-600" />
                   <AlertDescription className="text-amber-800">
-                    <span className="font-semibold">Bank details suspended.</span> This site is in development and the
-                    transaction layer is currently suspended, so bank account details are not required to register.
-                    You can vote directly without a transaction.
+                    <span className="font-semibold">{t('newUserReg.bankSuspended')}</span> {t('newUserReg.bankSuspendedDesc')}
                   </AlertDescription>
                 </Alert>
               </div>
@@ -272,12 +272,12 @@ export default function NewUserRegistration() {
                   {register.isPending ? (
                     <>
                       <Save className="w-5 h-5 mr-2 animate-pulse" />
-                      Registering...
+                      {t('newUserReg.registering')}
                     </>
                   ) : (
                     <>
                       <CheckCircle2 className="w-5 h-5 mr-2" />
-                      Complete Registration
+                      {t('newUserReg.completeRegistration')}
                     </>
                   )}
                 </Button>

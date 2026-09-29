@@ -7,8 +7,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Shield, CheckCircle2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function AssignInfomariansDialog({ poll, open, onOpenChange }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [selectedIds, setSelectedIds] = useState([]);
 
@@ -59,10 +61,10 @@ export default function AssignInfomariansDialog({ poll, open, onOpenChange }) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Shield className="w-5 h-5 text-indigo-600" />
-            Assign Infomarians
+            {t('assignInfomarians.title')}
           </DialogTitle>
           <DialogDescription>
-            Select one or more Infomarians to moderate the discussion for "{poll?.title}".
+            {t('assignInfomarians.description', { title: poll?.title })}
           </DialogDescription>
         </DialogHeader>
 
@@ -73,7 +75,7 @@ export default function AssignInfomariansDialog({ poll, open, onOpenChange }) {
             </div>
           ) : activeInfomarians.length === 0 ? (
             <p className="text-sm text-slate-500 text-center py-8">
-              No active Infomarians available. Create or activate Infomarians in Constituency Admin.
+              {t('assignInfomarians.noActive')}
             </p>
           ) : (
             <div className="space-y-2 max-h-72 overflow-y-auto">
@@ -123,7 +125,7 @@ export default function AssignInfomariansDialog({ poll, open, onOpenChange }) {
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={updatePoll.isPending}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button
             onClick={handleSave}
@@ -133,10 +135,10 @@ export default function AssignInfomariansDialog({ poll, open, onOpenChange }) {
             {updatePoll.isPending ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              'Save Assignment'
+                {t('assignInfomarians.saving')}
+                </>
+                ) : (
+                t('assignInfomarians.saveAssignment')
             )}
           </Button>
         </DialogFooter>

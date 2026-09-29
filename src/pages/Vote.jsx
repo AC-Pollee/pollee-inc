@@ -13,8 +13,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import TransactionForm from '@/components/vote/TransactionForm';
 import PollDiscussion from '@/components/polls/PollDiscussion';
 import LiveResults from '@/components/polls/LiveResults';
+import { useTranslation } from 'react-i18next';
 
 export default function Vote() {
+  const { t } = useTranslation();
   const urlParams = new URLSearchParams(window.location.search);
   const pollId = urlParams.get('pollId');
   const queryClient = useQueryClient();
@@ -111,12 +113,12 @@ export default function Vote() {
             <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
               <VoteIcon className="w-8 h-8 text-amber-600" />
             </div>
-            <h2 className="text-xl font-semibold text-slate-900 mb-2">No Poll Selected</h2>
-            <p className="text-slate-500 mb-6">Please select a poll from the homepage to vote</p>
+            <h2 className="text-xl font-semibold text-slate-900 mb-2">{t('vote.noPollSelected')}</h2>
+            <p className="text-slate-500 mb-6">{t('vote.noPollSelectedDesc')}</p>
             <Link to={createPageUrl('Home')}>
               <Button className="bg-indigo-600 hover:bg-indigo-700">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Polls
+                {t('vote.backToPolls')}
               </Button>
             </Link>
           </CardContent>
@@ -134,21 +136,21 @@ export default function Vote() {
             <div className="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center mx-auto mb-4">
               <User className="w-8 h-8 text-indigo-600" />
             </div>
-            <h2 className="text-xl font-semibold text-slate-900 mb-2">Login Required</h2>
-            <p className="text-slate-500 mb-6">Please log in or sign up to vote on this poll</p>
+            <h2 className="text-xl font-semibold text-slate-900 mb-2">{t('vote.loginRequired')}</h2>
+            <p className="text-slate-500 mb-6">{t('vote.loginRequiredDesc')}</p>
             <div className="flex flex-col gap-3">
               <Button 
                 onClick={() => base44.auth.redirectToLogin(window.location.href)}
                 className="bg-indigo-600 hover:bg-indigo-700 w-full"
               >
-                Log In
-              </Button>
-              <Button 
-                onClick={() => base44.auth.redirectToLogin(window.location.href)}
-                variant="outline"
-                className="w-full"
-              >
-                Sign Up
+                {t('vote.logIn')}
+                </Button>
+                <Button 
+                 onClick={() => base44.auth.redirectToLogin(window.location.href)}
+                 variant="outline"
+                 className="w-full"
+                >
+                {t('vote.signUp')}
               </Button>
             </div>
           </CardContent>
@@ -182,11 +184,11 @@ export default function Vote() {
         <Link to={createPageUrl('Home')}>
           <Button variant="ghost" className="mb-6 text-slate-600 hover:text-slate-900 -ml-2">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Polls
-          </Button>
-        </Link>
-        
-        <AnimatePresence mode="wait">
+            {t('vote.backToPolls')}
+            </Button>
+            </Link>
+
+            <AnimatePresence mode="wait">
           {submitted ? (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -202,21 +204,20 @@ export default function Vote() {
                 <CheckCircle2 className="w-10 h-10 text-emerald-600" />
               </motion.div>
               
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">Vote Submitted!</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-2">{t('vote.voteSubmitted')}</h2>
               <p className="text-slate-500 mb-8 max-w-sm mx-auto">
-                Your vote has been recorded and counted in the live results.
-                You can change it at any time before the poll closes.
+                {t('vote.voteSubmittedDesc')}
               </p>
               
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link to={createPageUrl('Home')}>
                   <Button variant="outline" className="w-full sm:w-auto">
-                    Back to Polls
+                    {t('vote.backToPolls')}
                   </Button>
                 </Link>
                 <Link to={createPageUrl('Results')}>
                   <Button className="bg-indigo-600 hover:bg-indigo-700 w-full sm:w-auto">
-                    View Results
+                    {t('vote.viewResults')}
                   </Button>
                 </Link>
               </div>
@@ -237,7 +238,7 @@ export default function Vote() {
                     </div>
                     {isPollClosed && (
                       <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
-                        <p className="text-white font-semibold text-sm">Poll Closed</p>
+                        <p className="text-white font-semibold text-sm">{t('vote.pollClosed')}</p>
                       </div>
                     )}
                   </div>
@@ -255,7 +256,7 @@ export default function Vote() {
                         <History className="h-4 w-4 text-indigo-600" />
                         <AlertDescription>
                           <div className="space-y-1">
-                            <p className="text-indigo-900 font-semibold">Your Last Vote</p>
+                            <p className="text-indigo-900 font-semibold">{t('vote.yourLastVote')}</p>
                             <div className="flex items-center gap-2">
                               <span className="text-indigo-700">
                                 <span className="font-bold">{lastVote.option_label}</span>
@@ -266,7 +267,7 @@ export default function Vote() {
                               </span>
                             </div>
                             <p className="text-xs text-indigo-600 mt-1">
-                              You can change your vote anytime before the poll closes.
+                              {t('vote.canChangeVote')}
                             </p>
                           </div>
                         </AlertDescription>
@@ -275,7 +276,7 @@ export default function Vote() {
                   )}
 
                   <div className="space-y-4 mb-8">
-                    <h3 className="font-semibold text-lg">Available Options</h3>
+                    <h3 className="font-semibold text-lg">{t('vote.availableOptions')}</h3>
                     <div className="grid gap-3">
                       {poll?.options?.map((option) => (
                         <div
@@ -302,16 +303,16 @@ export default function Vote() {
                     <Alert className="bg-slate-50 border-slate-200">
                       <AlertCircle className="h-4 w-4 text-slate-600" />
                       <AlertDescription className="text-slate-800">
-                        <span className="font-semibold">This poll has closed.</span> Voting and discussions are no longer available. View the final results below.
+                        <span className="font-semibold">{t('vote.pollClosedAlert')}</span>
                       </AlertDescription>
                     </Alert>
                   ) : !isSuperAdmin && !user?.date_of_birth ? (
                     <Alert className="bg-amber-50 border-amber-200">
                       <AlertCircle className="h-4 w-4 text-amber-600" />
                       <AlertDescription className="text-amber-800">
-                        Please complete your profile with your date of birth before voting.{' '}
+                        {t('vote.completeProfile')}{' '}
                         <Link to={createPageUrl('Profile')} className="underline font-semibold">
-                          Go to Profile
+                          {t('vote.goToProfile')}
                         </Link>
                       </AlertDescription>
                     </Alert>
@@ -319,14 +320,14 @@ export default function Vote() {
                     <Alert className="bg-red-50 border-red-200">
                       <AlertCircle className="h-4 w-4 text-red-600" />
                       <AlertDescription className="text-red-800">
-                        You must be at least 12 years old to participate in this platform.
+                        {t('vote.tooYoung')}
                       </AlertDescription>
                     </Alert>
                   ) : !isSuperAdmin && age < 18 ? (
                     <Alert className="bg-blue-50 border-blue-200">
                       <AlertCircle className="h-4 w-4 text-blue-600" />
                       <AlertDescription className="text-blue-800">
-                        Junior Member (Age {age}) - You can view live results and participate in discussions, but cannot cast official votes until you turn 18.
+                        {t('vote.juniorMember', { age })}
                       </AlertDescription>
                     </Alert>
                   ) : (
@@ -387,7 +388,7 @@ export default function Vote() {
         <div className="mt-12 mb-8">
           <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl shadow-lg p-8 border border-indigo-100">
             <h2 className="text-xl font-bold text-slate-900 mb-6 text-center">
-              Important Documents & Guidelines
+              {t('vote.docsTitle')}
             </h2>
             <div className="grid md:grid-cols-3 gap-6">
               <a
@@ -399,8 +400,8 @@ export default function Vote() {
                 <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center mb-3">
                   <CheckCircle2 className="w-6 h-6 text-indigo-600" />
                 </div>
-                <h3 className="font-semibold text-slate-900 text-center">Code of Conduct</h3>
-                <p className="text-sm text-slate-600 text-center mt-2">Community standards and behavior guidelines</p>
+                <h3 className="font-semibold text-slate-900 text-center">{t('vote.codeOfConduct')}</h3>
+                <p className="text-sm text-slate-600 text-center mt-2">{t('vote.codeOfConductDesc')}</p>
               </a>
               
               <a
@@ -412,8 +413,8 @@ export default function Vote() {
                 <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mb-3">
                   <AlertCircle className="w-6 h-6 text-purple-600" />
                 </div>
-                <h3 className="font-semibold text-slate-900 text-center">Model Rules</h3>
-                <p className="text-sm text-slate-600 text-center mt-2">Platform governance and operational rules</p>
+                <h3 className="font-semibold text-slate-900 text-center">{t('vote.modelRules')}</h3>
+                <p className="text-sm text-slate-600 text-center mt-2">{t('vote.modelRulesDesc')}</p>
               </a>
               
               <a
@@ -425,8 +426,8 @@ export default function Vote() {
                 <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-3">
                   <ArrowLeft className="w-6 h-6 text-blue-600" />
                 </div>
-                <h3 className="font-semibold text-slate-900 text-center">Code of Practice</h3>
-                <p className="text-sm text-slate-600 text-center mt-2">Best practices for voting and participation</p>
+                <h3 className="font-semibold text-slate-900 text-center">{t('vote.codeOfPractice')}</h3>
+                <p className="text-sm text-slate-600 text-center mt-2">{t('vote.codeOfPracticeDesc')}</p>
               </a>
             </div>
           </div>

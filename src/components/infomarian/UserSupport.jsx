@@ -8,8 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MessageSquare, Send, HelpCircle, CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 export default function UserSupport({ infomarian }) {
+  const { t } = useTranslation();
   const [message, setMessage] = useState('');
   const [userEmail, setUserEmail] = useState('');
 
@@ -65,9 +67,9 @@ export default function UserSupport({ infomarian }) {
       <Card className="border-0 shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="w-5 h-5" />
-            Send Support Message
-          </CardTitle>
+              <MessageSquare className="w-5 h-5" />
+              {t('userSupport.sendMessage')}
+            </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
