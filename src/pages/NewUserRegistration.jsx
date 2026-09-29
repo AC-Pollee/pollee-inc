@@ -235,48 +235,14 @@ export default function NewUserRegistration() {
               </div>
 
               <div className="border-t border-slate-200 pt-6 mt-6">
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                  <p className="text-sm text-blue-800">
-                    We use bank transactions because they are secure, confidential and fully accountable by both Parties.
-                  </p>
-                </div>
-                <h3 className="text-lg font-semibold text-slate-900 mb-4">Australian Bank Details</h3>
-
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="bsb" className="text-base font-semibold">BSB Number</Label>
-                    <Input
-                      id="bsb"
-                      value={formData.bsb}
-                      onChange={(e) => setFormData({ ...formData, bsb: e.target.value })}
-                      placeholder="000-000"
-                      maxLength={7}
-                      className="h-12 rounded-lg"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="account_number" className="text-base font-semibold">Account Number</Label>
-                    <Input
-                      id="account_number"
-                      value={formData.account_number}
-                      onChange={(e) => setFormData({ ...formData, account_number: e.target.value })}
-                      placeholder="12345678"
-                      className="h-12 rounded-lg"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2 mt-6">
-                  <Label htmlFor="account_name" className="text-base font-semibold">Account Name</Label>
-                  <Input
-                    id="account_name"
-                    value={formData.account_name}
-                    onChange={(e) => setFormData({ ...formData, account_name: e.target.value })}
-                    placeholder="Name as it appears on your bank account"
-                    className="h-12 rounded-lg"
-                  />
-                </div>
+                <Alert className="bg-amber-50 border-amber-200">
+                  <AlertCircle className="h-4 w-4 text-amber-600" />
+                  <AlertDescription className="text-amber-800">
+                    <span className="font-semibold">Bank details suspended.</span> This site is in development and the
+                    transaction layer is currently suspended, so bank account details are not required to register.
+                    You can vote directly without a transaction.
+                  </AlertDescription>
+                </Alert>
               </div>
 
               <div className="pt-4 space-y-4">

@@ -204,8 +204,8 @@ export default function Vote() {
               
               <h2 className="text-2xl font-bold text-slate-900 mb-2">Vote Submitted!</h2>
               <p className="text-slate-500 mb-8 max-w-sm mx-auto">
-                Your vote has been received and is pending verification. 
-                Once verified, it will be counted in the results.
+                Your vote has been recorded and counted in the live results.
+                You can change it at any time before the poll closes.
               </p>
               
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
