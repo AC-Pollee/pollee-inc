@@ -70,7 +70,8 @@
         "en",
         "fr",
         "de",
-        "es"
+        "es",
+        "nl"
       ],
       "default": "en",
       "description": "User's preferred UI language"

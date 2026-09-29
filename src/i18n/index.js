@@ -4,8 +4,9 @@ import en from './locales/en.json';
 import fr from './locales/fr.json';
 import de from './locales/de.json';
 import es from './locales/es.json';
+import nl from './locales/nl.json';
 
-export const LANGUAGES = ['en', 'fr', 'de', 'es'];
+export const LANGUAGES = ['en', 'fr', 'de', 'es', 'nl'];
 export const STORAGE_KEY = 'pollee_language';
 
 const getInitialLanguage = () => {
@@ -20,6 +21,7 @@ i18n.use(initReactI18next).init({
     fr: { translation: fr },
     de: { translation: de },
     es: { translation: es },
+    nl: { translation: nl },
   },
   lng: getInitialLanguage(),
   fallbackLng: 'en',

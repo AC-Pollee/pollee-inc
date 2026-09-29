@@ -10,6 +10,7 @@ const LANGUAGE_LABELS = {
   fr: 'Français',
   de: 'Deutsch',
   es: 'Español',
+  nl: 'Nederlands',
 };
 
 const LANGUAGE_FLAGS = {
@@ -17,6 +18,7 @@ const LANGUAGE_FLAGS = {
   fr: '🇫🇷',
   de: '🇩🇪',
   es: '🇪🇸',
+  nl: '🇳🇱',
 };
 
 export default function LanguageSwitcher() {

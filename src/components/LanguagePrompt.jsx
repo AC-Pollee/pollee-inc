@@ -7,6 +7,7 @@ const LANGUAGE_LABELS = {
   fr: 'Français',
   de: 'Deutsch',
   es: 'Español',
+  nl: 'Nederlands',
 };
 
 const LANGUAGE_FLAGS = {
@@ -14,6 +15,7 @@ const LANGUAGE_FLAGS = {
   fr: '🇫🇷',
   de: '🇩🇪',
   es: '🇪🇸',
+  nl: '🇳🇱',
 };
 
 export default function LanguagePrompt() {
@@ -25,7 +27,7 @@ export default function LanguagePrompt() {
       <label className="block text-xs font-medium text-muted-foreground mb-2 text-center">
         {t('common.language')}
       </label>
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-5 gap-2">
         {LANGUAGES.map((code) => (
           <button
             key={code}
