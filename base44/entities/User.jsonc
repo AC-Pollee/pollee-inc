@@ -19,6 +19,10 @@
       "type": "string",
       "description": "Infomarian ID"
     },
+    "franchise_id": {
+      "type": "string",
+      "description": "Constituency (franchise) the user has chosen to belong to"
+    },
     "phone_number": {
       "type": "string",
       "description": "Phone number"

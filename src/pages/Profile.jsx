@@ -21,6 +21,7 @@ import ReputationScore from '@/components/profile/ReputationScore';
 import ReputationBadge from '@/components/profile/ReputationBadge';
 import UserHelp from '@/components/help/UserHelp';
 import AvatarUploader from '@/components/profile/AvatarUploader';
+import ConstituencySelector from '@/components/profile/ConstituencySelector';
 import { useTranslation } from 'react-i18next';
 
 export default function Profile() {
@@ -32,6 +33,7 @@ export default function Profile() {
     email: '',
     date_of_birth: '',
     infomarian_id: '',
+    franchise_id: '',
     phone_number: '',
     bsb: '',
     account_number: '',
@@ -65,6 +67,7 @@ export default function Profile() {
         email: user.email || '',
         date_of_birth: user.date_of_birth || '',
         infomarian_id: user.infomarian_id || '',
+        franchise_id: user.franchise_id || '',
         phone_number: user.phone_number || '',
         bsb: user.bsb || '',
         account_number: user.account_number || '',
@@ -97,6 +100,7 @@ export default function Profile() {
       last_name: formData.last_name,
       date_of_birth: formData.date_of_birth,
       infomarian_id: formData.infomarian_id,
+      franchise_id: formData.franchise_id,
       phone_number: formData.phone_number,
       bsb: formData.bsb,
       account_number: formData.account_number,
@@ -411,6 +415,14 @@ export default function Profile() {
                   placeholder="Enter your Infomarian ID"
                   className="h-12 rounded-lg"
                   required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <ConstituencySelector
+                  value={formData.franchise_id}
+                  infomarianId={formData.infomarian_id}
+                  onChange={(franchiseId) => setFormData({ ...formData, franchise_id: franchiseId })}
                 />
               </div>
 
