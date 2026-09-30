@@ -9,9 +9,11 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { format } from "date-fns";
 import { useTranslation } from 'react-i18next';
+import { usePollTranslation } from '@/hooks/usePollTranslation';
 
 export default function PollCard({ poll, voteCount }) {
   const { t } = useTranslation();
+  const { title: translatedTitle, description: translatedDescription } = usePollTranslation(poll);
   const isActive = poll.status === 'active';
   
   const { data: comments = [] } = useQuery({
@@ -48,12 +50,12 @@ export default function PollCard({ poll, voteCount }) {
         
         <Link to={createPageUrl(`Vote?pollId=${poll.id}#discussion`)}>
           <h3 className="text-lg font-semibold text-slate-900 mb-2 line-clamp-2 group-hover:text-indigo-700 transition-colors cursor-pointer">
-            {poll.title}
+            {translatedTitle}
           </h3>
         </Link>
         
         {poll.description && (
-          <p className="text-sm text-slate-500 mb-4 line-clamp-2">{poll.description}</p>
+          <p className="text-sm text-slate-500 mb-4 line-clamp-2">{translatedDescription}</p>
         )}
         
         <div className="space-y-3 pt-4 border-t border-slate-100">

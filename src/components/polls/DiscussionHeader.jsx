@@ -5,9 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { Hash, Archive, Shield, UserCircle, MessageCircle, Clock } from 'lucide-react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
+import { usePollTranslation } from '@/hooks/usePollTranslation';
 
 export default function DiscussionHeader({ poll, isArchived }) {
   const { t } = useTranslation();
+  const { title: translatedTitle } = usePollTranslation(poll);
   const { data: infomarians = [] } = useQuery({
     queryKey: ['infomarians-list'],
     queryFn: () => base44.entities.Infomarian.list()
@@ -37,7 +39,7 @@ export default function DiscussionHeader({ poll, isArchived }) {
             <Hash className="w-5 h-5" />
           </div>
           <div className="min-w-0">
-            <p className="text-base font-semibold leading-tight truncate">{poll?.title || 'Untitled Poll'}</p>
+            <p className="text-base font-semibold leading-tight truncate">{translatedTitle || 'Untitled Poll'}</p>
             <p className="text-xs text-slate-300 uppercase tracking-wide font-medium mt-0.5">{t('discussionHeader.pollId')}</p>
             <p className="font-mono text-xs font-medium tracking-tight text-slate-300">{poll?.id || '—'}</p>
           </div>

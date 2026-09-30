@@ -11,6 +11,7 @@ import { ArrowLeft, BarChart3, Users, Calendar, ChevronDown, ChevronUp } from 'l
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import ResultsChart from '@/components/polls/ResultsChart';
+import PollTitle from '@/components/polls/PollTitle';
 import { useTranslation } from 'react-i18next';
 
 export default function Results() {
@@ -110,7 +111,7 @@ export default function Results() {
                       <div className="flex items-start justify-between">
                         <div className="space-y-2">
                           <div className="flex items-center gap-3">
-                            <CardTitle className="text-xl">{poll.title}</CardTitle>
+                            <CardTitle className="text-xl"><PollTitle poll={poll} /></CardTitle>
                             <Badge 
                               className={`${
                                 poll.status === 'active' 

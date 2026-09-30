@@ -14,9 +14,11 @@ import TransactionForm from '@/components/vote/TransactionForm';
 import PollDiscussion from '@/components/polls/PollDiscussion';
 import LiveResults from '@/components/polls/LiveResults';
 import { useTranslation } from 'react-i18next';
+import { usePollTranslation } from '@/hooks/usePollTranslation';
 
 export default function Vote() {
   const { t } = useTranslation();
+  const { title: translatedTitle, description: translatedDescription } = usePollTranslation(poll);
   const urlParams = new URLSearchParams(window.location.search);
   const pollId = urlParams.get('pollId');
   const queryClient = useQueryClient();
@@ -231,9 +233,9 @@ export default function Vote() {
                 <CardHeader className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white p-8">
                   <div className="flex items-start justify-between">
                     <div>
-                      <CardTitle className="text-2xl font-bold">{poll?.title}</CardTitle>
+                      <CardTitle className="text-2xl font-bold">{translatedTitle}</CardTitle>
                       {poll?.description && (
-                        <p className="text-indigo-100 mt-2">{poll.description}</p>
+                        <p className="text-indigo-100 mt-2">{translatedDescription}</p>
                       )}
                     </div>
                     {isPollClosed && (
