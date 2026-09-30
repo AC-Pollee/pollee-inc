@@ -15,6 +15,7 @@ import PollDiscussion from '@/components/polls/PollDiscussion';
 import LiveResults from '@/components/polls/LiveResults';
 import { useTranslation } from 'react-i18next';
 import { usePollTranslation } from '@/hooks/usePollTranslation';
+import { awardReputation } from '@/lib/reputation';
 
 export default function Vote() {
   const { t } = useTranslation();
@@ -100,7 +101,12 @@ export default function Vote() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['votes']);
+      queryClient.invalidateQueries(['currentUser']);
       setSubmitted(true);
+      // Award +5 reputation to the voter (verification is switched off — every vote counts)
+      if (user?.email) {
+        awardReputation(user.email, 5, 'verified_votes').catch(() => {});
+      }
     }
   });
   

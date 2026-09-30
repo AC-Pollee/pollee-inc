@@ -18,6 +18,7 @@ import EvidenceDisplay from './EvidenceDisplay';
 import EvidenceManager from './EvidenceManager';
 import MemberForwardContent from './MemberForwardContent';
 import { useToast } from "@/components/ui/use-toast";
+import { awardReputation } from '@/lib/reputation';
 import { useTranslation } from 'react-i18next';
 
 export default function PollDiscussion({ pollId, currentUser, userAge, isClosed = false, poll }) {
@@ -97,6 +98,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
     onSuccess: (comment) => {
       queryClient.invalidateQueries(['comments', pollId]);
       queryClient.invalidateQueries(['poll-comments', pollId]);
+      queryClient.invalidateQueries(['currentUser']);
       setNewComment('');
       setReplyingTo(null);
       setReplyResponsibility(false);
@@ -104,6 +106,10 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
         title: "Comment posted",
         description: "Your comment is now visible to everyone.",
       });
+      // Award +3 reputation to the author for contributing to the discussion
+      if (comment?.user_email) {
+        awardReputation(comment.user_email, 3, 'approved_comments').catch(() => {});
+      }
     },
     onError: (error) => {
       toast({

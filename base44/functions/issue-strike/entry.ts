@@ -93,8 +93,7 @@ export default async function(req) {
     const newScore = Math.max(0, currentScore - 3);
 
     const breakdown = author.reputation_breakdown || {};
-    const bdKey = severity === 'severe' ? 'strikes_severe' : severity === 'moderate' ? 'strikes_moderate' : 'strikes_minor';
-    const newBreakdown = { ...breakdown, [bdKey]: (breakdown[bdKey] || 0) + 1 };
+    const newBreakdown = { ...breakdown, flagged_content: (breakdown.flagged_content || 0) + 1 };
 
     let consequence = 'warning';
     let suspension_end_date = author.suspension_end_date;

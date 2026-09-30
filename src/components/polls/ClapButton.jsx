@@ -14,18 +14,6 @@ export default function ClapButton({ comment, currentUser, claps = [], disabled 
   const isOwnComment = !!currentUser && comment.user_email === currentUser.email;
   const canClap = !!currentUser && !disabled && !isOwnComment && !hasClapped;
 
-  const awardPoints = useMutation({
-    mutationFn: async () => {
-      if (!comment.user_email) return;
-      const users = await base44.entities.User.filter({ email: comment.user_email });
-      const poster = users[0];
-      if (poster) {
-        const newScore = (poster.reputation_score || 100) + 3;
-        await base44.entities.User.update(poster.id, { reputation_score: newScore });
-      }
-    }
-  });
-
   const clap = useMutation({
     mutationFn: async () => {
       await base44.entities.Clap.create({
@@ -39,8 +27,6 @@ export default function ClapButton({ comment, currentUser, claps = [], disabled 
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['claps', comment.poll_id]);
-      queryClient.invalidateQueries(['currentUser']);
-      awardPoints.mutate();
     }
   });
 

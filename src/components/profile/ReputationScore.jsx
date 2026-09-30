@@ -111,44 +111,18 @@ export default function ReputationScore({ user }) {
           </div>
 
           {/* Negative Actions */}
-          {(breakdown.strikes_minor > 0 || breakdown.strikes_moderate > 0 || breakdown.strikes_severe > 0 || breakdown.flagged_content > 0) && (
+          {breakdown.flagged_content > 0 && (
             <div className="space-y-3">
               <h3 className="font-semibold text-slate-900 flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-red-600" />
                 {t('reputation.conductIssues')}
               </h3>
               <div className="grid grid-cols-2 gap-3">
-                {breakdown.strikes_minor > 0 && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                    <span className="text-xs text-yellow-700 font-medium">Minor Strikes</span>
-                    <p className="text-2xl font-bold text-yellow-900">{breakdown.strikes_minor}</p>
-                    <p className="text-xs text-yellow-600">-10 points each</p>
-                  </div>
-                )}
-
-                {breakdown.strikes_moderate > 0 && (
-                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
-                    <span className="text-xs text-orange-700 font-medium">Moderate Strikes</span>
-                    <p className="text-2xl font-bold text-orange-900">{breakdown.strikes_moderate}</p>
-                    <p className="text-xs text-orange-600">-25 points each</p>
-                  </div>
-                )}
-
-                {breakdown.strikes_severe > 0 && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                    <span className="text-xs text-red-700 font-medium">Severe Strikes</span>
-                    <p className="text-2xl font-bold text-red-900">{breakdown.strikes_severe}</p>
-                    <p className="text-xs text-red-600">-50 points each</p>
-                  </div>
-                )}
-
-                {breakdown.flagged_content > 0 && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                    <span className="text-xs text-red-700 font-medium">Flagged Content</span>
-                    <p className="text-2xl font-bold text-red-900">{breakdown.flagged_content}</p>
-                    <p className="text-xs text-red-600">-5 points each</p>
-                  </div>
-                )}
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                  <span className="text-xs text-red-700 font-medium">Flagged Content</span>
+                  <p className="text-2xl font-bold text-red-900">{breakdown.flagged_content}</p>
+                  <p className="text-xs text-red-600">-3 points each</p>
+                </div>
               </div>
             </div>
           )}
