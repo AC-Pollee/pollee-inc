@@ -43,10 +43,31 @@ export default function AssignInfomariansDialog({ poll, open, onOpenChange }) {
     );
   };
 
-  const handleSave = () => {
-    updatePoll.mutate({
+  const handleSave = async () => {
+    const previouslyAssigned = poll.assigned_infomarians || [];
+    // Determine which infomarians are newly assigned (not assigned before)
+    const newlyAssignedIds = selectedIds.filter(id => !previouslyAssigned.includes(id));
+    const newlyAssigned = newlyAssignedIds
+      .map(id => infomarians.find(i => i.infomarian_id === id || i.id === id || i.user_email === id))
+      .filter(Boolean);
+
+    await updatePoll.mutateAsync({
       id: poll.id,
       data: { assigned_infomarians: selectedIds }
+    });
+
+    // Send an automatic email to each newly assigned infomarian
+    newlyAssigned.forEach((inf) => {
+      base44.integrations.Core.SendEmail({
+        to: inf.user_email,
+        subject: 'You have been assigned to a new poll',
+        html: `<p>Dear ${inf.full_name},</p>
+          <p>You have been assigned to moderate the following poll:</p>
+          <p><strong>${poll.title}</strong></p>
+          ${poll.description ? `<p>${poll.description}</p>` : ''}
+          <p>Please visit the Infomarian Dashboard to begin your moderation duties for this poll.</p>
+          <p>— Pollee Inc</p>`
+      }).catch(() => {});
     });
   };
 
