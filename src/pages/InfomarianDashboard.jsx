@@ -83,6 +83,16 @@ export default function InfomarianDashboard() {
     );
   }
 
+  // Allowed in, but the Infomarian profile is still loading or hasn't been created yet.
+  // Without this guard, infomarian.full_name below throws and blanks the page.
+  if (!infomarian) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 p-4 md:p-8 flex items-center justify-center">
+        <div className="text-slate-500">{t('common.loading') || 'Loading…'}</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
