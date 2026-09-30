@@ -57,6 +57,7 @@ export default function Layout({ children, currentPageName }) {
 
     if (isSuperAdmin) {
       return [
+        { name: 'InfomarianDashboard', icon: Shield, label: 'nav.dashboard', badge: pendingCount > 0 ? pendingCount : null },
         { name: 'Home', icon: Vote, label: 'nav.polls' },
         { name: 'Results', icon: BarChart3, label: 'nav.results' },
         { name: 'MasterFranchiserDashboard', icon: Shield, label: 'nav.master' },
