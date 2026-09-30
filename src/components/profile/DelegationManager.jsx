@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Users, Plus, Trash2, CheckCircle2, Clock, XCircle, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import DelegateSearchInput from '@/components/profile/DelegateSearchInput';
 
 export default function DelegationManager({ user }) {
   const { t } = useTranslation();
@@ -113,27 +114,17 @@ export default function DelegationManager({ user }) {
                 onSubmit={handleSubmit}
                 className="bg-slate-50 rounded-lg p-4 space-y-4"
               >
-                <div className="space-y-2">
-                  <Label htmlFor="delegate_full_name">{t('delegationManager.delegateFullName')}</Label>
-                  <Input
-                    id="delegate_full_name"
-                    value={formData.delegate_full_name}
-                    onChange={(e) => setFormData({...formData, delegate_full_name: e.target.value})}
-                    placeholder="Enter full name"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="delegate_user_id">{t('delegationManager.delegateUserId')}</Label>
-                  <Input
-                    id="delegate_user_id"
-                    value={formData.delegate_user_id}
-                    onChange={(e) => setFormData({...formData, delegate_user_id: e.target.value})}
-                    placeholder="Enter user ID"
-                    required
-                  />
-                </div>
+                <DelegateSearchInput
+                  excludeUserId={user?.id}
+                  selectedName={formData.delegate_full_name}
+                  selectedId={formData.delegate_user_id}
+                  onSelect={({ full_name, user_id }) => setFormData({
+                    ...formData,
+                    delegate_full_name: full_name,
+                    delegate_user_id: user_id
+                  })}
+                  t={t}
+                />
 
                 <div className="space-y-2">
                   <Label htmlFor="delegation_type">{t('delegationManager.delegationType')}</Label>
@@ -171,7 +162,7 @@ export default function DelegationManager({ user }) {
                 )}
 
                 <div className="flex gap-2">
-                  <Button type="submit" disabled={createDelegation.isPending}>
+                  <Button type="submit" disabled={createDelegation.isPending || !formData.delegate_user_id}>
                     {t('delegationManager.createDelegation')}
                   </Button>
                   <Button type="button" variant="outline" onClick={() => setShowForm(false)}>

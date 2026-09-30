@@ -839,7 +839,11 @@
     "delegationsToVerifyDesc": "People who want to delegate their vote to you",
     "verify": "Verify",
     "decline": "Decline",
-    "userId": "User ID:"
+    "userId": "User ID:",
+    "searchPlaceholder": "Search member by name or email",
+    "noMatches": "No matching members",
+    "autofilledOnSelect": "Auto-filled when you select a member",
+    "memberSelected": "Member selected"
   },
   "delegationsHeld": {
     "title": "Delegations Held",
