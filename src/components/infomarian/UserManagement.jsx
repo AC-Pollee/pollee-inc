@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Search, Flag, CheckCircle2, User, MessageSquare } from 'lucide-react';
+import { AlertCircle, Search, Flag, CheckCircle2, User, MessageSquare, Pencil, Save, X, History, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 
@@ -22,6 +22,11 @@ export default function UserManagement({ infomarian }) {
   const [dmLoading, setDmLoading] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [editData, setEditData] = useState({});
+  const [editReason, setEditReason] = useState('');
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   const handleDirectMessage = async () => {
     if (!selectedUser) return;
@@ -36,6 +41,56 @@ export default function UserManagement({ infomarian }) {
       setDmLoading(false);
     }
   };
+  const startEdit = () => {
+    setEditData({
+      full_name: selectedUser.name || selectedUser.full_name || '',
+      email: selectedUser.email || '',
+      last_name: selectedUser.last_name || '',
+      date_of_birth: selectedUser.date_of_birth || '',
+      phone_number: selectedUser.phone_number || '',
+      language: selectedUser.language || 'en',
+      user_role: selectedUser.user_role || selectedUser.role || 'voter',
+      franchise_id: selectedUser.franchise_id || '',
+      infomarian_id: selectedUser.infomarian_id || '',
+      bsb: selectedUser.bsb || '',
+      account_number: selectedUser.account_number || '',
+      account_name: selectedUser.account_name || '',
+      account_validated: !!selectedUser.account_validated,
+      voter_id: selectedUser.voter_id || ''
+    });
+    setEditReason('');
+    setEditMode(true);
+    setHistoryOpen(false);
+  };
+
+  const cancelEdit = () => {
+    setEditMode(false);
+    setEditData({});
+    setEditReason('');
+  };
+
+  const saveEdit = async () => {
+    if (!selectedUser) return;
+    setSavingEdit(true);
+    try {
+      const res = await base44.functions.invoke('update-user-record', {
+        target_user_id: selectedUser.id,
+        updates: editData,
+        reason: editReason
+      });
+      const updated = res.data?.user;
+      if (updated) {
+        setSelectedUser({ ...selectedUser, ...updated });
+      }
+      setEditMode(false);
+      alert('User record updated. Change history recorded.');
+    } catch (e) {
+      alert('Failed to update user record: ' + (e.message || 'Unknown error'));
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
   const [strikeData, setStrikeData] = useState({
     reason: '',
     severity: 'moderate',
@@ -219,12 +274,227 @@ export default function UserManagement({ infomarian }) {
                   </div>
                 )}
 
-                <div className="mt-4 pt-4 border-t border-slate-200">
-                  <Button onClick={handleDirectMessage} disabled={dmLoading} className="bg-indigo-600 hover:bg-indigo-700">
+                <div className="mt-4 pt-4 border-t border-slate-200 flex flex-wrap gap-2">
+                  <Button
+                    onClick={handleDirectMessage}
+                    disabled={dmLoading}
+                    variant="outline"
+                    className="border-indigo-200 text-indigo-700 hover:bg-indigo-50"
+                  >
                     <MessageSquare className="w-4 h-4 mr-2" />
                     {t('messages.directMessage')}
                   </Button>
+                  <Button
+                    onClick={() => { setEditMode(false); setHistoryOpen(!historyOpen); }}
+                    variant="outline"
+                    className="border-slate-300 text-slate-700 hover:bg-slate-100"
+                  >
+                    <History className="w-4 h-4 mr-2" />
+                    Change History Report
+                  </Button>
+                  {!editMode ? (
+                    <Button onClick={startEdit} className="bg-indigo-600 hover:bg-indigo-700">
+                      <Pencil className="w-4 h-4 mr-2" />
+                      Edit Record
+                    </Button>
+                  ) : (
+                    <Button onClick={cancelEdit} variant="outline" className="border-red-200 text-red-700 hover:bg-red-50">
+                      <X className="w-4 h-4 mr-2" />
+                      Cancel Edit
+                    </Button>
+                  )}
                 </div>
+
+                {/* Edit Record Form */}
+                {editMode && (
+                  <div className="mt-4 p-4 bg-white rounded-lg border border-indigo-200 space-y-3">
+                    <h4 className="font-semibold text-indigo-900 flex items-center gap-2">
+                      <Pencil className="w-4 h-4" />
+                      Edit User Record
+                    </h4>
+                    <p className="text-xs text-slate-500">
+                      Changes are logged to the change history report with your name and role.
+                    </p>
+                    <div className="grid md:grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <Label className="text-xs">Full Name</Label>
+                        <Input
+                          value={editData.full_name || ''}
+                          onChange={(e) => setEditData({ ...editData, full_name: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Email</Label>
+                        <Input
+                          type="email"
+                          value={editData.email || ''}
+                          onChange={(e) => setEditData({ ...editData, email: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Last Name</Label>
+                        <Input
+                          value={editData.last_name || ''}
+                          onChange={(e) => setEditData({ ...editData, last_name: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Date of Birth</Label>
+                        <Input
+                          type="date"
+                          value={editData.date_of_birth || ''}
+                          onChange={(e) => setEditData({ ...editData, date_of_birth: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Phone Number</Label>
+                        <Input
+                          value={editData.phone_number || ''}
+                          onChange={(e) => setEditData({ ...editData, phone_number: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Language</Label>
+                        <select
+                          value={editData.language || 'en'}
+                          onChange={(e) => setEditData({ ...editData, language: e.target.value })}
+                          className="w-full h-10 px-3 rounded-md border border-slate-200 bg-white text-slate-900"
+                        >
+                          <option value="en">English</option>
+                          <option value="fr">French</option>
+                          <option value="de">German</option>
+                          <option value="es">Spanish</option>
+                          <option value="nl">Dutch</option>
+                        </select>
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">User Role</Label>
+                        <select
+                          value={editData.user_role || 'voter'}
+                          onChange={(e) => setEditData({ ...editData, user_role: e.target.value })}
+                          className="w-full h-10 px-3 rounded-md border border-slate-200 bg-white text-slate-900"
+                        >
+                          <option value="voter">Voter</option>
+                          <option value="infomarian">Infomarian</option>
+                          <option value="franchise_manager">Constituency Manager</option>
+                          <option value="master_franchiser">Master Franchiser</option>
+                        </select>
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Constituency (Franchise) ID</Label>
+                        <Input
+                          value={editData.franchise_id || ''}
+                          onChange={(e) => setEditData({ ...editData, franchise_id: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">BSB</Label>
+                        <Input
+                          value={editData.bsb || ''}
+                          onChange={(e) => setEditData({ ...editData, bsb: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Account Number</Label>
+                        <Input
+                          value={editData.account_number || ''}
+                          onChange={(e) => setEditData({ ...editData, account_number: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Account Name</Label>
+                        <Input
+                          value={editData.account_name || ''}
+                          onChange={(e) => setEditData({ ...editData, account_name: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Voter ID</Label>
+                        <Input
+                          value={editData.voter_id || ''}
+                          onChange={(e) => setEditData({ ...editData, voter_id: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-1 md:col-span-2">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={!!editData.account_validated}
+                            onChange={(e) => setEditData({ ...editData, account_validated: e.target.checked })}
+                            className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-600"
+                          />
+                          <span className="text-sm font-medium text-slate-700">Account Validated</span>
+                        </label>
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">Reason for Change (recorded in history)</Label>
+                      <Input
+                        value={editReason}
+                        onChange={(e) => setEditReason(e.target.value)}
+                        placeholder="e.g., Member requested phone number correction"
+                      />
+                    </div>
+                    <Button
+                      onClick={saveEdit}
+                      disabled={savingEdit}
+                      className="w-full bg-emerald-600 hover:bg-emerald-700"
+                    >
+                      {savingEdit ? (
+                        <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Saving...</>
+                      ) : (
+                        <><Save className="w-4 h-4 mr-2" /> Save Changes</>
+                      )}
+                    </Button>
+                  </div>
+                )}
+
+                {/* Change History Report */}
+                {historyOpen && (
+                  <div className="mt-4 p-4 bg-white rounded-lg border border-slate-200">
+                    <h4 className="font-semibold text-slate-900 flex items-center gap-2 mb-3">
+                      <History className="w-4 h-4" />
+                      Change History Report
+                    </h4>
+                    {(!selectedUser.change_history || selectedUser.change_history.length === 0) ? (
+                      <p className="text-sm text-slate-500">No changes have been recorded for this user.</p>
+                    ) : (
+                      <div className="space-y-2 max-h-80 overflow-y-auto">
+                        {[...selectedUser.change_history].reverse().map((entry, idx) => (
+                          <div key={idx} className="text-xs p-3 bg-slate-50 rounded border border-slate-200">
+                            <div className="flex items-center justify-between mb-1">
+                              <Badge className="bg-indigo-100 text-indigo-700 capitalize">
+                                {entry.field?.replace(/_/g, ' ')}
+                              </Badge>
+                              <span className="text-slate-500">
+                                {entry.date ? format(new Date(entry.date), 'MMM d, yyyy HH:mm') : ''}
+                              </span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2 mt-1">
+                              <div>
+                                <span className="text-slate-400">From:</span>{' '}
+                                <span className="text-slate-700 break-all">
+                                  {entry.old_value === null || entry.old_value === undefined ? '—' : String(entry.old_value)}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-slate-400">To:</span>{' '}
+                                <span className="text-slate-900 font-medium break-all">
+                                  {entry.new_value === null || entry.new_value === undefined ? '—' : String(entry.new_value)}
+                                </span>
+                              </div>
+                            </div>
+                            <p className="mt-1 text-slate-500">
+                              By {entry.changed_by_name || 'Unknown'}
+                              {entry.changed_by_role ? ` (${entry.changed_by_role})` : ''}
+                              {entry.reason ? ` — ${entry.reason}` : ''}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           )}

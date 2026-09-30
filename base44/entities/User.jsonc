@@ -167,6 +167,47 @@
       ],
       "default": "newcomer",
       "description": "Reputation tier"
+    },
+    "change_history": {
+      "type": "array",
+      "default": [],
+      "description": "Audit log of changes made to this user's record after creation",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the change was made"
+          },
+          "changed_by_id": {
+            "type": "string",
+            "description": "User ID of the moderator who made the change"
+          },
+          "changed_by_name": {
+            "type": "string",
+            "description": "Name of the moderator who made the change"
+          },
+          "changed_by_role": {
+            "type": "string",
+            "description": "Role of the moderator (admin, infomarian, master_franchiser, franchise_manager)"
+          },
+          "field": {
+            "type": "string",
+            "description": "Name of the field that was changed"
+          },
+          "old_value": {
+            "description": "Previous value of the field"
+          },
+          "new_value": {
+            "description": "New value of the field"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Optional note explaining why the change was made"
+          }
+        }
+      }
     }
   },
   "required": [
