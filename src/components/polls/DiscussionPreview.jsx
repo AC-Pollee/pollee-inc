@@ -11,6 +11,9 @@ import { Search, MessageCircle, MessageSquare, ArrowRight, Flame } from 'lucide-
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
+import { usePollTranslation } from '@/hooks/usePollTranslation';
+import PollTitle from '@/components/polls/PollTitle';
+import CommentTranslation from '@/components/polls/CommentTranslation';
 
 export default function DiscussionPreview() {
   const { t } = useTranslation();
@@ -61,6 +64,8 @@ export default function DiscussionPreview() {
     if (filtered.length > 0) return filtered[0];
     return null;
   }, [selectedPollId, filtered, discussions]);
+
+  const { title: previewTitle, description: previewDescription, isTranslating, error: translationError, retryTranslation } = usePollTranslation(previewPoll);
 
   const previewComments = useMemo(() => {
     if (!previewPoll) return [];
@@ -131,7 +136,7 @@ export default function DiscussionPreview() {
                 >
                   <div className="flex items-start justify-between gap-2">
                     <h3 className="text-sm font-semibold text-slate-900 line-clamp-2 flex-1">
-                      {poll.title}
+                      <PollTitle poll={poll} />
                     </h3>
                     {isTop && (
                       <Flame className="w-4 h-4 text-orange-500 shrink-0" />
@@ -156,11 +161,11 @@ export default function DiscussionPreview() {
                 <div className="p-5 border-b border-slate-100">
                   <div className="flex items-center gap-2 mb-2">
                     <Badge variant="outline" className="text-xs capitalize">
-                      {previewPoll.poll_level || 'local'}
+                      {t(`admin.${previewPoll.poll_level === 'federal' ? 'federalLevel' : previewPoll.poll_level === 'state' ? 'stateLevel' : 'localLevel'}`)}
                     </Badge>
                     <Badge variant="secondary" className="text-xs">
                       <MessageCircle className="w-3 h-3 mr-1" />
-                      {previewPoll.commentCount} {previewPoll.commentCount === 1 ? 'comment' : 'comments'}
+                      {previewPoll.commentCount} {previewPoll.commentCount === 1 ? t('discussionPreview.comment') : t('discussionPreview.comments')}
                     </Badge>
                     {discussions[0]?.id === previewPoll.id && previewPoll.commentCount > 0 && (
                       <Badge className="text-xs bg-orange-100 text-orange-700 hover:bg-orange-100">
@@ -169,10 +174,12 @@ export default function DiscussionPreview() {
                       </Badge>
                     )}
                   </div>
-                  <h3 className="text-lg font-bold text-slate-900">{previewPoll.title}</h3>
+                  <h3 className="text-lg font-bold text-slate-900">{previewTitle}</h3>
                   {previewPoll.description && (
-                    <p className="text-sm text-slate-500 mt-1 line-clamp-2">{previewPoll.description}</p>
+                    <p className="text-sm text-slate-500 mt-1 line-clamp-2">{previewDescription}</p>
                   )}
+                  {isTranslating && <p role="status" className="text-xs text-muted-foreground mt-1">{t('commentTranslation.translating')}</p>}
+                  {translationError && <button type="button" onClick={() => retryTranslation()} className="text-xs text-destructive mt-1">{t('commentTranslation.error')}</button>}
                 </div>
 
                 <div className="p-5 space-y-4 flex-1">
@@ -206,7 +213,7 @@ export default function DiscussionPreview() {
                               {c.created_date ? format(new Date(c.created_date), 'dd MMM, HH:mm') : ''}
                             </span>
                           </div>
-                          <p className="text-sm text-slate-600 mt-1 line-clamp-3">{c.content}</p>
+                          <CommentTranslation comment={c} compact />
                         </div>
                       </motion.div>
                     ))
