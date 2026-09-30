@@ -97,13 +97,44 @@ export default function UserManagement({ infomarian }) {
     comment_id: ''
   });
 
-  const { data: users = [] } = useQuery({
-    queryKey: ['allUsers'],
-    queryFn: async () => {
-      // In a real app, you'd have a proper user listing endpoint
-      return [];
-    }
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me(),
+    retry: false
   });
+
+  const canRevokeStrike = !!currentUser && (
+    currentUser.email === 'ac@acproductiondesign.com' ||
+    currentUser.role === 'admin' ||
+    currentUser.user_role === 'master_franchiser'
+  );
+
+  const [revokingStrike, setRevokingStrike] = useState(null);
+
+  const handleRevokeStrike = async (strike) => {
+    const note = prompt('Enter a reason for revoking this strike:', 'Strike issued in error');
+    if (note === null) return;
+    setRevokingStrike(strike.date);
+    try {
+      const res = await base44.functions.invoke('revoke-strike', {
+        target_user_id: selectedUser.id,
+        strike_date: strike.date,
+        reason: note
+      });
+      const data = res.data;
+      if (data?.ok) {
+        // Refresh the selected user's strikes from the server
+        const fresh = await base44.functions.invoke('search-users', { query: selectedUser.email });
+        const updated = fresh.data?.users?.find(u => u.id === selectedUser.id);
+        if (updated) setSelectedUser({ ...selectedUser, ...updated });
+        alert(`Strike revoked. ${data.strike_count} strike(s) remaining. Reputation restored to ${data.reputation_score}.`);
+      }
+    } catch (e) {
+      alert('Failed to revoke strike: ' + (e.message || 'Unknown error'));
+    } finally {
+      setRevokingStrike(null);
+    }
+  };
 
   const issueStrike = useMutation({
     mutationFn: async ({ userId, strikeInfo }) => {
@@ -257,7 +288,7 @@ export default function UserManagement({ infomarian }) {
                     <div className="space-y-2">
                       {selectedUser.strikes.map((strike, idx) => (
                         <div key={idx} className="text-xs bg-white p-2 rounded border">
-                          <div className="flex justify-between">
+                          <div className="flex justify-between items-center">
                             <Badge className={
                               strike.severity === 'severe' ? 'bg-red-600' :
                               strike.severity === 'moderate' ? 'bg-orange-600' :
@@ -268,6 +299,24 @@ export default function UserManagement({ infomarian }) {
                             <span className="text-slate-500">{format(new Date(strike.date), 'MMM d, yyyy')}</span>
                           </div>
                           <p className="mt-1 text-slate-700">{strike.reason}</p>
+                          {strike.infomarian_name && (
+                            <p className="mt-1 text-slate-400">Issued by: {strike.infomarian_name}</p>
+                          )}
+                          {canRevokeStrike && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleRevokeStrike(strike)}
+                              disabled={revokingStrike === strike.date}
+                              className="mt-2 h-7 text-xs border-red-200 text-red-700 hover:bg-red-50"
+                            >
+                              {revokingStrike === strike.date ? (
+                                <><Loader2 className="w-3 h-3 mr-1 animate-spin" /> Revoking...</>
+                              ) : (
+                                <><X className="w-3 h-3 mr-1" /> Revoke Strike</>
+                              )}
+                            </Button>
+                          )}
                         </div>
                       ))}
                     </div>
