@@ -253,7 +253,7 @@ export default function UserManagement({ infomarian }) {
                 id="severity"
                 value={strikeData.severity}
                 onChange={(e) => setStrikeData({...strikeData, severity: e.target.value})}
-                className="w-full h-10 px-3 rounded-md border border-slate-200"
+                className="w-full h-10 px-3 rounded-md border border-slate-200 bg-white text-slate-900"
               >
                 <option value="minor">Minor - Warning only</option>
                 <option value="moderate">Moderate - Counted toward 3 strikes</option>
