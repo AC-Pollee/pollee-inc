@@ -20,7 +20,19 @@ export default async function(req) {
       .filter(u => u.id !== caller.id)
       .map(u => {
         const name = `${u.full_name || ''} ${u.last_name || ''}`.trim();
-        return { id: u.id, name: name || u.email, email: u.email || '', role: u.user_role || 'voter' };
+        return {
+          id: u.id,
+          name: name || u.email,
+          email: u.email || '',
+          role: u.user_role || 'voter',
+          full_name: u.full_name || '',
+          last_name: u.last_name || '',
+          voter_id: u.voter_id || '',
+          user_role: u.user_role || 'voter',
+          strikes: u.strikes || [],
+          commenting_restricted: !!u.commenting_restricted,
+          account_validated: !!u.account_validated
+        };
       })
       .filter(u => u.name.toLowerCase().includes(query) || u.email.toLowerCase().includes(query))
       .slice(0, 10);

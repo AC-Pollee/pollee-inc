@@ -20,6 +20,8 @@ export default function UserManagement({ infomarian }) {
   const [searchEmail, setSearchEmail] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
   const [dmLoading, setDmLoading] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const [searching, setSearching] = useState(false);
 
   const handleDirectMessage = async () => {
     if (!selectedUser) return;
@@ -86,20 +88,21 @@ export default function UserManagement({ infomarian }) {
 
   const searchUser = async () => {
     if (!searchEmail.trim()) return;
-    
+    setSearching(true);
+    setSearchResults([]);
+    setSelectedUser(null);
     try {
-      // Search for user by email
-      const allUsers = await base44.entities.User.list();
-      const user = allUsers.find(u => u.email.toLowerCase() === searchEmail.toLowerCase());
-      
-      if (user) {
-        setSelectedUser(user);
-      } else {
-        alert('User not found');
+      const res = await base44.functions.invoke('search-users', { query: searchEmail.trim() });
+      const users = res.data?.users || [];
+      setSearchResults(users);
+      if (users.length === 0) {
+        alert('No users found');
       }
     } catch (error) {
       console.error('Error searching user:', error);
       alert('Error searching for user');
+    } finally {
+      setSearching(false);
     }
   };
 
@@ -125,24 +128,43 @@ export default function UserManagement({ infomarian }) {
           <div className="flex gap-3">
             <div className="flex-1">
               <Input
-                placeholder="Search by email address..."
+                placeholder="Search by name or email..."
                 value={searchEmail}
                 onChange={(e) => setSearchEmail(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && searchUser()}
               />
             </div>
-            <Button onClick={searchUser}>
+            <Button onClick={searchUser} disabled={searching}>
               <Search className="w-4 h-4 mr-2" />
-              {t('userMgmt.search')}
+              {searching ? 'Searching...' : t('userMgmt.search')}
             </Button>
           </div>
+
+          {searchResults.length > 0 && (
+            <div className="space-y-1 border border-slate-200 rounded-md p-2 bg-white max-h-64 overflow-y-auto">
+              {searchResults.map((u) => (
+                <button
+                  key={u.id}
+                  type="button"
+                  onClick={() => { setSelectedUser(u); setSearchResults([]); }}
+                  className="w-full flex items-center justify-between text-left px-3 py-2 rounded hover:bg-slate-100 transition"
+                >
+                  <div>
+                    <p className="text-sm font-medium text-slate-900">{u.name}</p>
+                    <p className="text-xs text-slate-500">{u.email}</p>
+                  </div>
+                  <Badge variant="outline" className="capitalize">{u.role}</Badge>
+                </button>
+              ))}
+            </div>
+          )}
 
           {selectedUser && (
             <Card className="bg-slate-50">
               <CardContent className="pt-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h3 className="font-semibold text-lg">{selectedUser.full_name}</h3>
+                    <h3 className="font-semibold text-lg">{selectedUser.name || selectedUser.full_name}</h3>
                     <p className="text-sm text-slate-600">{selectedUser.email}</p>
                     {selectedUser.voter_id && (
                       <Badge className="mt-2">Voter ID: {selectedUser.voter_id}</Badge>
