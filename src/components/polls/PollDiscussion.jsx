@@ -371,8 +371,6 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
             </div>
           ) : (
             <>
-              <p className={`text-xs md:text-sm text-slate-700 whitespace-pre-wrap break-words ${comment.moderation_status === 'rejected' ? 'line-through text-slate-400' : ''}`}>{comment.content}</p>
-
               <CommentTranslation comment={comment} />
 
               {comment.moderation_reason && (
