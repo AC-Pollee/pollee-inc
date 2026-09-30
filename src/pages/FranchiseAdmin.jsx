@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Building2, Users, Plus, Trash2, Search, Pencil, Loader2, FileText } from 'lucide-react';
 import FranchiseEditDialog from '@/components/franchise/FranchiseEditDialog';
+import InfomarianEditDialog from '@/components/infomarian/InfomarianEditDialog';
 import { useTranslation } from 'react-i18next';
 
 export default function FranchiseAdmin() {
@@ -152,6 +153,7 @@ export default function FranchiseAdmin() {
   });
 
   const [editingFranchise, setEditingFranchise] = useState(null);
+  const [editingInfomarian, setEditingInfomarian] = useState(null);
 
   const deleteInfomarian = useMutation({
     mutationFn: (id) => base44.entities.Infomarian.delete(id),
@@ -954,18 +956,29 @@ export default function FranchiseAdmin() {
                           </a>
                         )}
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          if (confirm('Remove this Infomarian?')) {
-                            deleteInfomarian.mutate(info.id);
-                          }
-                        }}
-                        className="text-slate-400 hover:text-red-500"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setEditingInfomarian(info)}
+                          className="text-slate-400 hover:text-indigo-600"
+                          title="Edit Infomarian"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            if (confirm('Remove this Infomarian?')) {
+                              deleteInfomarian.mutate(info.id);
+                            }
+                          }}
+                          className="text-slate-400 hover:text-red-500"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -974,6 +987,13 @@ export default function FranchiseAdmin() {
           </TabsContent>
         </Tabs>
       </div>
+
+      <InfomarianEditDialog
+        infomarian={editingInfomarian}
+        open={!!editingInfomarian}
+        onOpenChange={(v) => !v && setEditingInfomarian(null)}
+        franchises={franchises}
+      />
     </div>
   );
 }

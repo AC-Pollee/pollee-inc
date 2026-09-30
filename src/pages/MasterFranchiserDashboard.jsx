@@ -5,15 +5,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Shield, Building2, Users, Vote, BarChart3 } from 'lucide-react';
+import { Shield, Building2, Users, Vote, BarChart3, Pencil } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import ConstituencyHelp from '@/components/help/ConstituencyHelp';
+import InfomarianEditDialog from '@/components/infomarian/InfomarianEditDialog';
 import { useTranslation } from 'react-i18next';
 
 export default function MasterFranchiserDashboard() {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('overview');
+  const [editingInfomarian, setEditingInfomarian] = useState(null);
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -232,13 +234,24 @@ export default function MasterFranchiserDashboard() {
                         <p className="font-semibold text-slate-900">{infomarian.full_name}</p>
                         <p className="text-sm text-slate-500">ID: {infomarian.infomarian_id}</p>
                       </div>
-                      <Badge className={
-                        infomarian.status === 'active' ? 'bg-emerald-100 text-emerald-700' :
-                        infomarian.status === 'suspended' ? 'bg-red-100 text-red-700' :
-                        'bg-slate-100 text-slate-600'
-                      }>
-                        {infomarian.status}
-                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <Badge className={
+                          infomarian.status === 'active' ? 'bg-emerald-100 text-emerald-700' :
+                          infomarian.status === 'suspended' ? 'bg-red-100 text-red-700' :
+                          'bg-slate-100 text-slate-600'
+                        }>
+                          {infomarian.status}
+                        </Badge>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setEditingInfomarian(infomarian)}
+                          className="text-slate-400 hover:text-indigo-600"
+                          title="Edit Infomarian"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -311,6 +324,13 @@ export default function MasterFranchiserDashboard() {
           </TabsContent>
         </Tabs>
       </div>
+
+      <InfomarianEditDialog
+        infomarian={editingInfomarian}
+        open={!!editingInfomarian}
+        onOpenChange={(v) => !v && setEditingInfomarian(null)}
+        franchises={franchises}
+      />
     </div>
   );
 }
