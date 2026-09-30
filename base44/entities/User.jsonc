@@ -150,7 +150,8 @@
         "strikes_minor": 0,
         "strikes_moderate": 0,
         "strikes_severe": 0,
-        "flagged_content": 0
+        "flagged_content": 0,
+        "claps_received": 0
       },
       "description": "Breakdown of reputation components"
     },
