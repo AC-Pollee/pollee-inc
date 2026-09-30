@@ -51,7 +51,8 @@
     "infomarians": "Infomarians",
     "report": "Report",
     "moderation": "Moderation",
-    "newUser": "New User"
+    "newUser": "New User",
+    "messages": "Messages"
   },
   "login": {
     "title": "Welcome Back",
@@ -1159,5 +1160,25 @@
     "showTranslation": "Show {{lang}} translation",
     "showOriginal": "Show original",
     "error": "Translation failed. Please try again."
+  },
+  "messages": {
+    "title": "Direct Messages",
+    "privateMod": "Private moderation channel",
+    "private": "Private — only you and the other participant can see this",
+    "newConversation": "New Conversation",
+    "searchMember": "Search for a member",
+    "searchPlaceholder": "Search by name or email...",
+    "noMatches": "No matching members",
+    "subjectOptional": "Subject (optional)",
+    "subjectPlaceholder": "e.g., Moderation follow-up",
+    "startChat": "Start Chat",
+    "selectConversation": "Select a conversation to view messages",
+    "noConversations": "No conversations yet",
+    "noMessages": "No messages yet. Say hello!",
+    "typeMessage": "Type a message...",
+    "closed": "Closed",
+    "back": "Back",
+    "change": "Change",
+    "directMessage": "Direct Message"
   }
 }

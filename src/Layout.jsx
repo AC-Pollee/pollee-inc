@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { createPageUrl } from '@/utils';
-import { Vote, BarChart3, Settings, User, Shield, AlertTriangle, ShieldAlert } from 'lucide-react';
+import { Vote, BarChart3, Settings, User, Shield, AlertTriangle, ShieldAlert, MessageSquare } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Badge } from "@/components/ui/badge";
@@ -115,6 +115,8 @@ export default function Layout({ children, currentPageName }) {
   const navItems = getRoleNavItems();
   // Incident reporting is available to all users — pinned to the menu bar
   navItems.push({ name: 'IncidentReport', icon: AlertTriangle, label: 'nav.report' });
+  // Direct messaging — available to all users (moderators initiate, members reply)
+  navItems.push({ name: 'Messages', icon: MessageSquare, label: 'nav.messages' });
 
   // Moderation Alerts — visible only to Infomarians and Constituency administrators
   const isSuperAdmin = user?.email === 'ac@acproductiondesign.com';

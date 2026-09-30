@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,15 +9,31 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Search, Flag, CheckCircle2, User } from 'lucide-react';
+import { AlertCircle, Search, Flag, CheckCircle2, User, MessageSquare } from 'lucide-react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 
 export default function UserManagement({ infomarian }) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [searchEmail, setSearchEmail] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
+  const [dmLoading, setDmLoading] = useState(false);
+
+  const handleDirectMessage = async () => {
+    if (!selectedUser) return;
+    setDmLoading(true);
+    try {
+      const res = await base44.functions.invoke('start-conversation', { target_user_id: selectedUser.id });
+      const conv = res.data?.conversation;
+      if (conv) navigate(`/Messages?c=${conv.id}`);
+    } catch (e) {
+      alert('Could not start conversation');
+    } finally {
+      setDmLoading(false);
+    }
+  };
   const [strikeData, setStrikeData] = useState({
     reason: '',
     severity: 'moderate',
@@ -179,6 +196,13 @@ export default function UserManagement({ infomarian }) {
                     </div>
                   </div>
                 )}
+
+                <div className="mt-4 pt-4 border-t border-slate-200">
+                  <Button onClick={handleDirectMessage} disabled={dmLoading} className="bg-indigo-600 hover:bg-indigo-700">
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    {t('messages.directMessage')}
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           )}

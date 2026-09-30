@@ -1,0 +1,119 @@
+{
+  "name": "Conversation",
+  "type": "object",
+  "properties": {
+    "participants": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "User IDs of the two participants"
+    },
+    "participant_names": {
+      "type": "array",
+      "description": "Display info for each participant",
+      "items": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "initiator_id": {
+      "type": "string",
+      "description": "User ID of the conversation starter"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Optional subject / context for the conversation"
+    },
+    "related_poll_id": {
+      "type": "string",
+      "description": "Optional related poll ID"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "closed"
+      ],
+      "default": "active",
+      "description": "Conversation status"
+    },
+    "last_message_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the last message was sent"
+    },
+    "last_message_preview": {
+      "type": "string",
+      "description": "Preview of the last message"
+    },
+    "last_sender_id": {
+      "type": "string",
+      "description": "User ID of the last sender"
+    }
+  },
+  "required": [
+    "participants",
+    "participant_names",
+    "initiator_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.participants": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "data.participants": {
+        "$in": [
+          "{{user.id}}"
+        ]
+      }
+    },
+    "update": {
+      "$or": [
+        {
+          "data.participants": {
+            "$in": [
+              "{{user.id}}"
+            ]
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.initiator_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

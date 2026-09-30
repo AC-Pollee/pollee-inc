@@ -16,6 +16,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import Messages from './pages/Messages';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -83,6 +84,11 @@ const AuthenticatedApp = () => {
             }
           />
         ))}
+        <Route path="/Messages" element={
+          <LayoutWrapper currentPageName="Messages">
+            <Messages />
+          </LayoutWrapper>
+        } />
         <Route path="/NewUserRegistration" element={
           <LayoutWrapper currentPageName="NewUserRegistration">
             <NewUserRegistration />
