@@ -53,27 +53,9 @@ export default async function(req) {
     const remainingStrikes = existingStrikes.filter((_, i) => i !== strikeIndex);
     const newCount = remainingStrikes.length;
 
-    // Recompute consequences based on the remaining strike count.
-    let commenting_restricted = !!target.commenting_restricted;
-    let suspension_end_date = target.suspension_end_date;
-    let permanently_banned = !!target.permanently_banned;
-
-    if (newCount === 0) {
-      commenting_restricted = false;
-      suspension_end_date = null;
-      permanently_banned = false;
-    } else if (newCount === 1) {
-      permanently_banned = false;
-      commenting_restricted = true;
-    } else if (newCount === 2) {
-      permanently_banned = false;
-      commenting_restricted = true;
-    } else {
-      permanently_banned = true;
-      commenting_restricted = true;
-    }
-
-    // Restore reputation: each strike had cost -3, so revoking restores +3.
+    // Incident-specific revocation: only this single strike is removed.
+    // All other strikes and any existing consequences (commenting restriction,
+    // suspension, ban) remain in place — this is not a blanket reset.
     const currentScore = typeof target.reputation_score === 'number' ? target.reputation_score : 100;
     const newScore = Math.min(1000, currentScore + 3);
 
@@ -99,9 +81,6 @@ export default async function(req) {
       reputation_score: newScore,
       reputation_breakdown: newBreakdown,
       reputation_level: levelFor(newScore),
-      commenting_restricted,
-      suspension_end_date,
-      permanently_banned,
       change_history: [...existingHistory, historyEntry]
     });
 
@@ -131,8 +110,6 @@ export default async function(req) {
       ok: true,
       strike_count: newCount,
       reputation_score: newScore,
-      commenting_restricted,
-      permanently_banned,
       revoked_strike: revokedStrike
     });
   } catch (error) {
