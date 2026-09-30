@@ -102,6 +102,19 @@ export default function FranchiseAdmin() {
     mutationFn: (data) => base44.entities.Infomarian.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries(['infomarians']);
+      // Send an automatic alert email to the newly selected Infomarian
+      const franchise = franchises.find(f => f.id === infomarianData.franchise_id);
+      const franchiseName = franchise?.franchise_name || infomarianData.franchise_id;
+      base44.integrations.Core.SendEmail({
+        to: infomarianData.user_email,
+        subject: 'You have been selected as an Infomarian',
+        html: `<p>Dear ${infomarianData.full_name},</p>
+          <p>You have been selected as an <strong>Infomarian</strong> for <strong>${franchiseName}</strong>.</p>
+          <p>Your Infomarian ID is <strong>${infomarianData.infomarian_id}</strong>.</p>
+          <p>You can now access the Infomarian Dashboard to begin your moderation duties.</p>
+          <p>Thank you for serving your constituency.</p>
+          <p>— Pollee Inc</p>`
+      }).catch(() => {});
       setInfomarianData({
         user_email: '',
         full_name: '',
