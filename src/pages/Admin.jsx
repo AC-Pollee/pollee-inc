@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { 
   ArrowLeft, Plus, Trash2, Loader2, CheckCircle2, XCircle, 
-  Clock, ExternalLink, Settings, Vote, Eye, Building2, Shield, Users
+  Clock, ExternalLink, Settings, Vote, Eye, Building2, Shield, Users, UserPlus
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
@@ -199,10 +199,18 @@ export default function Admin() {
             </Button>
             </Link>
 
-            <div className="mb-8">
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">{t('admin.title')}</h1>
-            <p className="text-slate-500">{t('admin.subtitle')}</p>
-        </div>
+            <div className="mb-8 flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900 mb-2">{t('admin.title')}</h1>
+              <p className="text-slate-500">{t('admin.subtitle')}</p>
+            </div>
+            <Link to={createPageUrl('NewUserRegistration')}>
+              <Button variant="outline" className="border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+                <UserPlus className="w-4 h-4 mr-2" />
+                {t('admin.registerNewUser')}
+              </Button>
+            </Link>
+          </div>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="bg-white border border-slate-200 p-1 rounded-xl shadow-sm">

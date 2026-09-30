@@ -165,6 +165,7 @@
   },
   "admin": {
     "backToPolls": "Retour aux sondages",
+    "registerNewUser": "Inscrire un nouvel utilisateur",
     "title": "Panneau d'administration",
     "subtitle": "Créer des sondages et vérifier les votes",
     "createPoll": "Créer un sondage",
@@ -413,6 +414,7 @@
   },
   "infomarianDash": {
     "backToHome": "Retour à l'accueil",
+    "registerNewUser": "Inscrire un nouvel utilisateur",
     "title": "Tableau de bord Infomarien",
     "welcome": "Bienvenue, {{name}}",
     "notInfomarian": "Pas un Infomarien",

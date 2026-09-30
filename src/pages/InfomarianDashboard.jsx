@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, BarChart3, MessageSquare, Image, DollarSign, AlertCircle, CheckCircle2, Library } from 'lucide-react';
+import { ArrowLeft, BarChart3, MessageSquare, Image, DollarSign, AlertCircle, CheckCircle2, Library, UserPlus } from 'lucide-react';
 import { motion } from 'framer-motion';
 import AssignedPolls from '@/components/infomarian/AssignedPolls';
 import CommentsModeration from '@/components/infomarian/CommentsModeration';
@@ -109,9 +109,17 @@ export default function InfomarianDashboard() {
               <h1 className="text-3xl font-bold text-slate-900 mb-2">{t('infomarianDash.title')}</h1>
               <p className="text-slate-500">{t('infomarianDash.welcome', { name: infomarian.full_name })}</p>
             </div>
-            <Badge className="bg-purple-100 text-purple-700 px-4 py-2 text-base">
-              {infomarian.infomarian_id}
-            </Badge>
+            <div className="flex items-center gap-3">
+              <Link to={createPageUrl('NewUserRegistration')}>
+                <Button variant="outline" className="border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  {t('infomarianDash.registerNewUser')}
+                </Button>
+              </Link>
+              <Badge className="bg-purple-100 text-purple-700 px-4 py-2 text-base">
+                {infomarian.infomarian_id}
+              </Badge>
+            </div>
           </div>
         </div>
 
