@@ -9,6 +9,7 @@ const LANGUAGE_NAMES = {
   fr: 'French',
   de: 'German',
   es: 'Spanish',
+  nl: 'Dutch',
 };
 
 export default function CommentTranslation({ comment }) {
