@@ -9,9 +9,10 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Library, Plus, Link2, Image as ImageIcon, Video, FileText, Music, Trash2, Check, X, Search, Inbox } from 'lucide-react';
+import { Library, Plus, Link2, Image as ImageIcon, Video, FileText, Music, Trash2, Check, X, Search, Inbox, Pencil } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { useTranslation } from 'react-i18next';
+import ContentEditDialog from './ContentEditDialog';
 
 const TYPE_ICONS = {
   url: Link2,
@@ -26,6 +27,7 @@ export default function ContentLibraryPanel({ infomarian }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [showAdd, setShowAdd] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
 
@@ -50,6 +52,16 @@ export default function ContentLibraryPanel({ infomarian }) {
     onSuccess: () => {
       queryClient.invalidateQueries(['content-library', infomarian?.infomarian_id]);
       queryClient.invalidateQueries(['forwarded-content', infomarian?.infomarian_id]);
+    }
+  });
+
+  const updateItem = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.ContentLibraryItem.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['content-library', infomarian?.infomarian_id]);
+      queryClient.invalidateQueries(['forwarded-content', infomarian?.infomarian_id]);
+      setEditingItem(null);
+      toast({ title: t('contentLibrary.updated') });
     }
   });
 
@@ -164,10 +176,16 @@ export default function ContentLibraryPanel({ infomarian }) {
                       <Icon className="w-5 h-5 text-indigo-500" />
                       <Badge variant="secondary" className="text-xs capitalize">{item.content_type}</Badge>
                     </div>
-                    <Button size="icon" variant="ghost" className="h-7 w-7 text-red-500 hover:bg-red-50"
-                      onClick={() => { if (confirm(t('contentLibrary.confirmDelete'))) deleteItem.mutate(item.id); }}>
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </Button>
+                    <div className="flex gap-0.5">
+                      <Button size="icon" variant="ghost" className="h-7 w-7 text-indigo-500 hover:bg-indigo-50"
+                        onClick={() => setEditingItem(item)}>
+                        <Pencil className="w-3.5 h-3.5" />
+                      </Button>
+                      <Button size="icon" variant="ghost" className="h-7 w-7 text-red-500 hover:bg-red-50"
+                        onClick={() => { if (confirm(t('contentLibrary.confirmDelete'))) deleteItem.mutate(item.id); }}>
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
                   </div>
                   <p className="font-semibold text-sm text-slate-900 mb-1">{item.title}</p>
                   {item.description && <p className="text-xs text-slate-500 line-clamp-2">{item.description}</p>}
@@ -186,6 +204,7 @@ export default function ContentLibraryPanel({ infomarian }) {
       )}
 
       <AddItemDialog open={showAdd} onOpenChange={setShowAdd} infomarian={infomarian} onCreate={createItem.mutate} />
+      <ContentEditDialog item={editingItem} open={!!editingItem} onOpenChange={(o) => !o && setEditingItem(null)} onSaved={updateItem.mutate} />
     </div>
   );
 }

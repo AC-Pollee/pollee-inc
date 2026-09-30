@@ -462,7 +462,10 @@
     "audio": "Audio",
     "empty": "Ihre Bibliothek ist leer. Fügen Sie Inhalte hinzu, um sie als Belege in Diskussionen zu verwenden.",
     "forwardedPending": "Weitergeleitete Inhalte zur Überprüfung",
-    "forwardedBy": "Weitergeleitet von"
+    "forwardedBy": "Weitergeleitet von",
+    "editItem": "Inhalt bearbeiten",
+    "saveChanges": "Änderungen speichern",
+    "updated": "Inhalt aktualisiert"
   },
   "evidence": {
     "supportingEvidence": "Belegmaterial",

@@ -464,7 +464,10 @@
     "audio": "Audio",
     "empty": "Your library is empty. Add content to use as supporting evidence in discussions.",
     "forwardedPending": "Forwarded Content Pending Review",
-    "forwardedBy": "Forwarded by"
+    "forwardedBy": "Forwarded by",
+    "editItem": "Edit Content",
+    "saveChanges": "Save Changes",
+    "updated": "Content updated"
   },
   "evidence": {
     "supportingEvidence": "Supporting Evidence",

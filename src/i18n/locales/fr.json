@@ -464,7 +464,10 @@
     "audio": "Audio",
     "empty": "Votre bibliothèque est vide. Ajoutez du contenu à utiliser comme preuve dans les discussions.",
     "forwardedPending": "Contenu transféré en attente d'examen",
-    "forwardedBy": "Transféré par"
+    "forwardedBy": "Transféré par",
+    "editItem": "Modifier le contenu",
+    "saveChanges": "Enregistrer les modifications",
+    "updated": "Contenu mis à jour"
   },
   "evidence": {
     "supportingEvidence": "Preuves à l'appui",

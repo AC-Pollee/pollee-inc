@@ -462,7 +462,10 @@
     "audio": "Audio",
     "empty": "Uw bibliotheek is leeg. Voeg inhoud toe om als bewijs in discussies te gebruiken.",
     "forwardedPending": "Doorgestuurd inhoud ter beoordeling",
-    "forwardedBy": "Doorgestuurd door"
+    "forwardedBy": "Doorgestuurd door",
+    "editItem": "Inhoud bewerken",
+    "saveChanges": "Wijzigingen opslaan",
+    "updated": "Inhoud bijgewerkt"
   },
   "evidence": {
     "supportingEvidence": "Ondersteunend bewijs",
