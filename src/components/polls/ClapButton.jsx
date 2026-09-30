@@ -24,9 +24,16 @@ export default function ClapButton({ comment, currentUser, claps = [], disabled 
         clapper_name: currentUser.full_name || currentUser.email,
         target_user_email: comment.user_email
       });
+      // Award +1 reputation to the comment author (service-role, works for any clapper)
+      try {
+        await base44.functions.invoke('award-clap-point', { comment_id: comment.id });
+      } catch (e) {
+        // reputation award is best-effort; the clap itself still recorded
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['claps', comment.poll_id]);
+      queryClient.invalidateQueries(['currentUser']);
     }
   });
 
