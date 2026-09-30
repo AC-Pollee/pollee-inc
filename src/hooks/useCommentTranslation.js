@@ -1,12 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { useTranslation } from 'react-i18next';
 import { base44 } from '@/api/base44Client';
+import i18n from '@/i18n';
 
 const LANGUAGE_NAMES = { en: 'English', fr: 'French', de: 'German', es: 'Spanish', nl: 'Dutch' };
 
 export function useCommentTranslation(comment) {
-  const { i18n } = useTranslation();
-  const lang = (i18n.resolvedLanguage || i18n.language || 'en').split('-')[0];
+  const lang = (i18n.language || 'en').split('-')[0];
   const content = comment?.content || '';
   const targetLang = LANGUAGE_NAMES[lang];
   const needsTranslation = lang !== 'en' && !!targetLang && !!content;
