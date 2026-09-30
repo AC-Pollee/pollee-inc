@@ -66,6 +66,23 @@
       "type": "string",
       "description": "Name of the bank"
     },
+    "account_binding": {
+      "type": "string",
+      "enum": [
+        "yes",
+        "no",
+        "rts"
+      ],
+      "description": "Which constituency account this vote binds to (Yes, No, or RTS)"
+    },
+    "destination_account_bsb": {
+      "type": "string",
+      "description": "BSB of the constituency account this vote is bound to"
+    },
+    "destination_account_number": {
+      "type": "string",
+      "description": "Account number of the constituency account this vote is bound to"
+    },
     "payment_breakdown": {
       "type": "object",
       "description": "Breakdown of 0.55 AUD payment",

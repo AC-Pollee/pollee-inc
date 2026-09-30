@@ -56,7 +56,7 @@ export default function Admin() {
     pollee_account_name: 'Pollee Inc',
     yes_account: '11111111',
     no_account: '22222222',
-    undecided_account: '33333333'
+    rts_account: '33333333'
   });
   const [bankSaved, setBankSaved] = useState(false);
   
@@ -811,13 +811,13 @@ export default function Admin() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="undecided_account" className="text-base">
-                        "Undecided" Account Number
+                      <Label htmlFor="rts_account" className="text-base">
+                        "RTS" Account Number
                       </Label>
                       <Input
-                        id="undecided_account"
-                        value={bankDetails.undecided_account}
-                        onChange={(e) => setBankDetails({...bankDetails, undecided_account: e.target.value})}
+                        id="rts_account"
+                        value={bankDetails.rts_account}
+                        onChange={(e) => setBankDetails({...bankDetails, rts_account: e.target.value})}
                         placeholder="33333333"
                         className="h-11 rounded-lg"
                       />

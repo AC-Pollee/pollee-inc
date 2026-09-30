@@ -53,6 +53,18 @@ export default function TransactionForm({ pollId, pollOptions, onSubmit, current
     const option = pollOptions.find(o => o.id === selectedChoice);
     if (!option) return;
 
+    // Bind the chosen option to the constituency's Yes / No / RTS account by position.
+    // Option 1 -> Yes, Option 2 -> No, Option 3 (RTS) -> RTS.
+    const optionIndex = pollOptions.findIndex(o => o.id === selectedChoice);
+    const bindings = ['yes', 'no', 'rts'];
+    const accountBinding = bindings[optionIndex] || 'rts';
+    const accountFields = {
+      yes: { bsb: franchise?.yes_account_bsb, number: franchise?.yes_account_number },
+      no: { bsb: franchise?.no_account_bsb, number: franchise?.no_account_number },
+      rts: { bsb: franchise?.rts_account_bsb, number: franchise?.rts_account_number }
+    };
+    const destination = accountFields[accountBinding] || {};
+
     onSubmit({
       poll_id: pollId,
       poll_item_id: option.id,
@@ -70,7 +82,10 @@ export default function TransactionForm({ pollId, pollOptions, onSubmit, current
       tip_amount: 0,
       delegation_ids: selectedDelegations.map(d => d.id),
       status: 'verified',
-      is_vote_change: hasVotedBefore
+      is_vote_change: hasVotedBefore,
+      account_binding: accountBinding,
+      destination_account_bsb: destination.bsb || '',
+      destination_account_number: destination.number || ''
     });
   };
 

@@ -55,13 +55,13 @@
       "type": "string",
       "description": "Account number for No votes"
     },
-    "undecided_account_bsb": {
+    "rts_account_bsb": {
       "type": "string",
-      "description": "BSB for I Don't Know votes account"
+      "description": "BSB for RTS votes account"
     },
-    "undecided_account_number": {
+    "rts_account_number": {
       "type": "string",
-      "description": "Account number for I Don't Know votes"
+      "description": "Account number for RTS votes"
     }
   },
   "required": [
