@@ -283,6 +283,31 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
                   <CheckCircle2 className="w-3 h-3 md:w-4 md:h-4" />
                 </Button>
               )}
+              {canModerate && comment.moderation_status === 'flagged' && !isArchived && (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleModerate(comment.id, 'approved')}
+                    className="h-6 w-6 md:h-7 md:w-7 text-green-600 hover:text-green-700 hover:bg-green-50"
+                    title="Approve (clear flag)"
+                  >
+                    <CheckCircle2 className="w-3 h-3 md:w-4 md:h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      const reason = prompt('Reason for rejecting this flagged comment:');
+                      if (reason) handleModerate(comment.id, 'rejected', reason);
+                    }}
+                    className="h-6 w-6 md:h-7 md:w-7 text-red-600 hover:text-red-700 hover:bg-red-50"
+                    title="Reject flagged comment"
+                  >
+                    <XCircle className="w-3 h-3 md:w-4 md:h-4" />
+                  </Button>
+                </>
+              )}
               {!canModerate && !isArchived && (
                 <Button
                   variant="ghost"
