@@ -18,7 +18,6 @@ import { usePollTranslation } from '@/hooks/usePollTranslation';
 
 export default function Vote() {
   const { t } = useTranslation();
-  const { title: translatedTitle, description: translatedDescription } = usePollTranslation(poll);
   const urlParams = new URLSearchParams(window.location.search);
   const pollId = urlParams.get('pollId');
   const queryClient = useQueryClient();
@@ -38,6 +37,8 @@ export default function Vote() {
     },
     enabled: !!pollId
   });
+
+  const { title: translatedTitle, description: translatedDescription } = usePollTranslation(poll);
 
   const { data: franchise } = useQuery({
     queryKey: ['franchise', poll?.franchise_id],
