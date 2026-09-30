@@ -109,6 +109,11 @@
     "end_date": {
       "type": "string",
       "format": "date-time"
+    },
+    "reputation_awarded": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the +10 reputation bonus for poll approval has been awarded to the creator"
     }
   },
   "required": [

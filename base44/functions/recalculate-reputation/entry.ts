@@ -21,12 +21,14 @@ const POINTS = {
   successful_delegations: 10,
   received_delegations: 15,
   claps_received: 1,
+  approved_polls: 10,
   flagged_content: -3,
 };
 
 // Recalculates every user's reputation_score + breakdown from their actual
-// actions across all polls (comments, votes, claps, delegations, strikes).
-// Admin-only maintenance op. Runs as the service role to update all users.
+// actions across all polls (comments, votes, claps, delegations, strikes,
+// and approved polls they authored). Admin-only maintenance op. Runs as the
+// service role to update all users.
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
@@ -35,12 +37,13 @@ export default async function(req) {
     const isAdmin = caller.role === 'admin' || caller.email === 'ac@acproductiondesign.com';
     if (!isAdmin) return Response.json({ error: 'Admin only' }, { status: 403 });
 
-    const [users, comments, votes, claps, delegations] = await Promise.all([
+    const [users, comments, votes, claps, delegations, polls] = await Promise.all([
       base44.asServiceRole.entities.User.list(),
       base44.asServiceRole.entities.Comment.list(),
       base44.asServiceRole.entities.Vote.list(),
       base44.asServiceRole.entities.Clap.list(),
       base44.asServiceRole.entities.Delegation.list(),
+      base44.asServiceRole.entities.Poll.list(),
     ]);
 
     const byEmail = new Map(users.map(u => [u.email, u.id]));
@@ -52,6 +55,7 @@ export default async function(req) {
         claps_received: 0,
         successful_delegations: 0,
         received_delegations: 0,
+        approved_polls: 0,
         flagged_content: 0,
         strikes_minor: 0,
         strikes_moderate: 0,
@@ -81,6 +85,11 @@ export default async function(req) {
       if (d.status !== 'verified') continue;
       if (stats.has(d.delegator_user_id)) stats.get(d.delegator_user_id).successful_delegations += 1;
       if (stats.has(d.delegate_user_id)) stats.get(d.delegate_user_id).received_delegations += 1;
+    }
+    // Approved polls — +10 to the poll's creator (created_by_id).
+    for (const p of polls) {
+      if (p.moderation_status !== 'approved') continue;
+      if (stats.has(p.created_by_id)) stats.get(p.created_by_id).approved_polls += 1;
     }
     // Strikes — flagged_content = number of strikes (matches issue-strike's live award).
     for (const u of users) {
@@ -112,6 +121,7 @@ export default async function(req) {
         strikes_severe: s.strikes_severe,
         flagged_content: s.flagged_content,
         claps_received: s.claps_received,
+        approved_polls: s.approved_polls,
       };
       await base44.asServiceRole.entities.User.update(u.id, {
         reputation_score: score,

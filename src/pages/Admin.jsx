@@ -104,8 +104,16 @@ export default function Admin() {
   });
   
   const updatePoll = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Poll.update(id, data),
-    onSuccess: () => queryClient.invalidateQueries(['polls'])
+    mutationFn: async ({ id, data }) => {
+      await base44.entities.Poll.update(id, data);
+      if (data.moderation_status === 'approved') {
+        try { await base44.functions.invoke('award-poll-approval', { poll_id: id }); } catch (e) {}
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['polls']);
+      queryClient.invalidateQueries(['currentUser']);
+    }
   });
   
   const deletePoll = useMutation({
