@@ -6,7 +6,8 @@ import { Plus, Trash2, GripVertical } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
-export default function VotingOptionsEditor({ options, onChange, onAdd, onRemove, onUpdate, minOptions = 2 }) {
+export default function VotingOptionsEditor({ options, onChange, onAdd, onRemove, onUpdate, minOptions = 2, maxOptions = 2 }) {
+  const atMax = options.length >= maxOptions;
   const { t } = useTranslation();
   const handleDragEnd = (result) => {
     if (!result.destination) return;
@@ -85,14 +86,16 @@ export default function VotingOptionsEditor({ options, onChange, onAdd, onRemove
         </Droppable>
       </DragDropContext>
 
-      <Button
-        variant="outline"
-        onClick={onAdd}
-        className="w-full h-12 rounded-xl border-dashed"
-      >
-        <Plus className="w-4 h-4 mr-2" />
-        {t('votingOptionsEditor.addOption')}
-      </Button>
+      {!atMax && (
+        <Button
+          variant="outline"
+          onClick={onAdd}
+          className="w-full h-12 rounded-xl border-dashed"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          {t('votingOptionsEditor.addOption')}
+        </Button>
+      )}
     </div>
   );
 }

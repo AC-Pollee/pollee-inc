@@ -114,6 +114,7 @@ export default function Admin() {
   });
   
   const addOption = () => {
+    if (options.length >= 2) return;
     setOptions([...options, { id: Date.now().toString(), label: '' }]);
   };
   
@@ -128,8 +129,14 @@ export default function Admin() {
   };
   
   const handleCreatePoll = () => {
-    const validOptions = options.filter(o => o.label.trim());
+    const validOptions = options.filter(o => o.label.trim()).slice(0, 2);
     if (!pollTitle.trim() || validOptions.length < 2 || !franchiseId) return;
+
+    // Append the compulsory RTS option as the 3rd option
+    const optionsWithRts = [
+      ...validOptions,
+      { id: 'rts', label: 'RTS' }
+    ];
 
     // Calculate end date as 720 hours (30 days) from now
     const endDate = new Date();
@@ -141,7 +148,7 @@ export default function Admin() {
       title: pollTitle.trim(),
       description: pollDescription.trim(),
       end_date: endDate.toISOString(),
-      options: validOptions,
+      options: optionsWithRts,
       franchise_id: franchiseId,
       poll_level: pollLevel,
       state: pollState || undefined,
@@ -341,7 +348,7 @@ export default function Admin() {
                 <div className="space-y-3">
                   <Label>Voting Options</Label>
                   <p className="text-xs text-slate-500 -mt-1">
-                    Drag the handle to reorder options. Text wraps automatically for longer option labels.
+                    Enter up to two options. A compulsory third option "RTS" is added automatically.
                   </p>
                   <VotingOptionsEditor
                     options={options}
@@ -349,6 +356,7 @@ export default function Admin() {
                     onAdd={addOption}
                     onRemove={removeOption}
                     onUpdate={updateOption}
+                    maxOptions={2}
                   />
                 </div>
                 
