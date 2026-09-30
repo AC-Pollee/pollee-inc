@@ -147,7 +147,7 @@ export default function TransactionForm({ pollId, pollOptions, onSubmit, current
                     }}
                   />
                   <Label htmlFor={`delegation-${delegation.id}`} className="text-sm text-blue-800 cursor-pointer">
-                    {delegation.delegator_full_name} ({delegation.delegation_type === 'open' ? 'Open' : 'This Poll'})
+                    {delegation.delegator_full_name} ({delegation.delegation_type === 'open' ? t('transactionForm.open') : t('transactionForm.thisPoll')})
                   </Label>
                 </div>
               ))}
