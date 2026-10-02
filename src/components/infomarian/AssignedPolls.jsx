@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Link } from 'react-router-dom';
@@ -7,13 +7,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Vote, Eye, MessageSquare, Users } from 'lucide-react';
+import { Vote, Eye, MessageSquare, Users, Calculator } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
+import BudgetPanel from '@/components/polls/BudgetPanel';
 
 export default function AssignedPolls({ infomarian }) {
   const { t } = useTranslation();
+  const [budgetPollId, setBudgetPollId] = useState(null);
   const { data: polls = [], isLoading } = useQuery({
     queryKey: ['assignedPolls', infomarian.id],
     queryFn: async () => {
@@ -113,18 +115,34 @@ export default function AssignedPolls({ infomarian }) {
                       )}
                     </div>
                   </div>
-                  <Link to={createPageUrl(`Results`)}>
-                    <Button variant="outline" size="sm" className="shrink-0">
-                      <Eye className="w-4 h-4 mr-2" />
-                      View
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="shrink-0 border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                      onClick={() => setBudgetPollId(poll.id)}
+                    >
+                      <Calculator className="w-4 h-4 mr-1" />
+                      Budget
                     </Button>
-                  </Link>
+                    <Link to={createPageUrl(`Results`)}>
+                      <Button variant="outline" size="sm" className="shrink-0">
+                        <Eye className="w-4 h-4 mr-2" />
+                        View
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </motion.div>
         );
       })}
+      <BudgetPanel
+        poll={polls.find(p => p.id === budgetPollId)}
+        open={!!budgetPollId}
+        onOpenChange={(open) => !open && setBudgetPollId(null)}
+      />
     </div>
   );
 }

@@ -11,10 +11,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { 
-  ArrowLeft, Plus, Trash2, Loader2, CheckCircle2, XCircle, 
-  Clock, ExternalLink, Settings, Vote, Eye, Building2, Shield, Users, UserPlus
+import {
+  ArrowLeft, Plus, Trash2, Loader2, CheckCircle2, XCircle,
+  Clock, ExternalLink, Settings, Vote, Eye, Building2, Shield, Users, UserPlus, Calculator
 } from 'lucide-react';
+import BudgetPanel from '@/components/polls/BudgetPanel';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import VotingOptionsEditor from '@/components/polls/VotingOptionsEditor';
@@ -35,6 +36,7 @@ export default function Admin() {
   
   // Create Poll State
   const [assignPoll, setAssignPoll] = useState(null);
+  const [budgetPollId, setBudgetPollId] = useState(null);
   const [pollTitle, setPollTitle] = useState('');
   const [pollDescription, setPollDescription] = useState('');
   const [pollEndDate, setPollEndDate] = useState('');
@@ -163,7 +165,10 @@ export default function Admin() {
       postcodes: postcodes.length > 0 ? postcodes : undefined,
       assigned_infomarians: [],
       status: 'active',
-      moderation_status: 'pending'
+      moderation_status: 'pending',
+      budget_enabled: true,
+      budget_status: 'draft',
+      budget_lines: []
     });
   };
   
@@ -460,6 +465,15 @@ export default function Admin() {
                           </div>
                           
                           <div className="flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                              onClick={() => setBudgetPollId(poll.id)}
+                            >
+                              <Calculator className="w-4 h-4 mr-1" />
+                              Budget
+                            </Button>
                             <Link to={createPageUrl(`Results`)}>
                               <Button variant="ghost" size="icon">
                                 <Eye className="w-4 h-4" />
@@ -551,6 +565,11 @@ export default function Admin() {
               poll={assignPoll}
               open={!!assignPoll}
               onOpenChange={(open) => !open && setAssignPoll(null)}
+              />
+              <BudgetPanel
+                poll={polls.find(p => p.id === budgetPollId)}
+                open={!!budgetPollId}
+                onOpenChange={(open) => !open && setBudgetPollId(null)}
               />
               </TabsContent>
 

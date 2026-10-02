@@ -114,6 +114,62 @@
       "type": "boolean",
       "default": false,
       "description": "Whether the +10 reputation bonus for poll approval has been awarded to the creator"
+    },
+    "budget_enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the budget engine is attached to this proposal. Attached by default on new proposals; toggled by Infomarian or above."
+    },
+    "budget_status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "finalised"
+      ],
+      "default": "draft",
+      "description": "Draft until every budget line has a figure entered by Infomarian or above, then finalised. Editing any line reverts to draft."
+    },
+    "budget_lines": {
+      "type": "array",
+      "default": [],
+      "description": "Budget line items for this proposal. Each line needs a cost figure entered by Infomarian or above before the budget can finalise.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string",
+            "description": "What this line pays for"
+          },
+          "cost": {
+            "type": "number",
+            "description": "Budget figure in dollars, entered by Infomarian or above"
+          },
+          "ci": {
+            "type": "number",
+            "description": "Confidence interval as a +/- percentage, 0 to 100"
+          },
+          "entered_by_id": {
+            "type": "string",
+            "description": "User ID of the Infomarian who entered the figure"
+          },
+          "entered_by_name": {
+            "type": "string",
+            "description": "Name of the Infomarian who entered the figure"
+          },
+          "entered_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the figure was entered"
+          }
+        },
+        "required": [
+          "id",
+          "label"
+        ]
+      }
     }
   },
   "required": [
