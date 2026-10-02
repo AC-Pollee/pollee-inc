@@ -138,6 +138,25 @@
       "default": false,
       "description": "Whether the envelope prompt has been answered \u2014 a legislative limit set, or explicitly skipped to derive from line totals."
     },
+    "budget_editors": {
+      "type": "array",
+      "default": [],
+      "description": "Nominated members who can co-edit this budget (enter figures on lines). Locking, the envelope, and finalising stay restricted to an Infomarian or above. Makes the budget a collaborative document.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "budget_lines": {
       "type": "array",
       "default": [],

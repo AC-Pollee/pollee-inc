@@ -9,8 +9,9 @@
 // Actions
 //   toggle      { pollId, enabled }                     Infomarian+ — switch the budget engine on/off
 //   setEnvelope { pollId, envelope?, skipped? }        Infomarian+ — set the legislative limit, or skip to derive from line totals
+//   setEditors  { pollId, editors[] }                   Infomarian+ — nominate members to co-edit the budget (collaborative)
 //   addLine     { pollId, label }                       any signed-in user — add a budget line (no figure yet)
-//   updateLine  { pollId, lineId, label?, cost?, ci? }  label editable by anyone; cost/ci by Infomarian+ only
+//   updateLine  { pollId, lineId, label?, cost?, ci? }  label editable by anyone; cost/ci by Infomarian+ or a nominated editor
 //   removeLine  { pollId, lineId }                      any signed-in user
 //   finalise    { pollId }                              Infomarian+ — only if every line has a figure > 0
 //
@@ -39,6 +40,13 @@ async function isInfomarianOrAbove(base44: any, user: any): Promise<boolean> {
   }
 }
 
+// A nominated budget editor (Poll.budget_editors) may co-edit figures on lines, but cannot
+// lock, set the envelope, toggle the engine, manage editors, or finalise — those stay Infomarian+.
+function isBudgetEditor(poll: any, user: any): boolean {
+  const editors: any[] = Array.isArray(poll?.budget_editors) ? poll.budget_editors : [];
+  return editors.some((e) => e && ((e.email && e.email === user?.email) || (e.user_id && e.user_id === user?.id)));
+}
+
 export default async function (req: Request): Promise<Response> {
   try {
     const base44 = createClientFromRequest(req);
@@ -47,7 +55,7 @@ export default async function (req: Request): Promise<Response> {
 
     const body = await req.json().catch(() => ({}));
     const { action, pollId } = body ?? {};
-    if (!action) return Response.json({ error: "action is required (toggle, setEnvelope, addLine, updateLine, removeLine, finalise)." }, { status: 400 });
+    if (!action) return Response.json({ error: "action is required (toggle, setEnvelope, setEditors, addLine, updateLine, removeLine, finalise)." }, { status: 400 });
     if (!pollId) return Response.json({ error: "pollId is required." }, { status: 400 });
 
     let poll: any;
@@ -80,6 +88,16 @@ export default async function (req: Request): Promise<Response> {
         }
         await base44.entities.Poll.update(pollId, { budget_envelope: envelope, budget_envelope_set: true });
         return Response.json({ ok: true, budget_envelope: envelope, budget_envelope_set: true });
+      }
+
+      case "setEditors": {
+        if (!elevated) return Response.json({ error: "Only an Infomarian or above can nominate budget editors." }, { status: 403 });
+        const raw: any[] = Array.isArray(body.editors) ? body.editors : [];
+        const editors = raw
+          .filter((e) => e && (e.email || e.user_id))
+          .map((e) => ({ user_id: e.user_id || null, email: e.email || null, name: e.name || null }));
+        await base44.entities.Poll.update(pollId, { budget_editors: editors });
+        return Response.json({ ok: true, budget_editors: editors });
       }
 
       case "addLine": {
@@ -117,7 +135,7 @@ export default async function (req: Request): Promise<Response> {
           next.label = label;
         }
         if (body.cost !== undefined) {
-          if (!elevated) return Response.json({ error: "Only an Infomarian or above can enter a budget figure." }, { status: 403 });
+          if (!elevated && !isBudgetEditor(poll, user)) return Response.json({ error: "Only an Infomarian, or a nominated budget editor, can enter a budget figure." }, { status: 403 });
           if (line.locked && body.locked === undefined) return Response.json({ error: "This figure is locked. Unlock it before editing." }, { status: 400 });
           const cost = Number(body.cost);
           if (!Number.isFinite(cost) || cost < 0) return Response.json({ error: "cost must be a non-negative number of dollars." }, { status: 400 });
@@ -127,7 +145,7 @@ export default async function (req: Request): Promise<Response> {
           next.entered_at = new Date().toISOString();
         }
         if (body.ci !== undefined) {
-          if (!elevated) return Response.json({ error: "Only an Infomarian or above can set the confidence interval." }, { status: 403 });
+          if (!elevated && !isBudgetEditor(poll, user)) return Response.json({ error: "Only an Infomarian, or a nominated budget editor, can set the confidence interval." }, { status: 403 });
           if (line.locked && body.locked === undefined) return Response.json({ error: "This line is locked. Unlock it before editing." }, { status: 400 });
           const ci = Number(body.ci);
           if (!Number.isFinite(ci) || ci < 0 || ci > 100) return Response.json({ error: "ci is the +/- percentage, 0 to 100." }, { status: 400 });
@@ -156,7 +174,7 @@ export default async function (req: Request): Promise<Response> {
       }
 
       default:
-        return Response.json({ error: `Unknown action "${action}". Use toggle, setEnvelope, addLine, updateLine, removeLine, finalise.` }, { status: 400 });
+        return Response.json({ error: `Unknown action "${action}". Use toggle, setEnvelope, setEditors, addLine, updateLine, removeLine, finalise.` }, { status: 400 });
     }
   } catch (error) {
     return Response.json({ error: (error as Error).message }, { status: 500 });

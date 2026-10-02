@@ -4,12 +4,13 @@ import { base44 } from '@/api/base44Client';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, BarChart3, MessageSquare, Image, DollarSign, AlertCircle, CheckCircle2, Library, UserPlus } from 'lucide-react';
 import { motion } from 'framer-motion';
 import AssignedPolls from '@/components/infomarian/AssignedPolls';
+import BudgetManagement from '@/components/infomarian/BudgetManagement';
 import CommentsModeration from '@/components/infomarian/CommentsModeration';
 import ModerationQueue from '@/components/infomarian/ModerationQueue';
 import MediaModeration from '@/components/infomarian/MediaModeration';
@@ -235,6 +236,10 @@ export default function InfomarianDashboard() {
               <BarChart3 className="w-4 h-4 mr-2" />
               {t('infomarianDash.myPolls')}
             </TabsTrigger>
+            <TabsTrigger value="budgets" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
+              <DollarSign className="w-4 h-4 mr-2" />
+              Budgets
+            </TabsTrigger>
             <TabsTrigger value="comments" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
               <MessageSquare className="w-4 h-4 mr-2" />
               {t('infomarianDash.moderate')}
@@ -280,6 +285,10 @@ export default function InfomarianDashboard() {
 
           <TabsContent value="polls">
             <AssignedPolls infomarian={infomarian} />
+          </TabsContent>
+
+          <TabsContent value="budgets">
+            <BudgetManagement infomarian={infomarian} />
           </TabsContent>
 
           <TabsContent value="comments">
