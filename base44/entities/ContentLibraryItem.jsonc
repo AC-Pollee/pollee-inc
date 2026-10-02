@@ -17,7 +17,8 @@
         "image",
         "video",
         "text",
-        "audio"
+        "audio",
+        "pdf"
       ],
       "description": "Type of content"
     },
@@ -27,7 +28,7 @@
     },
     "file_uri": {
       "type": "string",
-      "description": "URI of uploaded file in private storage (for image, video, audio types)"
+      "description": "URI of uploaded file in private storage (for image, video, audio, pdf types)"
     },
     "text_content": {
       "type": "string",

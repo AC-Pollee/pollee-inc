@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Library, Plus, Link2, Image as ImageIcon, Video, FileText, Music, Trash2, Check, X, Search, Inbox, Pencil } from 'lucide-react';
+import { Library, Plus, Link2, Image as ImageIcon, Video, FileText, Music, FileType, Trash2, Check, X, Search, Inbox, Pencil } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { useTranslation } from 'react-i18next';
 import ContentEditDialog from './ContentEditDialog';
@@ -20,6 +20,7 @@ const TYPE_ICONS = {
   video: Video,
   text: FileText,
   audio: Music,
+  pdf: FileType,
 };
 
 export default function ContentLibraryPanel({ infomarian }) {
@@ -155,6 +156,7 @@ export default function ContentLibraryPanel({ infomarian }) {
             <TabsTrigger value="video"><Video className="w-3 h-3 mr-1" />{t('contentLibrary.video')}</TabsTrigger>
             <TabsTrigger value="text"><FileText className="w-3 h-3 mr-1" />{t('contentLibrary.text')}</TabsTrigger>
             <TabsTrigger value="audio"><Music className="w-3 h-3 mr-1" />{t('contentLibrary.audio')}</TabsTrigger>
+            <TabsTrigger value="pdf"><FileType className="w-3 h-3 mr-1" />PDF</TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
@@ -245,8 +247,8 @@ function AddItemDialog({ open, onOpenChange, infomarian, onCreate }) {
       title: title.trim(),
       description: description.trim(),
       content_type: contentType,
-      url: contentType === 'url' ? url.trim() : (contentType === 'image' || contentType === 'video' || contentType === 'audio' ? url : undefined),
-      file_uri: (contentType === 'image' || contentType === 'video' || contentType === 'audio') ? url : undefined,
+      url: contentType === 'url' ? url.trim() : (['image', 'video', 'audio', 'pdf'].includes(contentType) ? url : undefined),
+      file_uri: ['image', 'video', 'audio', 'pdf'].includes(contentType) ? url : undefined,
       text_content: contentType === 'text' ? text.trim() : undefined,
       infomarian_id: infomarian.infomarian_id,
       infomarian_name: infomarian.full_name,
@@ -266,8 +268,8 @@ function AddItemDialog({ open, onOpenChange, infomarian, onCreate }) {
         <div className="space-y-4">
           <div>
             <Label>{t('contentLibrary.contentType')}</Label>
-            <div className="grid grid-cols-5 gap-2 mt-1">
-              {['url', 'image', 'video', 'text', 'audio'].map(type => {
+            <div className="grid grid-cols-6 gap-2 mt-1">
+              {['url', 'image', 'video', 'text', 'audio', 'pdf'].map(type => {
                 const Icon = TYPE_ICONS[type];
                 return (
                   <Button key={type} type="button" variant={contentType === type ? 'default' : 'outline'}
@@ -294,10 +296,10 @@ function AddItemDialog({ open, onOpenChange, infomarian, onCreate }) {
               <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://..." />
             </div>
           )}
-          {(contentType === 'image' || contentType === 'video' || contentType === 'audio') && (
+          {['image', 'video', 'audio', 'pdf'].includes(contentType) && (
             <div>
               <Label>{t('contentLibrary.uploadFile')}</Label>
-              <Input type="file" accept={contentType === 'image' ? 'image/*' : contentType === 'video' ? 'video/*' : 'audio/*'} onChange={handleFile} disabled={uploading} />
+              <Input type="file" accept={contentType === 'image' ? 'image/*' : contentType === 'video' ? 'video/*' : contentType === 'audio' ? 'audio/*' : 'application/pdf,.pdf'} onChange={handleFile} disabled={uploading} />
               {uploading && <p className="text-xs text-slate-500 mt-1">{t('contentLibrary.uploading')}</p>}
               {url && <p className="text-xs text-green-600 mt-1">{t('contentLibrary.uploaded')}</p>}
             </div>

@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Link2, Image as ImageIcon, Video, FileText, Music } from 'lucide-react';
+import { Link2, Image as ImageIcon, Video, FileText, Music, FileType } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { useTranslation } from 'react-i18next';
 
@@ -15,6 +15,7 @@ const TYPE_ICONS = {
   video: Video,
   text: FileText,
   audio: Music,
+  pdf: FileType,
 };
 
 export default function ContentEditDialog({ item, open, onOpenChange, onSaved }) {
@@ -61,8 +62,8 @@ export default function ContentEditDialog({ item, open, onOpenChange, onSaved })
         title: title.trim(),
         description: description.trim(),
         content_type: contentType,
-        url: contentType === 'url' ? url.trim() : (['image', 'video', 'audio'].includes(contentType) ? url : undefined),
-        file_uri: ['image', 'video', 'audio'].includes(contentType) ? url : undefined,
+        url: contentType === 'url' ? url.trim() : (['image', 'video', 'audio', 'pdf'].includes(contentType) ? url : undefined),
+        file_uri: ['image', 'video', 'audio', 'pdf'].includes(contentType) ? url : undefined,
         text_content: contentType === 'text' ? text.trim() : undefined,
         tags: tags ? tags.split(',').map(tg => tg.trim()).filter(Boolean) : [],
       }
@@ -78,8 +79,8 @@ export default function ContentEditDialog({ item, open, onOpenChange, onSaved })
         <div className="space-y-4">
           <div>
             <Label>{t('contentLibrary.contentType')}</Label>
-            <div className="grid grid-cols-5 gap-2 mt-1">
-              {['url', 'image', 'video', 'text', 'audio'].map(type => {
+            <div className="grid grid-cols-6 gap-2 mt-1">
+              {['url', 'image', 'video', 'text', 'audio', 'pdf'].map(type => {
                 const Icon = TYPE_ICONS[type];
                 return (
                   <Button key={type} type="button" variant={contentType === type ? 'default' : 'outline'}
@@ -106,10 +107,10 @@ export default function ContentEditDialog({ item, open, onOpenChange, onSaved })
               <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://..." />
             </div>
           )}
-          {['image', 'video', 'audio'].includes(contentType) && (
+          {['image', 'video', 'audio', 'pdf'].includes(contentType) && (
             <div>
               <Label>{t('contentLibrary.uploadFile')}</Label>
-              <Input type="file" accept={contentType === 'image' ? 'image/*' : contentType === 'video' ? 'video/*' : 'audio/*'} onChange={handleFile} disabled={uploading} />
+              <Input type="file" accept={contentType === 'image' ? 'image/*' : contentType === 'video' ? 'video/*' : contentType === 'audio' ? 'audio/*' : 'application/pdf,.pdf'} onChange={handleFile} disabled={uploading} />
               {uploading && <p className="text-xs text-slate-500 mt-1">{t('contentLibrary.uploading')}</p>}
               {url && <p className="text-xs text-green-600 mt-1">{t('contentLibrary.uploaded')}</p>}
             </div>
