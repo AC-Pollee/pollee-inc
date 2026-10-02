@@ -7,11 +7,12 @@
 // proposal back to draft so the figure can be corrected.
 //
 // Actions
-//   toggle    { pollId, enabled }                      Infomarian+ — switch the budget engine on/off
-//   addLine   { pollId, label }                         any signed-in user — add a budget line (no figure yet)
-//   updateLine { pollId, lineId, label?, cost?, ci? }  label editable by anyone; cost/ci by Infomarian+ only
-//   removeLine { pollId, lineId }                       any signed-in user
-//   finalise  { pollId }                                Infomarian+ — only if every line has a figure > 0
+//   toggle      { pollId, enabled }                     Infomarian+ — switch the budget engine on/off
+//   setEnvelope { pollId, envelope?, skipped? }        Infomarian+ — set the legislative limit, or skip to derive from line totals
+//   addLine     { pollId, label }                       any signed-in user — add a budget line (no figure yet)
+//   updateLine  { pollId, lineId, label?, cost?, ci? }  label editable by anyone; cost/ci by Infomarian+ only
+//   removeLine  { pollId, lineId }                      any signed-in user
+//   finalise    { pollId }                              Infomarian+ — only if every line has a figure > 0
 //
 // "Infomarian or above" = the workspace super-admin, a user whose user_role is infomarian /
 // master_franchiser / franchise_manager / admin, or anyone with an Infomarian record.
@@ -46,7 +47,7 @@ export default async function (req: Request): Promise<Response> {
 
     const body = await req.json().catch(() => ({}));
     const { action, pollId } = body ?? {};
-    if (!action) return Response.json({ error: "action is required (toggle, addLine, updateLine, removeLine, finalise)." }, { status: 400 });
+    if (!action) return Response.json({ error: "action is required (toggle, setEnvelope, addLine, updateLine, removeLine, finalise)." }, { status: 400 });
     if (!pollId) return Response.json({ error: "pollId is required." }, { status: 400 });
 
     let poll: any;
@@ -66,6 +67,19 @@ export default async function (req: Request): Promise<Response> {
         const enabled = !!body.enabled;
         await base44.entities.Poll.update(pollId, { budget_enabled: enabled });
         return Response.json({ ok: true, budget_enabled: enabled });
+      }
+
+      case "setEnvelope": {
+        if (!elevated) return Response.json({ error: "Only an Infomarian or above can set the envelope." }, { status: 403 });
+        const skipped = !!body.skipped;
+        let envelope: number | null = null;
+        if (!skipped) {
+          const n = Number(body.envelope);
+          if (!Number.isFinite(n) || n < 0) return Response.json({ error: "envelope must be a non-negative number of dollars." }, { status: 400 });
+          envelope = n;
+        }
+        await base44.entities.Poll.update(pollId, { budget_envelope: envelope, budget_envelope_set: true });
+        return Response.json({ ok: true, budget_envelope: envelope, budget_envelope_set: true });
       }
 
       case "addLine": {
@@ -142,7 +156,7 @@ export default async function (req: Request): Promise<Response> {
       }
 
       default:
-        return Response.json({ error: `Unknown action "${action}". Use toggle, addLine, updateLine, removeLine, finalise.` }, { status: 400 });
+        return Response.json({ error: `Unknown action "${action}". Use toggle, setEnvelope, addLine, updateLine, removeLine, finalise.` }, { status: 400 });
     }
   } catch (error) {
     return Response.json({ error: (error as Error).message }, { status: 500 });

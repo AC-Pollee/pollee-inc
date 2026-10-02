@@ -129,6 +129,15 @@
       "default": "draft",
       "description": "Draft until every budget line has a figure entered by Infomarian or above, then finalised. Editing any line reverts to draft."
     },
+    "budget_envelope": {
+      "type": "number",
+      "description": "The audited envelope for this proposal \u2014 a legislative limit entered by an Infomarian or above. Null when skipped, in which case the envelope is derived from the sum of all budget line totals."
+    },
+    "budget_envelope_set": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the envelope prompt has been answered \u2014 a legislative limit set, or explicitly skipped to derive from line totals."
+    },
     "budget_lines": {
       "type": "array",
       "default": [],

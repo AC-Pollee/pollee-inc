@@ -84,6 +84,20 @@ export default function BudgetSummary({ poll }) {
             Total: {money(total)}
           </span>
         </div>
+
+        {poll.budget_envelope_set && (
+          <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+            <span className="text-sm text-slate-500">
+              {poll.budget_envelope != null ? 'Envelope (legislative limit)' : 'Envelope (derived from totals)'}
+            </span>
+            <div className="text-right">
+              <span className="text-sm font-medium text-slate-900">{money(poll.budget_envelope)}</span>
+              {poll.budget_envelope != null && total > poll.budget_envelope && (
+                <span className="ml-2 text-xs text-red-600">over limit</span>
+              )}
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

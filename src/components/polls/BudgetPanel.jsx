@@ -130,6 +130,8 @@ export default function BudgetPanel({ poll, open, onOpenChange }) {
   const queryClient = useQueryClient();
   const [busy, setBusy] = useState(false);
   const [newLabel, setNewLabel] = useState('');
+  const [envInput, setEnvInput] = useState('');
+  const [editingEnvelope, setEditingEnvelope] = useState(false);
 
   const { data: user } = useQuery({ queryKey: ['currentUser'], queryFn: () => base44.auth.me() });
   const { data: infomarian } = useQuery({
@@ -171,6 +173,24 @@ export default function BudgetPanel({ poll, open, onOpenChange }) {
     const label = newLabel.trim();
     if (!label) return;
     call({ action: 'addLine', pollId: poll.id, label }, 'Line added').then(() => setNewLabel(''));
+  };
+
+  const envelopeSet = poll?.budget_envelope_set === true;
+  const envelope = poll?.budget_envelope;
+
+  const setEnvelope = () => {
+    const n = envInput === '' ? null : Number(envInput);
+    if (n === null || !Number.isFinite(n) || n < 0) {
+      toast({ variant: 'destructive', title: 'Envelope', description: 'Enter a non-negative dollar amount.' });
+      return;
+    }
+    call({ action: 'setEnvelope', pollId: poll.id, envelope: n }, 'Envelope set as legislative limit')
+      .then(() => { setEnvInput(''); setEditingEnvelope(false); });
+  };
+
+  const skipEnvelope = () => {
+    call({ action: 'setEnvelope', pollId: poll.id, skipped: true }, 'Envelope will be derived from line totals')
+      .then(() => { setEditingEnvelope(false); });
   };
 
   return (
@@ -223,6 +243,59 @@ export default function BudgetPanel({ poll, open, onOpenChange }) {
 
           {enabled ? (
             <>
+              {/* Envelope — prompted first; optional (legislative limit or derived from line totals) */}
+              <div className="rounded-xl border border-slate-200 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-medium">Envelope</Label>
+                  {envelopeSet && !editingEnvelope && (
+                    <Button variant="ghost" size="sm" onClick={() => { setEditingEnvelope(true); setEnvInput(envelope != null ? String(envelope) : ''); }} disabled={busy || !canBudget}>
+                      Edit
+                    </Button>
+                  )}
+                </div>
+                {!envelopeSet || editingEnvelope ? (
+                  <>
+                    <HelpNote>
+                      Set the audited envelope as a legislative limit, or skip to derive it from the sum of all
+                      budget line totals. This step is optional.
+                      {!canBudget && ' Only an Infomarian or above can set the envelope.'}
+                    </HelpNote>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={envInput}
+                      placeholder="Legislative limit ($)"
+                      disabled={busy || !canBudget}
+                      onChange={(e) => setEnvInput(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && envInput !== '' && setEnvelope()}
+                    />
+                    <div className="flex gap-2">
+                      <Button onClick={setEnvelope} disabled={busy || !canBudget || envInput === ''}>
+                        Set as legislative limit
+                      </Button>
+                      <Button variant="outline" onClick={skipEnvelope} disabled={busy || !canBudget}>
+                        Skip — derive from totals
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-sm">
+                    {envelope != null ? (
+                      <span className="text-slate-900">
+                        Legislative limit: <strong>${envelope.toLocaleString()}</strong>
+                        {total > envelope && (
+                          <span className="ml-2 text-red-600 text-xs">Line totals exceed the limit</span>
+                        )}
+                      </span>
+                    ) : (
+                      <span className="text-slate-500">
+                        Derived from line totals: <strong className="text-slate-900">${total.toLocaleString()}</strong>
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label>Budget lines</Label>
