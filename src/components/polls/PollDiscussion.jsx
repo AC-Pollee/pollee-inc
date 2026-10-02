@@ -17,6 +17,7 @@ import CommentTranslation from './CommentTranslation';
 import EvidenceDisplay from './EvidenceDisplay';
 import EvidenceManager from './EvidenceManager';
 import MemberForwardContent from './MemberForwardContent';
+import ShareButtons from './ShareButtons';
 import { useToast } from "@/components/ui/use-toast";
 import { awardReputation } from '@/lib/reputation';
 import { useTranslation } from 'react-i18next';
@@ -492,6 +493,25 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
             </Badge>
           )}
         </div>
+        {poll && (
+          <div className="mt-3">
+            <ShareButtons
+              title={poll.title}
+              summary={`Discussion: ${poll.title}`}
+              url={`${window.location.origin}/Vote?pollId=${poll.id}#discussion`}
+              fileName={`discussion-${poll.id}`}
+              compact
+              pdf={{
+                subtitle: 'Pollee discussion',
+                meta: [
+                  { label: 'Threads', value: topLevelComments.length },
+                  { label: 'Status', value: isArchived ? 'Archived' : 'Open' },
+                ],
+                paragraphs: [poll.description].filter(Boolean),
+              }}
+            />
+          </div>
+        )}
       </CardHeader>
 
       <CardContent className="space-y-4 md:space-y-6">

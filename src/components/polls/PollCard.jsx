@@ -10,6 +10,7 @@ import { createPageUrl } from "@/utils";
 import { format } from "date-fns";
 import { useTranslation } from 'react-i18next';
 import { usePollTranslation } from '@/hooks/usePollTranslation';
+import ShareButtons from './ShareButtons';
 
 export default function PollCard({ poll, voteCount }) {
   const { t } = useTranslation();
@@ -88,6 +89,25 @@ export default function PollCard({ poll, voteCount }) {
               <ChevronRight className="w-4 h-4 text-slate-400 ml-auto" />
             </div>
           </Link>
+
+          <div className="pt-1">
+            <ShareButtons
+              title={translatedTitle}
+              summary={translatedTitle}
+              url={`${window.location.origin}${createPageUrl(`Vote?pollId=${poll.id}`)}`}
+              fileName={`poll-${poll.id}`}
+              compact
+              pdf={{
+                subtitle: 'Pollee poll',
+                meta: [
+                  { label: 'Status', value: isActive ? 'Active' : 'Closed' },
+                  { label: 'Votes', value: voteCount || 0 },
+                  ...(poll.end_date ? [{ label: 'Closes', value: format(new Date(poll.end_date), 'MMM d, yyyy') }] : []),
+                ],
+                paragraphs: [translatedDescription].filter(Boolean),
+              }}
+            />
+          </div>
         </div>
       </CardContent>
     </Card>

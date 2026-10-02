@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calculator, Lock, CheckCircle2, AlertCircle } from 'lucide-react';
+import ShareButtons from './ShareButtons';
 
 const money = (n) =>
   typeof n === 'number' && Number.isFinite(n)
@@ -16,6 +17,8 @@ export default function BudgetSummary({ poll }) {
   const total = lines.reduce((a, l) => a + (typeof l.cost === 'number' ? l.cost : 0), 0);
   const lockedCount = lines.filter((l) => l.locked).length;
   const costedCount = lines.filter((l) => typeof l.cost === 'number' && l.cost > 0).length;
+  const money2 = (n) => (typeof n === 'number' && Number.isFinite(n) ? `$${n.toLocaleString()}` : '—');
+  const pollTitle = poll.title || 'Budget';
 
   return (
     <Card className="border-0 shadow-xl">
@@ -39,6 +42,27 @@ export default function BudgetSummary({ poll }) {
               Budget engine on
             </Badge>
           </div>
+        </div>
+        <div className="mt-3">
+          <ShareButtons
+            title={`Budget — ${pollTitle}`}
+            summary={`Budget for ${pollTitle}`}
+            url={typeof window !== 'undefined' ? window.location.href : ''}
+            fileName={`budget-${poll.id || 'summary'}`}
+            compact
+            pdf={{
+              subtitle: 'Pollee budget summary',
+              meta: [
+                { label: 'Status', value: status === 'finalised' ? 'Finalised' : 'Draft' },
+                { label: 'Total', value: money2(total) },
+                ...(poll.budget_envelope_set ? [{ label: 'Envelope', value: money2(poll.budget_envelope) }] : []),
+              ],
+              lines: lines.map((l) => ({
+                label: l.ci != null && typeof l.cost === 'number' && l.cost > 0 ? `${l.label} (±${l.ci}%)` : l.label,
+                value: money2(l.cost),
+              })),
+            }}
+          />
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
