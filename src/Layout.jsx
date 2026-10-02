@@ -6,7 +6,6 @@ import { Vote, BarChart3, Settings, User, Shield, AlertTriangle, ShieldAlert, Me
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Badge } from "@/components/ui/badge";
-import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 export default function Layout({ children, currentPageName }) {
   const { t } = useTranslation();
@@ -174,7 +173,6 @@ export default function Layout({ children, currentPageName }) {
                   </Link>
                 );
               })}
-              <LanguageSwitcher />
             </div>
           </div>
         </div>

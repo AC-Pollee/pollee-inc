@@ -10,7 +10,7 @@ import { Vote, Plus, BarChart3, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PollCard from '@/components/polls/PollCard';
 import DiscussionPreview from '@/components/polls/DiscussionPreview';
-import ThemeToggle from '@/components/ThemeToggle';
+import ThemeLanguageToggle from '@/components/ThemeLanguageToggle';
 
 export default function Home() {
   const { t } = useTranslation();
@@ -45,7 +45,7 @@ export default function Home() {
         
         <div className="relative max-w-6xl mx-auto px-4 pt-16 pb-20">
           <div className="flex justify-end mb-4">
-            <ThemeToggle />
+            <ThemeLanguageToggle />
           </div>
           
           <motion.div
