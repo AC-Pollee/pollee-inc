@@ -138,12 +138,12 @@ export default function Layout({ children, currentPageName }) {
                 <img
                   src="https://media.base44.com/images/public/69415ee66a530550d1e35558/2b39b1f81_generated_image.png"
                   alt="Pollee Inc"
-                  className="h-16 w-16 rounded-full dark:hidden"
+                  className="h-16 w-auto rounded-full dark:hidden"
                 />
                 <img
                   src="https://media.base44.com/images/public/69415ee66a530550d1e35558/075594b80_generated_image.png"
                   alt="Pollee Inc"
-                  className="h-16 w-16 rounded-full hidden dark:block"
+                  className="h-16 w-auto rounded-full hidden dark:block"
                 />
               </Link>
             </div>
