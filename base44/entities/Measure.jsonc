@@ -1,0 +1,100 @@
+{
+  "name": "Measure",
+  "type": "object",
+  "properties": {
+    "cycle_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "proposer": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string",
+      "enum": [
+        "constituent",
+        "institutional"
+      ]
+    },
+    "topic": {
+      "type": "string",
+      "description": "Used by the possible-split check"
+    },
+    "track": {
+      "type": "string",
+      "enum": [
+        "budget",
+        "declaratory",
+        "procedural",
+        "negotiator"
+      ],
+      "default": "budget"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "cultivating",
+        "costed",
+        "returned",
+        "deferred"
+      ]
+    },
+    "question_class": {
+      "type": "string",
+      "enum": [
+        "ordinary",
+        "borrowing",
+        "reserve",
+        "envelope"
+      ],
+      "default": "ordinary"
+    },
+    "rough_cost": {
+      "type": "number",
+      "description": "Proposer's own idea; never used in the cut"
+    },
+    "cost": {
+      "type": "number"
+    },
+    "ci": {
+      "type": "number",
+      "description": "Fraction, e.g. 0.15 for \u00b115%"
+    },
+    "cost2": {
+      "type": "number"
+    },
+    "cost_source": {
+      "type": "string"
+    },
+    "partial_consent": {
+      "type": "boolean",
+      "default": false
+    },
+    "borrow": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "number"
+        },
+        "cycle": {
+          "type": "string"
+        },
+        "approved": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "required": [
+    "cycle_id",
+    "title",
+    "proposer",
+    "path",
+    "track"
+  ]
+}

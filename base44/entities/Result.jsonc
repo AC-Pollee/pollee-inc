@@ -1,0 +1,40 @@
+{
+  "name": "Result",
+  "type": "object",
+  "description": "Totals only, published by the constituency node. Never individual directions or points.",
+  "properties": {
+    "cycle_id": {
+      "type": "string"
+    },
+    "measure_id": {
+      "type": "string"
+    },
+    "yes": {
+      "type": "number"
+    },
+    "no": {
+      "type": "number"
+    },
+    "rts": {
+      "type": "number"
+    },
+    "points": {
+      "type": "number"
+    },
+    "published_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "node_signature": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "cycle_id",
+    "measure_id",
+    "yes",
+    "no",
+    "rts",
+    "points"
+  ]
+}

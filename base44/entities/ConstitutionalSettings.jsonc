@@ -1,0 +1,37 @@
+{
+  "name": "ConstitutionalSettings",
+  "type": "object",
+  "description": "Pass thresholds in force. A new record is added only when a constitutional ballot changes them.",
+  "properties": {
+    "thresholds": {
+      "type": "object",
+      "properties": {
+        "ordinary": {
+          "type": "number"
+        },
+        "borrowing": {
+          "type": "number"
+        },
+        "reserve": {
+          "type": "number"
+        },
+        "envelope": {
+          "type": "number"
+        }
+      }
+    },
+    "effective_from": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_ballot": {
+      "type": "string",
+      "description": "Reference to the ballot that set these figures"
+    }
+  },
+  "required": [
+    "thresholds",
+    "effective_from",
+    "source_ballot"
+  ]
+}

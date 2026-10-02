@@ -1,0 +1,41 @@
+{
+  "name": "Costing",
+  "type": "object",
+  "description": "Every version kept, for the archive (\u00a73.4). Written only through budgetEngine.saveCosting.",
+  "properties": {
+    "measure_id": {
+      "type": "string"
+    },
+    "cycle_id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "number"
+    },
+    "cost": {
+      "type": "number"
+    },
+    "ci": {
+      "type": "number"
+    },
+    "cost2": {
+      "type": "number"
+    },
+    "source": {
+      "type": "string"
+    },
+    "infomarian_id": {
+      "type": "string"
+    },
+    "infomarian_name": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "measure_id",
+    "cycle_id",
+    "version",
+    "cost",
+    "ci"
+  ]
+}

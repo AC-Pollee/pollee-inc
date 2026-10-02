@@ -1,0 +1,57 @@
+{
+  "name": "Cycle",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "e.g. 2027\u201328"
+    },
+    "envelope": {
+      "type": "number",
+      "description": "Audited envelope in dollars"
+    },
+    "envelope_audit": {
+      "type": "string"
+    },
+    "committed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "sunset": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "deficit_charges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "ballot_opens_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Costings freeze from this moment"
+    }
+  },
+  "required": [
+    "name",
+    "envelope"
+  ]
+}
