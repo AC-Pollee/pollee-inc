@@ -119,7 +119,7 @@ export default function MessageThread({ conversation, currentUser, t }) {
           </div>
         )}
         <div className="flex gap-2">
-          <input ref={fileInputRef} type="file" className="hidden" onChange={onFileChange} />
+          <input ref={fileInputRef} type="file" accept="application/pdf,.pdf" className="hidden" onChange={onFileChange} />
           <Button
             type="button"
             variant="outline"
