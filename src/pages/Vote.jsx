@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import TransactionForm from '@/components/vote/TransactionForm';
 import PollDiscussion from '@/components/polls/PollDiscussion';
 import LiveResults from '@/components/polls/LiveResults';
+import BudgetSummary from '@/components/polls/BudgetSummary';
 import { useTranslation } from 'react-i18next';
 import { usePollTranslation } from '@/hooks/usePollTranslation';
 import { awardReputation } from '@/lib/reputation';
@@ -351,6 +352,15 @@ export default function Vote() {
                   )}
                 </CardContent>
               </Card>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+                className="mt-6"
+              >
+                <BudgetSummary poll={poll} />
+              </motion.div>
 
               {/* Live/Final Results - visible to everyone 12+ or closed polls or superadmin */}
               {(isSuperAdmin || age >= 12 || isPollClosed) && (
