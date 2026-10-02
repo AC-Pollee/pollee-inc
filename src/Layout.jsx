@@ -136,14 +136,14 @@ export default function Layout({ children, currentPageName }) {
             <div className="flex items-center gap-4">
               <Link to={createPageUrl('Home')} className="flex items-center">
                 <img
-                  src="https://media.base44.com/images/public/69415ee66a530550d1e35558/b2681a4ca_generated_image.png"
+                  src="https://media.base44.com/images/public/69415ee66a530550d1e35558/2b39b1f81_generated_image.png"
                   alt="Pollee Inc"
-                  className="h-9 w-auto rounded-lg dark:hidden"
+                  className="h-11 w-11 rounded-full dark:hidden"
                 />
                 <img
-                  src="https://media.base44.com/images/public/69415ee66a530550d1e35558/fda91b38c_generated_image.png"
+                  src="https://media.base44.com/images/public/69415ee66a530550d1e35558/075594b80_generated_image.png"
                   alt="Pollee Inc"
-                  className="h-9 w-auto rounded-lg hidden dark:block"
+                  className="h-11 w-11 rounded-full hidden dark:block"
                 />
               </Link>
             </div>
