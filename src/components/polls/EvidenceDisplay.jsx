@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Link2, Image as ImageIcon, Video, FileText, Music, Trash2, BookOpen, ExternalLink } from 'lucide-react';
+import { Link2, Image as ImageIcon, Video, FileText, Music, FileType, Trash2, BookOpen, ExternalLink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const TYPE_ICONS = {
@@ -12,6 +12,7 @@ const TYPE_ICONS = {
   video: Video,
   text: FileText,
   audio: Music,
+  pdf: FileType,
 };
 
 function EvidenceCard({ evidence, canRemove, onRemove }) {
@@ -24,7 +25,7 @@ function EvidenceCard({ evidence, canRemove, onRemove }) {
       const res = await base44.integrations.Core.CreateFileSignedUrl({ file_uri: evidence.file_uri });
       return res.signed_url;
     },
-    enabled: !!evidence.file_uri && (evidence.content_type === 'image' || evidence.content_type === 'video' || evidence.content_type === 'audio'),
+    enabled: !!evidence.file_uri && ['image', 'video', 'audio', 'pdf'].includes(evidence.content_type),
   });
 
   return (
@@ -71,6 +72,14 @@ function EvidenceCard({ evidence, canRemove, onRemove }) {
 
       {evidence.content_type === 'text' && evidence.text_content && (
         <p className="text-xs text-slate-700 whitespace-pre-wrap mt-2 p-2 bg-slate-50 rounded">{evidence.text_content}</p>
+      )}
+
+      {evidence.content_type === 'pdf' && signedUrl && (
+        <a href={signedUrl} target="_blank" rel="noopener noreferrer"
+          className="flex items-center gap-1.5 text-xs text-indigo-600 hover:underline mt-2">
+          <FileType className="w-3.5 h-3.5" />
+          {t('evidence.openPdf', { defaultValue: 'Open PDF' })}
+        </a>
       )}
 
       {evidence.display_note && (

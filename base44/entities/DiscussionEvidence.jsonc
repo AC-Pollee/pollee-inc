@@ -21,7 +21,8 @@
         "image",
         "video",
         "text",
-        "audio"
+        "audio",
+        "pdf"
       ],
       "description": "Type of content"
     },
