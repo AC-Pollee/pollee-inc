@@ -12,8 +12,9 @@ export default async function(req) {
     const body = await req.json();
     const conversationId = body?.conversation_id;
     const content = (body?.content || '').trim();
+    const attachment = body?.attachment || null;
     if (!conversationId) return Response.json({ error: 'conversation_id is required' }, { status: 400 });
-    if (!content) return Response.json({ error: 'Message content is empty' }, { status: 400 });
+    if (!content && !attachment) return Response.json({ error: 'Message content is empty' }, { status: 400 });
 
     const conversation = await base44.asServiceRole.entities.Conversation.get(conversationId);
     if (!conversation) return Response.json({ error: 'Conversation not found' }, { status: 404 });
@@ -30,12 +31,16 @@ export default async function(req) {
       sender_id: caller.id,
       sender_name: senderName,
       content,
+      attachment: attachment || null,
       participants: conversation.participants
     });
 
+    const preview = content
+      ? content.slice(0, 100)
+      : (attachment?.name ? `📎 ${attachment.name}`.slice(0, 100) : 'Attachment');
     await base44.asServiceRole.entities.Conversation.update(conversationId, {
       last_message_at: new Date().toISOString(),
-      last_message_preview: content.slice(0, 100),
+      last_message_preview: preview,
       last_sender_id: caller.id
     });
 

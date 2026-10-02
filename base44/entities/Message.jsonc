@@ -18,6 +18,28 @@
       "type": "string",
       "description": "Message text"
     },
+    "attachment": {
+      "type": "object",
+      "description": "Optional file attached to the message, stored in private storage",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Original filename"
+        },
+        "file_uri": {
+          "type": "string",
+          "description": "Private storage URI of the uploaded file"
+        },
+        "content_type": {
+          "type": "string",
+          "description": "MIME type of the file"
+        },
+        "size": {
+          "type": "number",
+          "description": "File size in bytes"
+        }
+      }
+    },
     "participants": {
       "type": "array",
       "items": {
