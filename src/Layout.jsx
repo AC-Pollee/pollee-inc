@@ -134,20 +134,17 @@ export default function Layout({ children, currentPageName }) {
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
-              <Link to={createPageUrl('Home')} className="flex items-center gap-2">
-                <div className="w-9 h-9 bg-white dark:bg-[#1c233a] rounded-lg flex items-center justify-center">
-                  <img
-                    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69415ee66a530550d1e35558/70757a247_pollee.png"
-                    alt="Pollee Inc Logo"
-                    className="w-8 h-8 dark:hidden"
-                  />
-                  <img
-                    src="https://media.base44.com/images/public/69415ee66a530550d1e35558/dff239769_Infinite-Pollee-Blue-White.png"
-                    alt="Pollee Inc Logo"
-                    className="w-8 h-8 hidden dark:block"
-                  />
-                </div>
-                <span className="font-bold text-xl text-slate-900">Pollee Inc</span>
+              <Link to={createPageUrl('Home')} className="flex items-center">
+                <img
+                  src="https://media.base44.com/images/public/69415ee66a530550d1e35558/b2681a4ca_generated_image.png"
+                  alt="Pollee Inc"
+                  className="h-9 w-auto rounded-lg dark:hidden"
+                />
+                <img
+                  src="https://media.base44.com/images/public/69415ee66a530550d1e35558/fda91b38c_generated_image.png"
+                  alt="Pollee Inc"
+                  className="h-9 w-auto rounded-lg hidden dark:block"
+                />
               </Link>
             </div>
             
