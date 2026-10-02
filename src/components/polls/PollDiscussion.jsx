@@ -386,7 +386,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
                 </div>
               )}
 
-              <div className="mt-2 flex items-center gap-2">
+              <div className="mt-2 flex items-center gap-2 flex-wrap">
                 <ClapButton
                   comment={comment}
                   currentUser={currentUser}
@@ -408,6 +408,21 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
                     {t('pollDiscussion.reply')}
                   </Button>
                 )}
+                <ShareButtons
+                  title={`Comment by ${comment.display_name || comment.user_name || 'member'}`}
+                  summary={comment.content}
+                  url={`${window.location.origin}/Vote?pollId=${pollId}#discussion`}
+                  fileName={`comment-${comment.id}`}
+                  compact
+                  pdf={{
+                    subtitle: 'Pollee discussion comment',
+                    meta: [
+                      { label: 'Author', value: comment.display_name || comment.user_name },
+                      { label: 'Posted', value: format(new Date(comment.created_date), 'MMM d, yyyy h:mm a') },
+                    ],
+                    paragraphs: [comment.content],
+                  }}
+                />
               </div>
             </>
           )}
