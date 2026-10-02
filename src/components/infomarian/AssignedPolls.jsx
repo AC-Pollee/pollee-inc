@@ -7,15 +7,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Vote, Eye, MessageSquare, Users, Calculator } from 'lucide-react';
+import { Vote, Eye, MessageSquare, Users, Calculator, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import BudgetPanel from '@/components/polls/BudgetPanel';
+import EditPollBodyDialog from '@/components/polls/EditPollBodyDialog';
 
 export default function AssignedPolls({ infomarian }) {
   const { t } = useTranslation();
   const [budgetPollId, setBudgetPollId] = useState(null);
+  const [editPollId, setEditPollId] = useState(null);
   const { data: polls = [], isLoading } = useQuery({
     queryKey: ['assignedPolls', infomarian.id],
     queryFn: async () => {
@@ -119,6 +121,15 @@ export default function AssignedPolls({ infomarian }) {
                     <Button
                       variant="outline"
                       size="sm"
+                      className="shrink-0 border-indigo-200 text-indigo-700 hover:bg-indigo-50"
+                      onClick={() => setEditPollId(poll.id)}
+                    >
+                      <FileText className="w-4 h-4 mr-1" />
+                      Edit body
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
                       className="shrink-0 border-emerald-200 text-emerald-700 hover:bg-emerald-50"
                       onClick={() => setBudgetPollId(poll.id)}
                     >
@@ -142,6 +153,11 @@ export default function AssignedPolls({ infomarian }) {
         poll={polls.find(p => p.id === budgetPollId)}
         open={!!budgetPollId}
         onOpenChange={(open) => !open && setBudgetPollId(null)}
+      />
+      <EditPollBodyDialog
+        poll={polls.find(p => p.id === editPollId)}
+        open={!!editPollId}
+        onOpenChange={(open) => !open && setEditPollId(null)}
       />
     </div>
   );
