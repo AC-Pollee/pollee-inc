@@ -16,6 +16,7 @@ import {
   Clock, ExternalLink, Settings, Vote, Eye, Building2, Shield, Users, UserPlus, Calculator
 } from 'lucide-react';
 import BudgetPanel from '@/components/polls/BudgetPanel';
+import BudgetLinesEditor from '@/components/polls/BudgetLinesEditor';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import VotingOptionsEditor from '@/components/polls/VotingOptionsEditor';
@@ -45,6 +46,7 @@ export default function Admin() {
   const [franchiseId, setFranchiseId] = useState('');
   const [pollState, setPollState] = useState('');
   const [pollPostcodes, setPollPostcodes] = useState('');
+  const [budgetLines, setBudgetLines] = useState([]);
 
   const { data: franchises = [], isLoading: loadingFranchises } = useQuery({
     queryKey: ['franchises'],
@@ -87,6 +89,13 @@ export default function Admin() {
     || currentUser?.user_role === 'franchise_manager'
     || isInfomarian
     || isFranchiseOwner;
+
+  // Infomarian or above can enter/lock budget figures.
+  const canBudget = isSuperAdmin
+    || currentUser?.role === 'admin'
+    || currentUser?.user_role === 'master_franchiser'
+    || currentUser?.user_role === 'franchise_manager'
+    || isInfomarian;
   
   const createPoll = useMutation({
     mutationFn: (pollData) => base44.entities.Poll.create(pollData),
@@ -96,6 +105,7 @@ export default function Admin() {
       setPollDescription('');
       setPollEndDate('');
       setOptions([{ id: '1', label: '' }, { id: '2', label: '' }]);
+      setBudgetLines([]);
       setActiveTab('manage');
     }
   });
@@ -168,7 +178,7 @@ export default function Admin() {
       moderation_status: 'pending',
       budget_enabled: true,
       budget_status: 'draft',
-      budget_lines: []
+      budget_lines: budgetLines
     });
   };
   
@@ -378,6 +388,15 @@ export default function Admin() {
                     onRemove={removeOption}
                     onUpdate={updateOption}
                     maxOptions={2}
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <BudgetLinesEditor
+                    lines={budgetLines}
+                    onChange={setBudgetLines}
+                    canBudget={canBudget}
+                    currentUser={currentUser}
                   />
                 </div>
                 

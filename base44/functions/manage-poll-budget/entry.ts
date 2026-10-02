@@ -71,7 +71,7 @@ export default async function (req: Request): Promise<Response> {
       case "addLine": {
         const label = (typeof body.label === "string" ? body.label : "").trim();
         if (!label) return Response.json({ error: "label is required for a budget line." }, { status: 400 });
-        const line = { id: uid(), label, cost: null, ci: null, entered_by_id: null, entered_by_name: null, entered_at: null };
+        const line = { id: uid(), label, cost: null, ci: null, locked: false, entered_by_id: null, entered_by_name: null, entered_at: null };
         await base44.entities.Poll.update(pollId, { budget_lines: [...lines, line], budget_status: "draft" });
         return Response.json({ ok: true, line });
       }
@@ -80,13 +80,31 @@ export default async function (req: Request): Promise<Response> {
         const line = lines.find((l) => l.id === body.lineId);
         if (!line) return Response.json({ error: "Budget line not found." }, { status: 404 });
         const next: any = { ...line };
+
+        // Lock toggle — Infomarian or above only. Locking requires a figure > 0 and stamps it as official.
+        if (body.locked !== undefined) {
+          if (!elevated) return Response.json({ error: "Only an Infomarian or above can lock a budget figure." }, { status: 403 });
+          const lock = !!body.locked;
+          if (lock && (typeof next.cost !== "number" || next.cost <= 0)) {
+            return Response.json({ error: "Enter a dollar figure before locking this line." }, { status: 400 });
+          }
+          next.locked = lock;
+          if (lock) {
+            next.entered_by_id = user.id;
+            next.entered_by_name = user.full_name || user.email;
+            next.entered_at = new Date().toISOString();
+          }
+        }
+
         if (typeof body.label === "string") {
+          if (line.locked && body.locked === undefined) return Response.json({ error: "This line is locked. Unlock it before editing." }, { status: 400 });
           const label = body.label.trim();
           if (!label) return Response.json({ error: "label cannot be empty." }, { status: 400 });
           next.label = label;
         }
         if (body.cost !== undefined) {
           if (!elevated) return Response.json({ error: "Only an Infomarian or above can enter a budget figure." }, { status: 403 });
+          if (line.locked && body.locked === undefined) return Response.json({ error: "This figure is locked. Unlock it before editing." }, { status: 400 });
           const cost = Number(body.cost);
           if (!Number.isFinite(cost) || cost < 0) return Response.json({ error: "cost must be a non-negative number of dollars." }, { status: 400 });
           next.cost = cost;
@@ -96,6 +114,7 @@ export default async function (req: Request): Promise<Response> {
         }
         if (body.ci !== undefined) {
           if (!elevated) return Response.json({ error: "Only an Infomarian or above can set the confidence interval." }, { status: 403 });
+          if (line.locked && body.locked === undefined) return Response.json({ error: "This line is locked. Unlock it before editing." }, { status: 400 });
           const ci = Number(body.ci);
           if (!Number.isFinite(ci) || ci < 0 || ci > 100) return Response.json({ error: "ci is the +/- percentage, 0 to 100." }, { status: 400 });
           next.ci = ci;

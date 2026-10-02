@@ -33,6 +33,7 @@ function LineRow({ line, canBudget, busy, onCommit, onRemove }) {
   const [cost, setCost] = useState(line.cost ?? '');
   const [ci, setCi] = useState(line.ci ?? '');
 
+  const locked = !!line.locked;
   const costSet = typeof line.cost === 'number' && line.cost > 0;
 
   return (
@@ -41,15 +42,16 @@ function LineRow({ line, canBudget, busy, onCommit, onRemove }) {
         <Input
           value={label}
           placeholder="Budget line label"
+          disabled={locked || busy}
           onChange={(e) => setLabel(e.target.value)}
-          onBlur={() => label !== line.label && onCommit({ label })}
+          onBlur={() => label !== line.label && !locked && onCommit({ label })}
           className="flex-1"
         />
         <Button
           variant="ghost"
           size="icon"
           className="text-slate-400 hover:text-red-500 flex-shrink-0"
-          disabled={busy}
+          disabled={locked || busy}
           onClick={onRemove}
         >
           <Trash2 className="w-4 h-4" />
@@ -64,15 +66,15 @@ function LineRow({ line, canBudget, busy, onCommit, onRemove }) {
               min="0"
               value={cost}
               placeholder="0"
-              disabled={!canBudget || busy}
+              disabled={!canBudget || busy || locked}
               onChange={(e) => setCost(e.target.value)}
               onBlur={() => {
                 const n = cost === '' ? null : Number(cost);
                 if (n !== line.cost) onCommit({ cost: n });
               }}
-              className={!canBudget ? 'bg-slate-50' : ''}
+              className={!canBudget || locked ? 'bg-slate-50' : ''}
             />
-            {!canBudget && (
+            {(!canBudget || locked) && (
               <Lock className="w-3.5 h-3.5 absolute right-2 top-1/2 -translate-y-1/2 text-slate-400" />
             )}
           </div>
@@ -85,15 +87,26 @@ function LineRow({ line, canBudget, busy, onCommit, onRemove }) {
             max="100"
             value={ci}
             placeholder="0"
-            disabled={!canBudget || busy}
+            disabled={!canBudget || busy || locked}
             onChange={(e) => setCi(e.target.value)}
             onBlur={() => {
               const n = ci === '' ? null : Number(ci);
               if (n !== line.ci) onCommit({ ci: n });
             }}
-            className={!canBudget ? 'bg-slate-50' : ''}
+            className={!canBudget || locked ? 'bg-slate-50' : ''}
           />
         </div>
+      </div>
+      {/* Lock toggle — Infomarian or above only */}
+      <div className="flex items-center justify-between pt-1">
+        <Switch
+          checked={locked}
+          disabled={!canBudget || busy || !costSet}
+          onCheckedChange={(v) => onCommit({ locked: v })}
+        />
+        <span className="text-xs text-slate-500">
+          {locked ? 'Figure locked' : canBudget ? (costSet ? 'Lock figure (Infomarian)' : 'Enter a figure to lock') : 'Locking is Infomarian-only'}
+        </span>
       </div>
       {costSet ? (
         <p className="text-xs text-emerald-700 flex items-center gap-1">
