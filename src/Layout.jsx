@@ -134,16 +134,16 @@ export default function Layout({ children, currentPageName }) {
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
-              <Link to={createPageUrl('Home')} className="flex items-center">
+              <Link to={createPageUrl('Home')} className="flex items-center -my-2">
                 <img
                   src="https://media.base44.com/images/public/69415ee66a530550d1e35558/2b39b1f81_generated_image.png"
                   alt="Pollee Inc"
-                  className="h-11 w-11 rounded-full dark:hidden"
+                  className="h-16 w-16 rounded-full dark:hidden"
                 />
                 <img
                   src="https://media.base44.com/images/public/69415ee66a530550d1e35558/075594b80_generated_image.png"
                   alt="Pollee Inc"
-                  className="h-11 w-11 rounded-full hidden dark:block"
+                  className="h-16 w-16 rounded-full hidden dark:block"
                 />
               </Link>
             </div>
