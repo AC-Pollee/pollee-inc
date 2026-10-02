@@ -1,0 +1,45 @@
+{
+  "name": "PolicyChange",
+  "type": "object",
+  "properties": {
+    "file_id": {
+      "type": "string",
+      "description": "Google Drive file ID of the policy document"
+    },
+    "file_name": {
+      "type": "string",
+      "description": "Name of the policy document"
+    },
+    "mime_type": {
+      "type": "string",
+      "description": "File MIME type"
+    },
+    "change_type": {
+      "type": "string",
+      "enum": [
+        "created",
+        "updated",
+        "deleted"
+      ],
+      "description": "Nature of the change detected"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "Link to the Google Doc"
+    },
+    "content_item_id": {
+      "type": "string",
+      "description": "ID of the ContentLibraryItem created for review (if any)"
+    },
+    "processed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the change was processed"
+    }
+  },
+  "required": [
+    "file_id",
+    "file_name",
+    "change_type"
+  ]
+}

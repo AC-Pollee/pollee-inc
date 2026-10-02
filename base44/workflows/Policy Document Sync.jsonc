@@ -1,0 +1,41 @@
+{
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "policy_document_sync",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "sync_policy_docs": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "policy-doc-sync",
+            "args": {
+              "data": "${ .trigger.data }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Sync policy documents",
+            "description": "Import updated policy docs from Google Drive"
+          }
+        }
+      }
+    ]
+  },
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "connector",
+      "events": [
+        "changes"
+      ],
+      "integration_type": "googledrive",
+      "resource_id": null
+    }
+  },
+  "name": "Policy Document Sync",
+  "description": "When Google Drive changes, sync policy document updates into the Content Library for review and the PolicyChange audit log."
+}
