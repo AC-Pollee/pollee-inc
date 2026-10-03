@@ -117,6 +117,7 @@
     "activePolls": "Active Polls",
     "activePollsSub": "Cast your vote on current issues",
     "activeCount": "{{count}} active",
+    "onlineUsers": "{{count}} online",
     "noPolls": "No Active Polls",
     "noPollsSub": "Be the first to create a poll for your community",
     "howWorks": "How Pollee Works",

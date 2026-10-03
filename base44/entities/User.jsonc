@@ -6,6 +6,11 @@
       "type": "string",
       "description": "URL of the user's uploaded avatar image (JPG or PNG, square, <= 2MB)"
     },
+    "last_active_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO timestamp of the user's most recent presence heartbeat, used to count active sessions"
+    },
     "last_name": {
       "type": "string",
       "description": "Last name of the user"
