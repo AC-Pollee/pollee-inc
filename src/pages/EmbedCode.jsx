@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { Check, Copy, ExternalLink } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
-const IMAGE_URL = "https://media.base44.com/images/public/69415ee66a530550d1e35558/1ea380e0a_generated_image.png";
 const APP_URL = "https://pollee-app.base44.app";
 
-const EMBED_CODE = `<a href="${APP_URL}" target="_blank" rel="noopener noreferrer" style="display:inline-block;max-width:100%;text-decoration:none;">
-  <img src="${IMAGE_URL}" alt="Pollee — democratic participation" style="display:block;width:100%;max-width:800px;height:auto;border:1px solid #e2e8f0;border-radius:12px;" />
-</a>`;
+const EMBED_CODE = `<div style="max-width:800px;margin:0 auto;">
+  <iframe src="${APP_URL}/" title="Pollee — live home page" loading="lazy" style="width:100%;height:640px;border:1px solid #e2e8f0;border-radius:12px;background:#ffffff;"></iframe>
+  <p style="text-align:center;margin-top:10px;">
+    <a href="${APP_URL}" target="_blank" rel="noopener noreferrer" style="color:#4f46e5;font-weight:600;text-decoration:none;">Open Pollee &#8594;</a>
+  </p>
+</div>`;
 
 export default function EmbedCode() {
   const [copied, setCopied] = useState(false);
@@ -26,24 +28,28 @@ export default function EmbedCode() {
         <header className="text-center mb-10">
           <h1 className="text-3xl font-bold text-slate-900 mb-2">Pollee Embed Code</h1>
           <p className="text-slate-600">
-            A static preview of the Pollee front page that links visitors to the live app. Paste it into a Squarespace Code Block.
+            A live snapshot of the Pollee home page that links visitors to the app. Paste it into a Squarespace Code Block.
           </p>
         </header>
 
         {/* Live preview */}
         <section className="mb-10">
-          <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">Preview</h2>
+          <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">Live Preview</h2>
           <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-4">
-            <a href={APP_URL} target="_blank" rel="noopener noreferrer" className="block">
-              <img
-                src={IMAGE_URL}
-                alt="Pollee — democratic participation"
-                className="w-full h-auto rounded-xl border border-slate-200"
+            <div className="overflow-hidden rounded-xl border border-slate-200">
+              <iframe
+                src={`${APP_URL}/`}
+                title="Pollee — live home page"
+                loading="lazy"
+                className="w-full"
+                style={{ height: 640, background: "#ffffff" }}
               />
-            </a>
+            </div>
             <p className="text-center text-sm text-slate-500 mt-3 flex items-center justify-center gap-1">
               <ExternalLink className="w-3.5 h-3.5" />
-              Clicking the image opens the Pollee app
+              <a href={APP_URL} target="_blank" rel="noopener noreferrer" className="text-indigo-600 font-semibold hover:underline">
+                Open Pollee
+              </a>
             </p>
           </div>
         </section>
@@ -71,7 +77,7 @@ export default function EmbedCode() {
             <li>Ensure <strong>Display Source</strong> is on, then save / preview the page.</li>
           </ol>
           <p className="text-xs text-slate-500 mt-4">
-            The preview is a static image captured at the time it was generated; it does not update automatically when the app changes.
+            The preview is a live iframe of the Pollee home page. Visitors who aren't signed in will see the login screen inside the frame; signed-in members see the home page directly. The "Open Pollee" link opens the full app in a new tab.
           </p>
         </section>
       </div>
