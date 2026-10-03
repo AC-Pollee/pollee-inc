@@ -411,7 +411,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
                     {t('pollDiscussion.reply')}
                   </Button>
                 )}
-                {isInfomarianOrAdmin && !isArchived && (
+                {currentUser && !isArchived && (
                   <Button
                     variant="ghost"
                     size="sm"

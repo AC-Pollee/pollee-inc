@@ -46,17 +46,14 @@ export default function ShareToMemberDialog({ open, onOpenChange, comment, pollI
 
   const share = useMutation({
     mutationFn: async () => {
-      const startRes = await base44.functions.invoke('start-conversation', {
+      const res = await base44.functions.invoke('share-to-member', {
         target_user_id: selected.id,
+        poll_id: pollId,
+        comment_id: comment?.id,
         subject: t('pollDiscussion.sharedCommentSubject', { defaultValue: 'Shared comment from discussion' }),
-        related_poll_id: pollId
-      });
-      const conversation = startRes.data?.conversation;
-      if (!conversation) throw new Error(startRes.data?.error || 'Failed to start conversation');
-      await base44.functions.invoke('send-message', {
-        conversation_id: conversation.id,
         content: forwardedText
       });
+      if (res.data?.error) throw new Error(res.data.error);
     },
     onSuccess: () => {
       toast({
