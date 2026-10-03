@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 const APP_URL = "https://pollee-app.base44.app";
 
 const EMBED_CODE = `<div style="max-width:800px;margin:0 auto;">
-  <iframe src="${APP_URL}/" title="Pollee — live home page" loading="lazy" style="width:100%;height:640px;border:1px solid #e2e8f0;border-radius:12px;background:#ffffff;"></iframe>
+  <iframe src="${APP_URL}/embed" title="Pollee — live home page" loading="lazy" style="width:100%;height:640px;border:1px solid #e2e8f0;border-radius:12px;background:#ffffff;"></iframe>
   <p style="text-align:center;margin-top:10px;">
     <a href="${APP_URL}" target="_blank" rel="noopener noreferrer" style="color:#4f46e5;font-weight:600;text-decoration:none;">Open Pollee &#8594;</a>
   </p>
@@ -38,7 +38,7 @@ export default function EmbedCode() {
           <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-4">
             <div className="overflow-hidden rounded-xl border border-slate-200">
               <iframe
-                src={`${APP_URL}/`}
+                src={`${APP_URL}/embed`}
                 title="Pollee — live home page"
                 loading="lazy"
                 className="w-full"
@@ -77,7 +77,7 @@ export default function EmbedCode() {
             <li>Ensure <strong>Display Source</strong> is on, then save / preview the page.</li>
           </ol>
           <p className="text-xs text-slate-500 mt-4">
-            The preview is a live iframe of the Pollee home page. Visitors who aren't signed in will see the login screen inside the frame; signed-in members see the home page directly. The "Open Pollee" link opens the full app in a new tab.
+            The preview is a live iframe of the Pollee home page showing active polls to everyone — no sign-in required to view. The "Open Pollee" link opens the full app in a new tab, where members can sign in to vote.
           </p>
         </section>
       </div>

@@ -210,5 +210,8 @@
     "options",
     "franchise_id",
     "poll_level"
-  ]
+  ],
+  "rls": {
+    "read": {}
+  }
 }
