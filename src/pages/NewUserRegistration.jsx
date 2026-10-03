@@ -20,7 +20,7 @@ export default function NewUserRegistration() {
     full_name: '',
     last_name: '',
     date_of_birth: '',
-    infomarian_id: '',
+    franchise_id: '',
     phone_number: '',
     bsb: '',
     account_number: '',
@@ -34,8 +34,47 @@ export default function NewUserRegistration() {
     queryFn: () => base44.auth.me()
   });
 
+  const { data: franchises = [] } = useQuery({
+    queryKey: ['activeFranchises'],
+    queryFn: async () => {
+      const all = await base44.entities.Franchise.list();
+      return all.filter(f => f.status === 'active');
+    }
+  });
+
+  const { data: allInfomarians = [] } = useQuery({
+    queryKey: ['allInfomarians'],
+    queryFn: () => base44.entities.Infomarian.list()
+  });
+
   const register = useMutation({
-    mutationFn: (data) => base44.auth.updateMe(data),
+    mutationFn: async (data) => {
+      await base44.auth.updateMe(data);
+      // Alert this constituency's Infomarians of the new constituent and
+      // request they assign a supporting Infomarian to the user.
+      const constituencyInfomarians = allInfomarians.filter(
+        i => i.franchise_id === data.franchise_id && i.status === 'active'
+      );
+      if (constituencyInfomarians.length > 0) {
+        const constituentName = `${data.full_name} ${data.last_name}`.trim();
+        const description = `New constituent ${constituentName} (${user?.email}) has registered and selected your constituency. Please review their details and assign a supporting Infomarian to their account.`;
+        await base44.entities.InfomarianTask.bulkCreate(
+          constituencyInfomarians.map(i => ({
+            assigned_to_id: i.infomarian_id,
+            assigned_to_name: i.full_name,
+            assigned_by_id: 'system',
+            assigned_by_name: 'Pollee System',
+            task_type: 'user_support',
+            title: 'New constituent — assignment required',
+            description,
+            priority: 'medium',
+            status: 'pending',
+            related_entity_type: 'user',
+            related_entity_id: user?.id || ''
+          }))
+        );
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['currentUser']);
       navigate('/Profile');
@@ -211,17 +250,24 @@ export default function NewUserRegistration() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="infomarian_id" className="text-base font-semibold">
-                  {t('newUserReg.infomarianId')} <span className="text-red-500">*</span>
+                <Label htmlFor="franchise_id" className="text-base font-semibold">
+                  {t('newUserReg.constituency')} <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  id="infomarian_id"
-                  value={formData.infomarian_id}
-                  onChange={(e) => setFormData({ ...formData, infomarian_id: e.target.value })}
-                  placeholder="Enter your Infomarian ID"
-                  className="h-12 rounded-lg"
+                <select
+                  id="franchise_id"
+                  value={formData.franchise_id}
+                  onChange={(e) => setFormData({ ...formData, franchise_id: e.target.value })}
+                  className="w-full h-12 rounded-lg border border-slate-200 bg-white px-3 text-slate-900"
                   required
-                />
+                >
+                  <option value="">{t('newUserReg.selectConstituency')}</option>
+                  {franchises.map(f => (
+                    <option key={f.id} value={f.id}>
+                      {f.franchise_name} ({f.postcode})
+                    </option>
+                  ))}
+                </select>
+                <p className="text-xs text-slate-500">{t('newUserReg.constituencyHelp')}</p>
               </div>
 
               <div className="space-y-2">
