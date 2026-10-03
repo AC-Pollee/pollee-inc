@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import ConstituencyHelp from '@/components/help/ConstituencyHelp';
 import InfomarianEditDialog from '@/components/infomarian/InfomarianEditDialog';
+import UserDirectory from '@/components/admin/UserDirectory';
 import { useTranslation } from 'react-i18next';
 
 export default function MasterFranchiserDashboard() {
@@ -139,6 +140,7 @@ export default function MasterFranchiserDashboard() {
                 <Badge className="ml-2 bg-red-500 text-white">{pendingComments.length}</Badge>
               )}
             </TabsTrigger>
+            <TabsTrigger value="users" className="rounded-lg">{t('userDirectory.title')}</TabsTrigger>
             <TabsTrigger value="help" className="rounded-lg">{t('masterDash.help')}</TabsTrigger>
           </TabsList>
 
@@ -317,6 +319,10 @@ export default function MasterFranchiserDashboard() {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="users" className="mt-6">
+            <UserDirectory />
           </TabsContent>
 
           <TabsContent value="help" className="mt-6">

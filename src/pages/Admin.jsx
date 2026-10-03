@@ -21,6 +21,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import VotingOptionsEditor from '@/components/polls/VotingOptionsEditor';
 import AssignInfomariansDialog from '@/components/polls/AssignInfomariansDialog';
+import UserDirectory from '@/components/admin/UserDirectory';
 import { useTranslation } from 'react-i18next';
 
 export default function Admin() {
@@ -269,6 +270,13 @@ export default function Admin() {
             >
               <Building2 className="w-4 h-4 mr-2" />
               {t('admin.banking')}
+            </TabsTrigger>
+            <TabsTrigger 
+              value="users" 
+              className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-6"
+            >
+              <Users className="w-4 h-4 mr-2" />
+              {t('userDirectory.title')}
             </TabsTrigger>
           </TabsList>
 
@@ -901,6 +909,11 @@ export default function Admin() {
                 </Button>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Users Tab */}
+          <TabsContent value="users">
+            <UserDirectory />
           </TabsContent>
         </Tabs>
       </div>
