@@ -17,6 +17,7 @@ import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Messages from './pages/Messages';
+import EmbedCode from './pages/EmbedCode';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -65,6 +66,7 @@ const AuthenticatedApp = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/embed-code" element={<EmbedCode />} />
 
       {/* Protected app routes — all gated by ProtectedRoute */}
       <Route element={<ProtectedRoute unauthenticatedElement={<RedirectToLogin />} />}>
