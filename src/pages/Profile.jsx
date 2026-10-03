@@ -459,7 +459,8 @@ export default function Profile() {
                       onChange={(e) => setFormData({...formData, bsb: e.target.value})}
                       placeholder="000-000"
                       maxLength={7}
-                      className="h-12 rounded-lg"
+                      disabled
+                      className="h-12 rounded-lg bg-slate-100 text-slate-400 cursor-not-allowed"
                     />
                   </div>
 
@@ -472,7 +473,8 @@ export default function Profile() {
                       value={formData.account_number}
                       onChange={(e) => setFormData({...formData, account_number: e.target.value})}
                       placeholder="12345678"
-                      className="h-12 rounded-lg"
+                      disabled
+                      className="h-12 rounded-lg bg-slate-100 text-slate-400 cursor-not-allowed"
                     />
                   </div>
                 </div>
@@ -486,7 +488,8 @@ export default function Profile() {
                     value={formData.account_name}
                     onChange={(e) => setFormData({...formData, account_name: e.target.value})}
                     placeholder="Name as it appears on your bank account"
-                    className="h-12 rounded-lg"
+                    disabled
+                    className="h-12 rounded-lg bg-slate-100 text-slate-400 cursor-not-allowed"
                   />
                 </div>
               </div>
