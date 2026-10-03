@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Reply, Flag, Trash2, CheckCircle2, XCircle, AlertTriangle, Edit2, Send, Archive, Lock } from 'lucide-react';
+import { MessageCircle, Reply, Flag, Trash2, CheckCircle2, XCircle, AlertTriangle, Edit2, Send, Archive, Lock, Share2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import DiscussionHeader from './DiscussionHeader';
@@ -18,6 +18,7 @@ import EvidenceDisplay from './EvidenceDisplay';
 import EvidenceManager from './EvidenceManager';
 import MemberForwardContent from './MemberForwardContent';
 import ShareButtons from './ShareButtons';
+import ShareToMemberDialog from './ShareToMemberDialog';
 import { useToast } from "@/components/ui/use-toast";
 import { awardReputation } from '@/lib/reputation';
 import { useTranslation } from 'react-i18next';
@@ -30,6 +31,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
   const [replyingTo, setReplyingTo] = useState(null);
   const [replyResponsibility, setReplyResponsibility] = useState(false);
   const [editingComment, setEditingComment] = useState(null);
+  const [sharingComment, setSharingComment] = useState(null);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -229,6 +231,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
     return (
       <motion.div
         key={comment.id}
+        id={`comment-${comment.id}`}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         className={`${depth > 0 ? 'ml-6 md:ml-8 mt-3 pl-3 md:pl-4 border-l-2 border-slate-200' : 'mb-4'}`}
@@ -408,21 +411,17 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
                     {t('pollDiscussion.reply')}
                   </Button>
                 )}
-                <ShareButtons
-                  title={`Comment by ${comment.display_name || comment.user_name || 'member'}`}
-                  summary={comment.content}
-                  url={`${window.location.origin}/Vote?pollId=${pollId}#discussion`}
-                  fileName={`comment-${comment.id}`}
-                  compact
-                  pdf={{
-                    subtitle: 'Pollee discussion comment',
-                    meta: [
-                      { label: 'Author', value: comment.display_name || comment.user_name },
-                      { label: 'Posted', value: format(new Date(comment.created_date), 'MMM d, yyyy h:mm a') },
-                    ],
-                    paragraphs: [comment.content],
-                  }}
-                />
+                {isInfomarianOrAdmin && !isArchived && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSharingComment(comment)}
+                    className="h-6 md:h-7 text-xs text-slate-600 hover:text-indigo-600 px-2"
+                  >
+                    <Share2 className="w-3 h-3 mr-1" />
+                    {t('pollDiscussion.shareToMember', { defaultValue: 'Share to Member' })}
+                  </Button>
+                )}
               </div>
             </>
           )}
@@ -631,6 +630,13 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
           )}
         </div>
       </CardContent>
+
+      <ShareToMemberDialog
+        open={!!sharingComment}
+        onOpenChange={(v) => !v && setSharingComment(null)}
+        comment={sharingComment}
+        pollId={pollId}
+      />
     </Card>
   );
 }
