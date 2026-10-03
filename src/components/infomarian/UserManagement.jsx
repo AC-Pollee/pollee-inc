@@ -103,6 +103,33 @@ export default function UserManagement({ infomarian }) {
     retry: false
   });
 
+  // All users (safe fields, no bank details) — used to list the members
+  // assigned to this Infomarian's franchise. Search still covers everyone.
+  const { data: allUsers = [], isLoading: loadingAssigned } = useQuery({
+    queryKey: ['directory-users'],
+    queryFn: async () => {
+      const res = await base44.functions.invoke('list-users', {});
+      return res.data?.users || [];
+    }
+  });
+
+  const assignedUsers = allUsers.filter(
+    (u) => u.franchise_id && u.franchise_id === infomarian.franchise_id
+  );
+
+  // Selecting from the assigned list fetches the full record (with the strikes
+  // array) so the strike-history detail view keeps working.
+  const selectUserFull = async (u) => {
+    setSearchResults([]);
+    try {
+      const res = await base44.functions.invoke('search-users', { query: u.email });
+      const full = res.data?.users?.find((x) => x.id === u.id);
+      setSelectedUser(full || u);
+    } catch {
+      setSelectedUser(u);
+    }
+  };
+
   const canRevokeStrike = !!currentUser && (
     currentUser.email === 'ac@acproductiondesign.com' ||
     currentUser.role === 'admin' ||
@@ -225,6 +252,46 @@ export default function UserManagement({ infomarian }) {
               {searching ? 'Searching...' : t('userMgmt.search')}
             </Button>
           </div>
+
+          {searchResults.length === 0 && (
+            <div>
+              <p className="text-xs font-semibold text-slate-500 uppercase mb-2">
+                {t('userMgmt.assignedMembers') || 'Assigned Members'} ({assignedUsers.length})
+              </p>
+              <div className="space-y-1 border border-slate-200 rounded-md p-2 bg-white max-h-64 overflow-y-auto">
+                {loadingAssigned ? (
+                  <p className="text-sm text-slate-400 p-2">{t('common.loading') || 'Loading…'}</p>
+                ) : assignedUsers.length === 0 ? (
+                  <p className="text-sm text-slate-400 p-2">{t('userMgmt.noAssigned') || 'No members assigned to your constituency yet.'}</p>
+                ) : (
+                  assignedUsers.map((u) => (
+                    <button
+                      key={u.id}
+                      type="button"
+                      onClick={() => selectUserFull(u)}
+                      className="w-full flex items-center justify-between text-left px-3 py-2 rounded hover:bg-slate-100 transition"
+                    >
+                      <div>
+                        <p className="text-sm font-medium text-slate-900">{`${u.full_name} ${u.last_name}`.trim() || u.email}</p>
+                        <p className="text-xs text-slate-500">{u.email}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {u.account_validated ? (
+                          <Badge className="bg-emerald-100 text-emerald-700">Verified</Badge>
+                        ) : (
+                          <Badge className="bg-amber-100 text-amber-700">Pending</Badge>
+                        )}
+                        <Badge variant="outline" className="capitalize">{u.user_role || 'voter'}</Badge>
+                      </div>
+                    </button>
+                  ))
+                )}
+              </div>
+              <p className="text-xs text-slate-400 mt-2">
+                {t('userMgmt.searchAllHint') || 'Use the search above to find any user across all constituencies.'}
+              </p>
+            </div>
+          )}
 
           {searchResults.length > 0 && (
             <div className="space-y-1 border border-slate-200 rounded-md p-2 bg-white max-h-64 overflow-y-auto">
