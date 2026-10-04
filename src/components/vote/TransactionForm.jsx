@@ -173,7 +173,7 @@ export default function TransactionForm({ pollId, pollOptions, onSubmit, current
               <Button
                 key={option.id}
                 onClick={() => setSelectedChoice(option.id)}
-                className={`h-16 text-lg font-semibold justify-start px-6 ${
+                className={`min-h-16 h-auto text-base font-semibold justify-start text-left whitespace-normal break-words px-6 py-3 ${
                   isSelected
                     ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
                     : 'bg-white text-slate-700 hover:bg-slate-50 border-2 border-slate-200'
