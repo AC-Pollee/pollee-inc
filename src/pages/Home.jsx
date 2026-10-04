@@ -10,7 +10,6 @@ import { Vote, Plus, BarChart3, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PollCard from '@/components/polls/PollCard';
 import DiscussionPreview from '@/components/polls/DiscussionPreview';
-import ThemeLanguageToggle from '@/components/ThemeLanguageToggle';
 
 export default function Home() {
   const { t } = useTranslation();
@@ -44,10 +43,6 @@ export default function Home() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-100/40 via-transparent to-transparent" />
         
         <div className="relative max-w-6xl mx-auto px-4 pt-16 pb-20">
-          <div className="flex justify-end mb-4">
-            <ThemeLanguageToggle />
-          </div>
-          
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
