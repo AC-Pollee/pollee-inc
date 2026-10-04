@@ -253,126 +253,17 @@ export default function Vote() {
                     )}
                   </div>
                 </CardHeader>
-                
-                <CardContent className="p-8">
-                  {/* Show last vote if user has voted before */}
-                  {lastVote && !isPollClosed && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="mb-6"
-                    >
-                      <Alert className="bg-gradient-to-br from-blue-50 to-indigo-50 border-indigo-200">
-                        <History className="h-4 w-4 text-indigo-600" />
-                        <AlertDescription>
-                          <div className="space-y-1">
-                            <p className="text-indigo-900 font-semibold">{t('vote.yourLastVote')}</p>
-                            <div className="flex items-center gap-2">
-                              <span className="text-indigo-700">
-                                <span className="font-bold">{translatedOptions.find(o => o.id === lastVote.poll_item_id)?.label || lastVote.option_label}</span>
-                              </span>
-                              <span className="text-xs text-indigo-600 flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                {format(new Date(lastVote.created_date), 'MMM d, h:mm a')}
-                              </span>
-                            </div>
-                            <p className="text-xs text-indigo-600 mt-1">
-                              {t('vote.canChangeVote')}
-                            </p>
-                          </div>
-                        </AlertDescription>
-                      </Alert>
-                    </motion.div>
-                  )}
-
-                  <div className="space-y-4 mb-8">
-                    <h3 className="font-semibold text-lg">{t('vote.availableOptions')}</h3>
-                    <div className="grid gap-3">
-                      {translatedOptions.map((option) => (
-                        <div
-                          key={option.id}
-                          className={`flex items-center justify-between p-4 rounded-lg border-2 transition-all ${
-                            lastVote?.poll_item_id === option.id
-                              ? 'bg-indigo-50 border-indigo-300'
-                              : 'bg-slate-50 border-slate-200'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium text-slate-900">{option.label}</span>
-                            {lastVote?.poll_item_id === option.id && (
-                              <CheckCircle2 className="w-4 h-4 text-indigo-600" />
-                            )}
-                          </div>
-                          <span className="text-sm text-slate-500 font-mono">ID: {option.id}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {isPollClosed ? (
-                    <Alert className="bg-slate-50 border-slate-200">
-                      <AlertCircle className="h-4 w-4 text-slate-600" />
-                      <AlertDescription className="text-slate-800">
-                        <span className="font-semibold">{t('vote.pollClosedAlert')}</span>
-                      </AlertDescription>
-                    </Alert>
-                  ) : !isSuperAdmin && !user?.date_of_birth ? (
-                    <Alert className="bg-amber-50 border-amber-200">
-                      <AlertCircle className="h-4 w-4 text-amber-600" />
-                      <AlertDescription className="text-amber-800">
-                        {t('vote.completeProfile')}{' '}
-                        <Link to={createPageUrl('Profile')} className="underline font-semibold">
-                          {t('vote.goToProfile')}
-                        </Link>
-                      </AlertDescription>
-                    </Alert>
-                  ) : !isSuperAdmin && age < 12 ? (
-                    <Alert className="bg-red-50 border-red-200">
-                      <AlertCircle className="h-4 w-4 text-red-600" />
-                      <AlertDescription className="text-red-800">
-                        {t('vote.tooYoung')}
-                      </AlertDescription>
-                    </Alert>
-                  ) : !isSuperAdmin && age < 18 ? (
-                    <Alert className="bg-blue-50 border-blue-200">
-                      <AlertCircle className="h-4 w-4 text-blue-600" />
-                      <AlertDescription className="text-blue-800">
-                        {t('vote.juniorMember', { age })}
-                      </AlertDescription>
-                    </Alert>
-                  ) : (
-                    <TransactionForm
-                      pollId={pollId}
-                      pollOptions={poll?.options || []}
-                      onSubmit={handleSubmit}
-                      currentUser={user}
-                      poll={poll}
-                      franchise={franchise}
-                    />
-                  )}
-                </CardContent>
               </Card>
 
+              {/* Budget */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15 }}
+                transition={{ delay: 0.1 }}
                 className="mt-6"
               >
                 <BudgetSummary poll={poll} />
               </motion.div>
-
-              {/* Live/Final Results - visible to everyone 12+ or closed polls or superadmin */}
-              {(isSuperAdmin || age >= 12 || isPollClosed) && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="mt-6"
-                >
-                  <LiveResults pollId={pollId} poll={poll} isPollClosed={isPollClosed} />
-                </motion.div>
-              )}
 
               {/* Discussion - available to everyone 12+ only when poll is open or superadmin */}
               {(isSuperAdmin || age >= 12) && !isPollClosed && (
@@ -380,7 +271,7 @@ export default function Vote() {
                   id="discussion"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
+                  transition={{ delay: 0.15 }}
                   className="mt-6"
                 >
                   <PollDiscussion pollId={pollId} currentUser={user} userAge={age} poll={poll} />
@@ -393,10 +284,106 @@ export default function Vote() {
                   id="discussion"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
+                  transition={{ delay: 0.15 }}
                   className="mt-6"
                 >
                   <PollDiscussion pollId={pollId} currentUser={user} userAge={age} isClosed={true} poll={poll} />
+                </motion.div>
+              )}
+
+              {/* Active vote + confirmation to terms */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="mt-6"
+              >
+                <Card className="border-0 shadow-xl">
+                  <CardContent className="p-8">
+                    {/* Show last vote if user has voted before */}
+                    {lastVote && !isPollClosed && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mb-6"
+                      >
+                        <Alert className="bg-gradient-to-br from-blue-50 to-indigo-50 border-indigo-200">
+                          <History className="h-4 w-4 text-indigo-600" />
+                          <AlertDescription>
+                            <div className="space-y-1">
+                              <p className="text-indigo-900 font-semibold">{t('vote.yourLastVote')}</p>
+                              <div className="flex items-center gap-2">
+                                <span className="text-indigo-700">
+                                  <span className="font-bold">{translatedOptions.find(o => o.id === lastVote.poll_item_id)?.label || lastVote.option_label}</span>
+                                </span>
+                                <span className="text-xs text-indigo-600 flex items-center gap-1">
+                                  <Clock className="w-3 h-3" />
+                                  {format(new Date(lastVote.created_date), 'MMM d, h:mm a')}
+                                </span>
+                              </div>
+                              <p className="text-xs text-indigo-600 mt-1">
+                                {t('vote.canChangeVote')}
+                              </p>
+                            </div>
+                          </AlertDescription>
+                        </Alert>
+                      </motion.div>
+                    )}
+
+                    {isPollClosed ? (
+                      <Alert className="bg-slate-50 border-slate-200">
+                        <AlertCircle className="h-4 w-4 text-slate-600" />
+                        <AlertDescription className="text-slate-800">
+                          <span className="font-semibold">{t('vote.pollClosedAlert')}</span>
+                        </AlertDescription>
+                      </Alert>
+                    ) : !isSuperAdmin && !user?.date_of_birth ? (
+                      <Alert className="bg-amber-50 border-amber-200">
+                        <AlertCircle className="h-4 w-4 text-amber-600" />
+                        <AlertDescription className="text-amber-800">
+                          {t('vote.completeProfile')}{' '}
+                          <Link to={createPageUrl('Profile')} className="underline font-semibold">
+                            {t('vote.goToProfile')}
+                          </Link>
+                        </AlertDescription>
+                      </Alert>
+                    ) : !isSuperAdmin && age < 12 ? (
+                      <Alert className="bg-red-50 border-red-200">
+                        <AlertCircle className="h-4 w-4 text-red-600" />
+                        <AlertDescription className="text-red-800">
+                          {t('vote.tooYoung')}
+                        </AlertDescription>
+                      </Alert>
+                    ) : !isSuperAdmin && age < 18 ? (
+                      <Alert className="bg-blue-50 border-blue-200">
+                        <AlertCircle className="h-4 w-4 text-blue-600" />
+                        <AlertDescription className="text-blue-800">
+                          {t('vote.juniorMember', { age })}
+                        </AlertDescription>
+                      </Alert>
+                    ) : (
+                      <TransactionForm
+                        pollId={pollId}
+                        pollOptions={poll?.options || []}
+                        onSubmit={handleSubmit}
+                        currentUser={user}
+                        poll={poll}
+                        franchise={franchise}
+                      />
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* Live/Final Results - visible to everyone 12+ or closed polls or superadmin */}
+              {(isSuperAdmin || age >= 12 || isPollClosed) && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.25 }}
+                  className="mt-6"
+                >
+                  <LiveResults pollId={pollId} poll={poll} isPollClosed={isPollClosed} />
                 </motion.div>
               )}
             </motion.div>

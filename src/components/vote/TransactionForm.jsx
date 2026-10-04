@@ -10,11 +10,13 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { usePollTranslation } from '@/hooks/usePollTranslation';
+import ResponsibilityAgreement from '@/components/polls/ResponsibilityAgreement';
 
 export default function TransactionForm({ pollId, pollOptions, onSubmit, currentUser, poll, franchise }) {
   const { t } = useTranslation();
   const { options: translatedOptions } = usePollTranslation(poll);
   const optionLabel = (id, fallback) => translatedOptions.find(o => o.id === id)?.label || fallback;
+  const [responsibilityAccepted, setResponsibilityAccepted] = useState(false);
   const [selectedChoice, setSelectedChoice] = useState(null);
   const [carryingDelegation, setCarryingDelegation] = useState(false);
   const [selectedDelegations, setSelectedDelegations] = useState([]);
@@ -159,6 +161,8 @@ export default function TransactionForm({ pollId, pollOptions, onSubmit, current
         </div>
       )}
 
+      <ResponsibilityAgreement accepted={responsibilityAccepted} onChange={setResponsibilityAccepted} />
+
       <Card className="p-6 bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-200">
         <h3 className="font-semibold text-indigo-900 mb-4">{t('transactionForm.castYourVote')}</h3>
         <div className="grid gap-3 mb-4">
@@ -207,6 +211,7 @@ export default function TransactionForm({ pollId, pollOptions, onSubmit, current
             </div>
             <Button
               onClick={handleVote}
+              disabled={!responsibilityAccepted}
               className="w-full h-12 bg-indigo-600 hover:bg-indigo-700"
             >
               <CheckCircle2 className="w-5 h-5 mr-2" />
