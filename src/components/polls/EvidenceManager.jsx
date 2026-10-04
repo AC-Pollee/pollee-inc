@@ -28,7 +28,9 @@ export default function EvidenceManager({ pollId, infomarian }) {
       infomarian_id: infomarian.infomarian_id,
       moderation_status: 'approved'
     }, '-created_date'),
-    enabled: !!infomarian?.infomarian_id && open
+    enabled: !!infomarian?.infomarian_id,
+    staleTime: 0,
+    refetchOnMount: 'always'
   });
 
   const attachEvidence = useMutation({
