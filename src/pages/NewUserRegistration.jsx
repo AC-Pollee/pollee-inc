@@ -282,15 +282,6 @@ export default function NewUserRegistration() {
                 />
               </div>
 
-              <div className="border-t border-slate-200 pt-6 mt-6">
-                <Alert className="bg-amber-50 border-amber-200">
-                  <AlertCircle className="h-4 w-4 text-amber-600" />
-                  <AlertDescription className="text-amber-800">
-                    <span className="font-semibold">{t('newUserReg.bankSuspended')}</span> {t('newUserReg.bankSuspendedDesc')}
-                  </AlertDescription>
-                </Alert>
-              </div>
-
               <div className="pt-4 space-y-4">
                 <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-lg border border-slate-200">
                   <input
