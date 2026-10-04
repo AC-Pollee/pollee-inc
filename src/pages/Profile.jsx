@@ -83,7 +83,7 @@ export default function Profile() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['currentUser']);
-      setSuccessMessage('Profile updated successfully!');
+      setSuccessMessage(t('profile.profileUpdated'));
       setTimeout(() => setSuccessMessage(''), 3000);
     }
   });
@@ -91,7 +91,7 @@ export default function Profile() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (containsExternalUrl(formData.personal_bio)) {
-      setBioError('External URLs are not allowed in your biography.');
+      setBioError(t('profile.externalUrlsBio'));
       return;
     }
     setBioError('');
@@ -139,7 +139,7 @@ export default function Profile() {
     const amount = parseFloat(depositAmount);
 
     if (!amount || amount <= 0 || amount >= 0.25) {
-      setValidationError('Please enter a valid amount (less than $0.25 AUD)');
+      setValidationError(t('profile.invalidAmount'));
       return;
     }
 
@@ -153,10 +153,10 @@ export default function Profile() {
         voter_id: voterId
       });
       queryClient.invalidateQueries(['currentUser']);
-      setSuccessMessage(`Account validated! Your Voter ID is: ${voterId}`);
+      setSuccessMessage(`${t('profile.accountValidated')}! ${t('profile.yourVoterId')} ${voterId}`);
       setValidationError('');
     } else {
-      setValidationError('The amount entered does not match our records. Please try again or contact support.');
+      setValidationError(t('profile.amountMismatch'));
     }
   };
 
@@ -210,7 +210,7 @@ export default function Profile() {
                   let value = e.target.value;
                   if (value.length > 350) value = value.slice(0, 350);
                   setFormData({ ...formData, personal_bio: value });
-                  setBioError(containsExternalUrl(value) ? 'External URLs are not allowed.' : '');
+                  setBioError(containsExternalUrl(value) ? t('profile.externalUrlsNotAllowed') : '');
                 }}
                 placeholder={t('profile.bioPlaceholder')}
                 maxLength={350}
@@ -236,7 +236,7 @@ export default function Profile() {
             <Alert className="mb-6 bg-amber-50 border-amber-200">
               <AlertCircle className="h-4 w-4 text-amber-600" />
               <AlertDescription className="text-amber-800">
-                Please complete your profile. Last Name, Date of Birth, and Infomarian ID are required.
+                {t('profile.completeProfile')}
               </AlertDescription>
             </Alert>
           </motion.div>
@@ -250,7 +250,7 @@ export default function Profile() {
             <Alert className="mb-6 bg-red-50 border-red-200">
               <AlertCircle className="h-4 w-4 text-red-600" />
               <AlertDescription className="text-red-800">
-                You must be at least 12 years old to participate in this platform.
+                {t('profile.tooYoung')}
               </AlertDescription>
             </Alert>
           </motion.div>
@@ -264,7 +264,7 @@ export default function Profile() {
             <Alert className="mb-6 bg-blue-50 border-blue-200">
               <AlertCircle className="h-4 w-4 text-blue-600" />
               <AlertDescription className="text-blue-800">
-                Junior Member (Age {age}) - You can participate in discussions and view running polls, but cannot cast official votes until you turn 18.
+                {t('profile.juniorMember', { age })}
               </AlertDescription>
             </Alert>
           </motion.div>
@@ -278,7 +278,7 @@ export default function Profile() {
               <Alert className="mb-6 bg-amber-50 border-amber-200">
                 <BadgeCheck className="h-4 w-4 text-amber-600" />
                 <AlertDescription className="text-amber-800">
-                  <span className="font-semibold">Account Validation Required:</span> Make a $0.55 AUD deposit to Pollee Inc. Once verified, we'll send you a random amount (less than $0.25 AUD) to confirm your account.
+                  {t('profile.accountValidationRequired')}
                 </AlertDescription>
               </Alert>
             </motion.div>
@@ -292,7 +292,7 @@ export default function Profile() {
               <Alert className="mb-6 bg-purple-50 border-purple-200">
                 <BadgeCheck className="h-4 w-4 text-purple-600" />
                 <AlertDescription className="text-purple-800">
-                  <span className="font-semibold">SuperAdmin Account:</span> Full access to all features without validation requirements.
+                  {t('profile.superAdminAccount')}
                 </AlertDescription>
               </Alert>
             </motion.div>
@@ -333,7 +333,7 @@ export default function Profile() {
                     id="full_name"
                     value={formData.full_name?.split(' ')[0] || formData.full_name}
                     onChange={(e) => setFormData({...formData, full_name: e.target.value})}
-                    placeholder="Enter your first name"
+                    placeholder={t('profile.firstNamePlaceholder')}
                     className="h-12 rounded-lg"
                     required
                   />
@@ -347,7 +347,7 @@ export default function Profile() {
                     id="last_name"
                     value={formData.last_name}
                     onChange={(e) => setFormData({...formData, last_name: e.target.value})}
-                    placeholder="Enter your last name"
+                    placeholder={t('profile.lastNamePlaceholder')}
                     className="h-12 rounded-lg"
                     required
                   />
@@ -393,13 +393,13 @@ export default function Profile() {
                   className="h-12 rounded-lg"
                   required
                 />
-                <p className="text-xs text-slate-500">Format: DD/MM/YYYY (e.g., 25/12/1990)</p>
+                <p className="text-xs text-slate-500">{t('profile.dobFormat')}</p>
                 {formData.date_of_birth && formData.date_of_birth.match(/^\d{4}-\d{2}-\d{2}$/) && (
                   <p className="text-xs text-slate-500">
-                    Age: {calculateAge(formData.date_of_birth)} years
-                    {calculateAge(formData.date_of_birth) >= 18 && ' - Eligible to vote'}
-                    {calculateAge(formData.date_of_birth) >= 12 && calculateAge(formData.date_of_birth) < 18 && ' - Junior member'}
-                    {calculateAge(formData.date_of_birth) < 12 && ' - Too young to participate'}
+                    {t('profile.ageLabel', { age: calculateAge(formData.date_of_birth) })}
+                    {calculateAge(formData.date_of_birth) >= 18 && t('profile.eligibleToVote')}
+                    {calculateAge(formData.date_of_birth) >= 12 && calculateAge(formData.date_of_birth) < 18 && t('profile.juniorMemberLabel')}
+                    {calculateAge(formData.date_of_birth) < 12 && t('profile.tooYoungLabel')}
                   </p>
                 )}
               </div>
@@ -412,7 +412,7 @@ export default function Profile() {
                   id="infomarian_id"
                   value={formData.infomarian_id}
                   onChange={(e) => setFormData({...formData, infomarian_id: e.target.value})}
-                  placeholder="Enter your Infomarian ID"
+                  placeholder={t('profile.infomarianIdPlaceholder')}
                   className="h-12 rounded-lg"
                   required
                 />
@@ -443,7 +443,7 @@ export default function Profile() {
               <div className="border-t border-slate-200 pt-6 mt-6">
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
                   <p className="text-sm text-blue-800">
-                    We use banks transactions because they are secure, confidential and fully accountable by both Parties. It is also a serious crime to interfere with financial transactions
+                    {t('profile.bankNote')}
                   </p>
                 </div>
                 <h3 className="text-lg font-semibold text-slate-900 mb-4">{t('profile.bankDetails')}</h3>
@@ -487,7 +487,7 @@ export default function Profile() {
                     id="account_name"
                     value={formData.account_name}
                     onChange={(e) => setFormData({...formData, account_name: e.target.value})}
-                    placeholder="Name as it appears on your bank account"
+                    placeholder={t('profile.accountNamePlaceholder')}
                     disabled
                     className="h-12 rounded-lg bg-slate-100 text-slate-400 cursor-not-allowed"
                   />
@@ -504,17 +504,17 @@ export default function Profile() {
                     className="mt-1 h-5 w-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-600"
                   />
                   <label htmlFor="terms-agreement" className="text-sm text-slate-700 cursor-pointer">
-                    I agree to the{' '}
+                    {t('profile.agreeToTerms')}{' '}
                     <a href="https://pollee.net/code-of-practice" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-700 underline">
-                      Pollee Code of Practice
+                      {t('profile.polleeCodeOfPractice')}
                     </a>
                     ,{' '}
                     <a href="https://pollee.net/code-of-conduct" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-700 underline">
-                      Code of Conduct
+                      {t('profile.codeOfConduct')}
                     </a>
-                    {' '}and{' '}
+                    {' '}{t('profile.and')}{' '}
                     <a href="https://pollee.net/model-rules" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-700 underline">
-                      Model Rules
+                      {t('profile.modelRules')}
                     </a>
                   </label>
                 </div>
@@ -527,7 +527,7 @@ export default function Profile() {
                   {updateProfile.isPending ? (
                     <>
                       <Save className="w-5 h-5 mr-2 animate-pulse" />
-                      Saving...
+                      {t('profile.saving')}
                     </>
                   ) : (
                     <>
@@ -557,24 +557,24 @@ export default function Profile() {
               {!validationInitiatedState ? (
                 <div className="space-y-4">
                   <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 mb-4">
-                    <h4 className="font-semibold text-blue-900 mb-3">Step 1: Make Your 0.55 AUD Deposit</h4>
+                    <h4 className="font-semibold text-blue-900 mb-3">{t('profile.step1Title')}</h4>
                     <p className="text-slate-700 mb-4">
-                      To validate your account and start voting, you must make a <span className="font-bold text-indigo-700">$0.55 AUD deposit</span> to the Pollee Inc bank account.
+                      {t('profile.step1Desc')}
                     </p>
                     
                     <div className="bg-white rounded-lg p-4 space-y-2 text-sm">
-                      <p className="font-semibold text-slate-900">Pollee Inc Bank Details:</p>
+                      <p className="font-semibold text-slate-900">{t('profile.polleeBankDetails')}</p>
                       <div className="space-y-1">
                         <div className="flex justify-between">
-                          <span className="text-slate-600">BSB:</span>
+                          <span className="text-slate-600">{t('profile.bsbLabel')}</span>
                           <span className="font-mono font-semibold">123-456</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-600">Account Name:</span>
+                          <span className="text-slate-600">{t('profile.accountNameLabel2')}</span>
                           <span className="font-semibold">Pollee Inc</span>
                         </div>
                         <div className="flex justify-between border-t border-slate-200 pt-2 mt-2">
-                          <span className="text-slate-600">Amount:</span>
+                          <span className="text-slate-600">{t('profile.amountLabel')}</span>
                           <span className="font-semibold text-amber-600">$0.55 AUD</span>
                         </div>
                       </div>
@@ -582,15 +582,15 @@ export default function Profile() {
 
                     <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mt-4">
                       <p className="text-sm text-amber-800">
-                        <span className="font-semibold">Important:</span> Include your email address ({user?.email}) in the transaction description so we can verify your payment.
+                        {t('profile.important', { email: user?.email })}
                       </p>
                     </div>
                   </div>
 
                   <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
-                    <h4 className="font-semibold text-emerald-900 mb-2">Step 2: We'll Confirm Receipt</h4>
+                    <h4 className="font-semibold text-emerald-900 mb-2">{t('profile.step2Title')}</h4>
                     <p className="text-sm text-emerald-800">
-                      Once we verify your $0.55 AUD deposit, Pollee Inc will send a <span className="font-semibold">random amount (less than $0.25 AUD)</span> to your bank account ending in {formData.account_number?.slice(-4) || 'XXXX'}.
+                      {t('profile.step2Desc', { last4: formData.account_number?.slice(-4) || 'XXXX' })}
                     </p>
                   </div>
 
@@ -600,12 +600,12 @@ export default function Profile() {
                     className="w-full h-14 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 rounded-lg text-lg disabled:opacity-50"
                   >
                     <BadgeCheck className="w-5 h-5 mr-2" />
-                    I've Made the $0.55 AUD Deposit
+                    {t('profile.madeDeposit')}
                   </Button>
 
                   {(!formData.bsb || !formData.account_number) && (
                     <p className="text-sm text-red-600 text-center">
-                      Please complete your bank details above before proceeding
+                      {t('profile.completeBankDetails')}
                     </p>
                   )}
                 </div>
@@ -615,27 +615,27 @@ export default function Profile() {
                     <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
                       <BadgeCheck className="w-8 h-8 text-amber-600" />
                     </div>
-                    <h3 className="text-xl font-semibold text-slate-900 mb-2">Validation In Progress</h3>
+                    <h3 className="text-xl font-semibold text-slate-900 mb-2">{t('profile.validationInProgress')}</h3>
                     <p className="text-slate-600 mb-4">
-                      Thank you for making your $0.55 AUD deposit. Our admin team is verifying your payment.
+                      {t('profile.validationInProgressDesc')}
                     </p>
                   </div>
 
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <p className="text-sm text-blue-800">
-                      <span className="font-semibold">Once verified:</span> Pollee Inc will send a random amount (less than $0.25 AUD) to your account ending in {formData.account_number?.slice(-4) || 'XXXX'}.
+                      {t('profile.onceVerified', { last4: formData.account_number?.slice(-4) || 'XXXX' })}
                     </p>
                   </div>
 
                   <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
                     <p className="text-sm text-emerald-800">
-                      <span className="font-semibold">Final Step:</span> Once you receive the random deposit, enter the exact amount below to complete validation.
+                      {t('profile.finalStep')}
                     </p>
                   </div>
 
                   <div className="space-y-3">
                     <Label htmlFor="depositAmount" className="text-base font-semibold">
-                      Enter Deposit Amount Received (AUD)
+                      {t('profile.enterDepositAmount')}
                     </Label>
                     <Input
                       id="depositAmount"
@@ -652,7 +652,7 @@ export default function Profile() {
                       className="h-12 rounded-lg text-lg font-semibold text-center"
                     />
                     <p className="text-xs text-slate-500 text-center">
-                      Enter the exact amount shown in your bank statement (e.g., 0.18)
+                      {t('profile.depositHint')}
                     </p>
                   </div>
 
@@ -669,7 +669,7 @@ export default function Profile() {
                     className="w-full h-14 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-lg disabled:opacity-50"
                   >
                     <CheckCircle2 className="w-5 h-5 mr-2" />
-                    Verify Deposit Amount
+                    {t('profile.verifyDeposit')}
                   </Button>
                 </div>
               )}
@@ -685,8 +685,8 @@ export default function Profile() {
                     <BadgeCheck className="w-5 h-5 text-emerald-600" />
                   </div>
                   <div>
-                    <p className="font-semibold text-emerald-900">Account Validated</p>
-                    <p className="text-sm text-emerald-700">Your Voter ID: <span className="font-mono font-bold">{user.voter_id}</span></p>
+                    <p className="font-semibold text-emerald-900">{t('profile.accountValidated')}</p>
+                    <p className="text-sm text-emerald-700">{t('profile.yourVoterId')} <span className="font-mono font-bold">{user.voter_id}</span></p>
                   </div>
                 </div>
               </CardContent>
@@ -730,21 +730,21 @@ export default function Profile() {
                     <AlertCircle className="w-6 h-6" />
                   </div>
                   <div>
-                    <CardTitle className="text-2xl">Conduct Strike Register</CardTitle>
+                    <CardTitle className="text-2xl">{t('profile.conductStrikeRegister')}</CardTitle>
                     <p className="text-red-100 text-sm mt-1">
-                      {user.strikes.length} strike{user.strikes.length > 1 ? 's' : ''} on record
+                      {t('profile.strikesOnRecord', { count: user.strikes.length })}
                     </p>
                     <p className="text-red-100 text-xs mt-1">
                       {user.permanently_banned
-                        ? 'Commenting rights suspended (voting unaffected).'
+                        ? t('profile.commentingSuspended')
                         : user.strikes.length === 2
-                        ? 'Next strike suspends commenting rights.'
+                        ? t('profile.nextStrikeSuspends')
                         : user.strikes.length === 1
-                        ? 'Next strike: 1-week commenting suspension.'
-                        : 'Three strikes and you\'re out.'}
+                        ? t('profile.nextStrikeWeek')
+                        : t('profile.threeStrikes')}
                     </p>
                     <Link to={createPageUrl('IncidentReport')} className="inline-block mt-2 text-xs underline text-white">
-                      Appeal a strike
+                      {t('profile.appealStrike')}
                     </Link>
                   </div>
                 </div>
@@ -767,7 +767,7 @@ export default function Profile() {
                           strike.severity === 'moderate' ? 'bg-orange-600 text-white' :
                           'bg-yellow-600 text-white'
                         }>
-                          Strike {index + 1} - {strike.severity}
+                          {t('profile.strike')} {index + 1} - {strike.severity}
                         </Badge>
                         <span className="text-sm text-slate-500">
                           {format(new Date(strike.date), 'MMM d, yyyy h:mm a')}
@@ -779,9 +779,9 @@ export default function Profile() {
                       </p>
 
                       <div className="text-sm text-slate-600">
-                        <p>Issued by: <span className="font-medium">{strike.infomarian_name}</span> (ID: {strike.infomarian_id})</p>
+                        <p>{t('profile.issuedBy')} <span className="font-medium">{strike.infomarian_name}</span> (ID: {strike.infomarian_id})</p>
                         {strike.comment_id && (
-                          <p className="text-xs text-slate-500 mt-1">Related to comment: {strike.comment_id}</p>
+                          <p className="text-xs text-slate-500 mt-1">{t('profile.relatedToComment')} {strike.comment_id}</p>
                         )}
                       </div>
                     </div>
@@ -792,7 +792,7 @@ export default function Profile() {
                   <Alert variant="destructive" className="mt-4">
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>
-                      You have received 3 or more strikes. Your commenting privileges may be restricted.
+                      {t('profile.strikesWarning')}
                     </AlertDescription>
                   </Alert>
                 )}
@@ -801,7 +801,7 @@ export default function Profile() {
                   <Alert variant="destructive" className="mt-4">
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>
-                      <span className="font-semibold">Commenting Restricted:</span> Your ability to comment on polls has been limited due to conduct violations.
+                      {t('profile.commentingRestricted')}
                     </AlertDescription>
                   </Alert>
                 )}
@@ -817,8 +817,8 @@ export default function Profile() {
                   <User className="w-5 h-5 text-purple-600" />
                 </div>
                 <div>
-                  <p className="font-semibold text-purple-900">Administrator Account</p>
-                  <p className="text-sm text-purple-600">You have admin access to manage polls and verify votes</p>
+                  <p className="font-semibold text-purple-900">{t('profile.adminAccount')}</p>
+                  <p className="text-sm text-purple-600">{t('profile.adminAccountDesc')}</p>
                 </div>
               </div>
             </CardContent>
@@ -830,16 +830,16 @@ export default function Profile() {
             <h3 className="text-lg font-semibold text-indigo-900 mb-3">{t('profile.welcomeToPollee')}</h3>
             <div className="text-slate-700 space-y-3 leading-relaxed">
               <p>
-                We believe in transparent and accountable Democracy built on trust and respect for all. Infomarians are professional users who are paid out of your voting to provide poll discussion content, to moderate discussions to ensure civility and respect are maintained, and to provide real help with using the system.
+                {t('profile.welcomeDesc1')}
               </p>
               <p>
-                We work on three strikes and your commenting rights are curtailed or removed, depending on the severity of any offense. You will be warned and the issue discussed on each notification of a complaint by another user or your Infomarian.
+                {t('profile.welcomeDesc2')}
               </p>
               <p>
-                If you appreciate the assistance an Infomarian provides you or applaud the quality of their work, you can "Tip" them by adding any amount to the base 55c vote transaction. You can also rate your interactions to help the community identify Infomarians who consistently deliver you truthful information, maintain a civilised discussion, and assist you when you have problems.
+                {t('profile.welcomeDesc3')}
               </p>
               <p className="font-semibold text-indigo-800">
-                With a vote, you can change your world, one poll at a time.
+                {t('profile.welcomeQuote')}
               </p>
             </div>
           </CardContent>
@@ -849,7 +849,7 @@ export default function Profile() {
         <div className="mt-8">
           <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl shadow-lg p-8 border border-indigo-100">
             <h2 className="text-xl font-bold text-slate-900 mb-6 text-center">
-              Important Documents & Guidelines
+              {t('profile.docsTitle')}
             </h2>
             <div className="grid md:grid-cols-3 gap-6">
               <a
@@ -861,8 +861,8 @@ export default function Profile() {
                 <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center mb-3">
                   <CheckCircle2 className="w-6 h-6 text-indigo-600" />
                 </div>
-                <h3 className="font-semibold text-slate-900 text-center">Code of Conduct</h3>
-                <p className="text-sm text-slate-600 text-center mt-2">Community standards and behavior guidelines</p>
+                <h3 className="font-semibold text-slate-900 text-center">{t('home.codeOfConduct')}</h3>
+                <p className="text-sm text-slate-600 text-center mt-2">{t('home.codeOfConductDesc')}</p>
               </a>
 
               <a
@@ -874,8 +874,8 @@ export default function Profile() {
                 <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mb-3">
                   <AlertCircle className="w-6 h-6 text-purple-600" />
                 </div>
-                <h3 className="font-semibold text-slate-900 text-center">Model Rules</h3>
-                <p className="text-sm text-slate-600 text-center mt-2">Platform governance and operational rules</p>
+                <h3 className="font-semibold text-slate-900 text-center">{t('home.modelRules')}</h3>
+                <p className="text-sm text-slate-600 text-center mt-2">{t('home.modelRulesDesc')}</p>
               </a>
 
               <a
@@ -887,8 +887,8 @@ export default function Profile() {
                 <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-3">
                   <User className="w-6 h-6 text-blue-600" />
                 </div>
-                <h3 className="font-semibold text-slate-900 text-center">Code of Practice</h3>
-                <p className="text-sm text-slate-600 text-center mt-2">Best practices for voting and participation</p>
+                <h3 className="font-semibold text-slate-900 text-center">{t('home.codeOfPractice')}</h3>
+                <p className="text-sm text-slate-600 text-center mt-2">{t('home.codeOfPracticeDesc')}</p>
               </a>
             </div>
           </div>
