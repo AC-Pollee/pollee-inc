@@ -73,11 +73,7 @@
           "data.sender_id": "{{user.id}}"
         },
         {
-          "data.participants": {
-            "$in": [
-              "{{user.id}}"
-            ]
-          }
+          "data.participants": "{{user.id}}"
         }
       ]
     },

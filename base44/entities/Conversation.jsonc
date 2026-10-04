@@ -81,20 +81,12 @@
       ]
     },
     "create": {
-      "data.participants": {
-        "$in": [
-          "{{user.id}}"
-        ]
-      }
+      "data.participants": "{{user.id}}"
     },
     "update": {
       "$or": [
         {
-          "data.participants": {
-            "$in": [
-              "{{user.id}}"
-            ]
-          }
+          "data.participants": "{{user.id}}"
         },
         {
           "user_condition": {
