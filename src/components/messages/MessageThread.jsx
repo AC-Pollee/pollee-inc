@@ -126,30 +126,7 @@ export default function MessageThread({ conversation, currentUser, t }) {
         <p className="font-semibold text-slate-900">{other?.name || 'Unknown'}</p>
         <p className="text-xs text-slate-500 flex items-center gap-1"><Lock className="w-3 h-3" /> {t('messages.private')}</p>
       </div>
-      <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto p-4 space-y-3 bg-slate-50 overscroll-contain">
-        {messages.length === 0 && (
-          <p className="text-center text-sm text-slate-400 py-8">{t('messages.noMessages')}</p>
-        )}
-        {[...messages].sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).map(m => {
-          const mine = m.sender_id === currentUser?.id;
-          return (
-            <div key={m.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[75%] rounded-2xl px-4 py-2 ${mine ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-200 text-slate-900'}`}>
-                {m.content && <p className="text-sm whitespace-pre-wrap break-words">{m.content}</p>}
-                {m.attachment && (
-                  <div className={m.content ? 'mt-2' : ''}>
-                    <AttachmentLink attachment={m.attachment} mine={mine} />
-                  </div>
-                )}
-                <p className={`text-[10px] mt-1 ${mine ? 'text-indigo-200' : 'text-slate-400'}`}>
-                  {format(new Date(m.created_date), 'MMM d, h:mm a')}
-                </p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      <form onSubmit={handleSend} className="p-4 border-t border-slate-200 bg-white">
+      <form onSubmit={handleSend} className="p-4 border-b border-slate-200 bg-white">
         {pendingFile && (
           <div className="mb-2 flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
             <FileIcon className="w-4 h-4 text-slate-500 flex-shrink-0" />
@@ -185,6 +162,29 @@ export default function MessageThread({ conversation, currentUser, t }) {
           </Button>
         </div>
       </form>
+      <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto p-4 space-y-3 bg-slate-50 overscroll-contain">
+        {messages.length === 0 && (
+          <p className="text-center text-sm text-slate-400 py-8">{t('messages.noMessages')}</p>
+        )}
+        {[...messages].sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).map(m => {
+          const mine = m.sender_id === currentUser?.id;
+          return (
+            <div key={m.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[75%] rounded-2xl px-4 py-2 ${mine ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-200 text-slate-900'}`}>
+                {m.content && <p className="text-sm whitespace-pre-wrap break-words">{m.content}</p>}
+                {m.attachment && (
+                  <div className={m.content ? 'mt-2' : ''}>
+                    <AttachmentLink attachment={m.attachment} mine={mine} />
+                  </div>
+                )}
+                <p className={`text-[10px] mt-1 ${mine ? 'text-indigo-200' : 'text-slate-400'}`}>
+                  {format(new Date(m.created_date), 'MMM d, h:mm a')}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

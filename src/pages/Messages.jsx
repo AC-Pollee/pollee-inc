@@ -100,7 +100,7 @@ export default function Messages() {
                 />
               )}
             </div>
-            <div className={`md:col-span-2 flex flex-col ${selectedId ? 'block' : 'hidden md:block'}`}>
+            <div className={`md:col-span-2 flex flex-col min-h-0 ${selectedId ? 'block' : 'hidden md:block'}`}>
               {selected ? (
                 <>
                   <Button variant="ghost" size="sm" className="md:hidden m-2 w-fit" onClick={() => setSelectedId(null)}>
