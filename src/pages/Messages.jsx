@@ -85,19 +85,24 @@ export default function Messages() {
 
         <Card className="border-0 shadow-lg overflow-hidden">
           <div className="grid md:grid-cols-3 h-[70vh]">
-            <div className={`md:border-r border-slate-200 overflow-y-auto ${selectedId ? 'hidden md:block' : 'block'}`}>
-              {isLoading ? (
-                <div className="p-8 text-center text-slate-400 text-sm">{t('common.loading')}</div>
-              ) : (
-                <ConversationList
-                  conversations={conversations}
-                  currentUser={currentUser}
-                  selectedId={selectedId}
-                  onSelect={handleSelect}
-                  seenIds={seenIds}
-                  t={t}
-                />
-              )}
+            <div className={`md:border-r border-slate-200 flex flex-col ${selectedId ? 'hidden md:block' : 'block'}`}>
+              <div className="px-4 py-3 border-b border-slate-200 bg-slate-50/50 shrink-0">
+                <h2 className="text-center text-sm font-semibold text-slate-700">{t('messages.existingConversations')}</h2>
+              </div>
+              <div className="overflow-y-auto">
+                {isLoading ? (
+                  <div className="p-8 text-center text-slate-400 text-sm">{t('common.loading')}</div>
+                ) : (
+                  <ConversationList
+                    conversations={conversations}
+                    currentUser={currentUser}
+                    selectedId={selectedId}
+                    onSelect={handleSelect}
+                    seenIds={seenIds}
+                    t={t}
+                  />
+                )}
+              </div>
             </div>
             <div className={`md:col-span-2 flex flex-col min-h-0 ${selectedId ? 'block' : 'hidden md:block'}`}>
               {selected ? (

@@ -1183,6 +1183,7 @@
   },
   "messages": {
     "title": "Direct Messages",
+    "existingConversations": "Existing Conversations",
     "privateMod": "Private moderation channel",
     "private": "Private — only you and the other participant can see this",
     "newConversation": "New Conversation",
