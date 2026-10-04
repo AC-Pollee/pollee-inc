@@ -18,14 +18,26 @@ export default function ConversationList({ conversations, currentUser, selectedI
         const other = (c.participant_names || []).find(p => p.user_id !== currentUser?.id)
           || (c.participant_names || [])[0];
         const isSel = c.id === selectedId;
+        const hasNew = !!c.last_sender_id && c.last_sender_id !== currentUser?.id;
         return (
           <button
             key={c.id}
             onClick={() => onSelect(c.id)}
             className={`w-full text-left p-4 flex gap-3 transition-colors ${isSel ? 'bg-indigo-50' : 'hover:bg-slate-50'}`}
           >
-            <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
-              <MessageSquare className="w-5 h-5 text-indigo-600" />
+            <div className="relative w-10 h-10 rounded-full flex items-center justify-center shrink-0">
+              {hasNew ? (
+                <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center">
+                  <MessageSquare className="w-5 h-5 text-white" />
+                </div>
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                  <MessageSquare className="w-5 h-5 text-indigo-600" />
+                </div>
+              )}
+              {hasNew && (
+                <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-red-500 border-2 border-white" />
+              )}
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between gap-2">
