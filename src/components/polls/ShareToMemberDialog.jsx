@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Search, Loader2, Share2 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +25,7 @@ export default function ShareToMemberDialog({ open, onOpenChange, comment, pollI
   const { toast } = useToast();
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState(null);
+  const [note, setNote] = useState('');
 
   const author = comment?.display_name || comment?.user_name || 'a member';
   const commentUrl = `${window.location.origin}/Vote?pollId=${pollId}#comment-${comment?.id}`;
@@ -33,6 +35,7 @@ export default function ShareToMemberDialog({ open, onOpenChange, comment, pollI
     content: comment?.content || '',
     url: commentUrl,
   });
+  const messageContent = note.trim() ? `${forwardedText}\n\n${note.trim()}` : forwardedText;
 
   const { data: results = [], isFetching } = useQuery({
     queryKey: ['search-users', query],
@@ -51,7 +54,7 @@ export default function ShareToMemberDialog({ open, onOpenChange, comment, pollI
         poll_id: pollId,
         comment_id: comment?.id,
         subject: t('pollDiscussion.sharedCommentSubject', { defaultValue: 'Shared comment from discussion' }),
-        content: forwardedText
+        content: messageContent
       });
       if (res.data?.error) throw new Error(res.data.error);
     },
@@ -63,6 +66,7 @@ export default function ShareToMemberDialog({ open, onOpenChange, comment, pollI
       onOpenChange(false);
       setQuery('');
       setSelected(null);
+      setNote('');
     },
     onError: (error) => {
       toast({
@@ -129,7 +133,16 @@ export default function ShareToMemberDialog({ open, onOpenChange, comment, pollI
             <p className="text-xs font-semibold text-slate-600 mb-1">
               {t('pollDiscussion.messagePreview', { defaultValue: 'Message preview' })}
             </p>
-            <p className="text-xs text-slate-700 whitespace-pre-wrap">{forwardedText}</p>
+            <p className="text-xs text-slate-700 whitespace-pre-wrap">{messageContent}</p>
+          </div>
+          <div className="space-y-2">
+            <Label>{t('pollDiscussion.addNote', { defaultValue: 'Add a note (optional)' })}</Label>
+            <Textarea
+              value={note}
+              onChange={e => setNote(e.target.value)}
+              placeholder={t('pollDiscussion.notePlaceholder', { defaultValue: 'Type a personal message to include...' })}
+              rows={3}
+            />
           </div>
         </div>
         <DialogFooter>
