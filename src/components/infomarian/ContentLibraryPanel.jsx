@@ -42,6 +42,7 @@ export default function ContentLibraryPanel({ infomarian }) {
     mutationFn: (data) => base44.entities.ContentLibraryItem.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries(['content-library', infomarian?.infomarian_id]);
+      queryClient.invalidateQueries(['evidence-library-select', infomarian?.infomarian_id]);
       queryClient.invalidateQueries(['forwarded-content', infomarian?.infomarian_id]);
       setShowAdd(false);
       toast({ title: t('contentLibrary.added') });
@@ -52,6 +53,7 @@ export default function ContentLibraryPanel({ infomarian }) {
     mutationFn: (id) => base44.entities.ContentLibraryItem.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries(['content-library', infomarian?.infomarian_id]);
+      queryClient.invalidateQueries(['evidence-library-select', infomarian?.infomarian_id]);
       queryClient.invalidateQueries(['forwarded-content', infomarian?.infomarian_id]);
     }
   });
@@ -60,6 +62,7 @@ export default function ContentLibraryPanel({ infomarian }) {
     mutationFn: ({ id, data }) => base44.entities.ContentLibraryItem.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries(['content-library', infomarian?.infomarian_id]);
+      queryClient.invalidateQueries(['evidence-library-select', infomarian?.infomarian_id]);
       queryClient.invalidateQueries(['forwarded-content', infomarian?.infomarian_id]);
       setEditingItem(null);
       toast({ title: t('contentLibrary.updated') });
@@ -70,6 +73,7 @@ export default function ContentLibraryPanel({ infomarian }) {
     mutationFn: ({ id, status }) => base44.entities.ContentLibraryItem.update(id, { moderation_status: status }),
     onSuccess: () => {
       queryClient.invalidateQueries(['content-library', infomarian?.infomarian_id]);
+      queryClient.invalidateQueries(['evidence-library-select', infomarian?.infomarian_id]);
       queryClient.invalidateQueries(['forwarded-content', infomarian?.infomarian_id]);
     }
   });

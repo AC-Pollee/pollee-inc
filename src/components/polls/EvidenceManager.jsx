@@ -23,7 +23,7 @@ export default function EvidenceManager({ pollId, infomarian }) {
   const [note, setNote] = useState('');
 
   const { data: libraryItems = [] } = useQuery({
-    queryKey: ['content-library', infomarian?.infomarian_id],
+    queryKey: ['evidence-library-select', infomarian?.infomarian_id],
     queryFn: () => base44.entities.ContentLibraryItem.filter({
       infomarian_id: infomarian.infomarian_id,
       moderation_status: 'approved'
