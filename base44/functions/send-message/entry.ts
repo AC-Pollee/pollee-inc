@@ -25,7 +25,7 @@ export default async function(req) {
       return Response.json({ error: 'This conversation is closed' }, { status: 400 });
     }
 
-    const senderName = `${caller.full_name || ''} ${caller.last_name || ''}`.trim() || caller.email;
+    const senderName = caller.full_name || caller.last_name || caller.email;
     const message = await base44.asServiceRole.entities.Message.create({
       conversation_id: conversationId,
       sender_id: caller.id,

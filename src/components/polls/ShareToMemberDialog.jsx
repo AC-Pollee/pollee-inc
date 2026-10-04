@@ -28,7 +28,7 @@ export default function ShareToMemberDialog({ open, onOpenChange, comment, pollI
   const author = comment?.display_name || comment?.user_name || 'a member';
   const commentUrl = `${window.location.origin}/Vote?pollId=${pollId}#comment-${comment?.id}`;
   const forwardedText = t('pollDiscussion.forwardedMessage', {
-    defaultValue: `Forwarded comment from {author}:\n\n"{content}"\n\nView comment: {url}`,
+    defaultValue: 'Forwarded comment from {{author}}:\n\n"{{content}}"\n\nView comment: {{url}}',
     author,
     content: comment?.content || '',
     url: commentUrl,

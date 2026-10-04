@@ -23,8 +23,8 @@ export default async function(req) {
     const target = await base44.asServiceRole.entities.User.get(targetUserId);
     if (!target) return Response.json({ error: 'User not found' }, { status: 404 });
 
-    const callerName = `${caller.full_name || ''} ${caller.last_name || ''}`.trim() || caller.email;
-    const targetName = `${target.full_name || ''} ${target.last_name || ''}`.trim() || target.email;
+    const callerName = caller.full_name || caller.last_name || caller.email;
+    const targetName = target.full_name || target.last_name || target.email;
     const participants = [caller.id, target.id];
     const participantNames = [
       { user_id: caller.id, name: callerName, email: caller.email },

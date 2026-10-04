@@ -19,7 +19,7 @@ export default async function(req) {
     const results = users
       .filter(u => u.id !== caller.id)
       .map(u => {
-        const name = `${u.full_name || ''} ${u.last_name || ''}`.trim();
+        const name = u.full_name || u.last_name || '';
         return {
           id: u.id,
           name: name || u.email,

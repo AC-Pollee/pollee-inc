@@ -6,9 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Send, Lock, Paperclip, X, Loader2, FileIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import AttachmentLink from '@/components/messages/AttachmentLink';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function MessageThread({ conversation, currentUser, t }) {
   const queryClient = useQueryClient();
+  const { toast } = useToast();
   const [text, setText] = useState('');
   const [pendingFile, setPendingFile] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -37,13 +39,23 @@ export default function MessageThread({ conversation, currentUser, t }) {
   }, [conversation?.id, queryClient]);
 
   const send = useMutation({
-    mutationFn: ({ content, attachment }) =>
-      base44.functions.invoke('send-message', { conversation_id: conversation.id, content, attachment }),
+    mutationFn: async ({ content, attachment }) => {
+      const res = await base44.functions.invoke('send-message', { conversation_id: conversation.id, content, attachment });
+      if (res.data?.error) throw new Error(res.data.error);
+      return res.data;
+    },
     onSuccess: () => {
       setText('');
       setPendingFile(null);
       queryClient.invalidateQueries(['messages', conversation.id]);
       queryClient.invalidateQueries(['conversations']);
+    },
+    onError: (error) => {
+      toast({
+        title: t('messages.sendFailed', { defaultValue: 'Failed to send message' }),
+        description: error?.message || '',
+        variant: 'destructive',
+      });
     }
   });
 
