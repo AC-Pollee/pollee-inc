@@ -125,6 +125,11 @@ export default function Layout({ children, currentPageName }) {
     navItems.push({ name: 'ModerationAlerts', icon: ShieldAlert, label: 'nav.moderation', badge: pendingCount > 0 ? pendingCount : null });
   }
 
+  // Administration tools live on the lower bar; everything else stays on the top line
+  const adminToolNames = ['InfomarianDashboard', 'MasterFranchiserDashboard', 'Admin'];
+  const publicNavItems = navItems.filter(i => !adminToolNames.includes(i.name));
+  const adminNavItems = navItems.filter(i => adminToolNames.includes(i.name));
+
   // Note: Infomarian moderation and help features accessible via Profile page
   
   return (
@@ -148,6 +153,33 @@ export default function Layout({ children, currentPageName }) {
               </Link>
             </div>
             
+            <div className="flex items-center gap-1">
+              {publicNavItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = currentPageName === item.name;
+                return (
+                  <Link
+                    key={item.name}
+                    to={createPageUrl(item.name)}
+                    className={`
+                      flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all relative
+                      ${isActive 
+                        ? 'bg-indigo-50 text-indigo-700' 
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                      }
+                    `}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span className="hidden sm:inline">{t(item.label)}</span>
+                    {item.badge && (
+                      <Badge className="ml-1 h-5 min-w-5 px-1.5 bg-red-500 text-white text-xs">
+                        {item.badge}
+                      </Badge>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         </div>
       </nav>
@@ -155,33 +187,35 @@ export default function Layout({ children, currentPageName }) {
       {/* Page Content */}
       <main className="pt-16">
         <div className="max-w-6xl mx-auto px-4 pt-2 pb-3 flex items-center justify-between gap-2 flex-wrap">
-          <div className="flex items-center gap-1 flex-wrap">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = currentPageName === item.name;
-              return (
-                <Link
-                  key={item.name}
-                  to={createPageUrl(item.name)}
-                  className={`
-                    flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all relative
-                    ${isActive 
-                      ? 'bg-indigo-50 text-indigo-700' 
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                    }
-                  `}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span className="hidden sm:inline">{t(item.label)}</span>
-                  {item.badge && (
-                    <Badge className="ml-1 h-5 min-w-5 px-1.5 bg-red-500 text-white text-xs">
-                      {item.badge}
-                    </Badge>
-                  )}
-                </Link>
-              );
-            })}
-          </div>
+          {adminNavItems.length > 0 && (
+            <div className="flex items-center gap-1 flex-wrap">
+              {adminNavItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = currentPageName === item.name;
+                return (
+                  <Link
+                    key={item.name}
+                    to={createPageUrl(item.name)}
+                    className={`
+                      flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all relative
+                      ${isActive 
+                        ? 'bg-indigo-50 text-indigo-700' 
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                      }
+                    `}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span className="hidden sm:inline">{t(item.label)}</span>
+                    {item.badge && (
+                      <Badge className="ml-1 h-5 min-w-5 px-1.5 bg-red-500 text-white text-xs">
+                        {item.badge}
+                      </Badge>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          )}
           <ThemeLanguageToggle />
         </div>
         {children}
