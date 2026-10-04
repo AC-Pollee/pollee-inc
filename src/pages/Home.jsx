@@ -44,7 +44,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-100/40 via-transparent to-transparent" />
         
         <div className="relative max-w-6xl mx-auto px-4 pt-16 pb-20">
-          <div className="flex justify-end mb-4 md:hidden">
+          <div className="flex justify-end mb-4">
             <ThemeLanguageToggle />
           </div>
           

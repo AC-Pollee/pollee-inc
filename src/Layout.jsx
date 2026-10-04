@@ -174,9 +174,6 @@ export default function Layout({ children, currentPageName }) {
                   </Link>
                 );
               })}
-              <div className="hidden md:flex items-center gap-2 pl-2 ml-2 border-l border-slate-200">
-                <ThemeLanguageToggle />
-              </div>
             </div>
           </div>
         </div>
@@ -184,6 +181,11 @@ export default function Layout({ children, currentPageName }) {
       
       {/* Page Content */}
       <main className="pt-16">
+        {currentPageName !== 'Home' && (
+          <div className="max-w-6xl mx-auto px-4 pt-2 pb-3 flex justify-end">
+            <ThemeLanguageToggle />
+          </div>
+        )}
         {children}
       </main>
     </div>
