@@ -87,7 +87,7 @@ export default function Messages() {
           <div className="grid md:grid-cols-3 h-[70vh]">
             <div className={`md:border-r border-slate-200 flex flex-col ${selectedId ? 'hidden md:block' : 'block'}`}>
               <div className="px-4 py-3 border-b border-slate-200 bg-slate-50/50 shrink-0">
-                <h2 className="text-center text-sm font-semibold text-slate-700">{t('messages.existingConversations')}</h2>
+                <h2 className="text-center text-xl font-semibold text-slate-700">{t('messages.existingConversations')}</h2>
               </div>
               <div className="overflow-y-auto">
                 {isLoading ? (
