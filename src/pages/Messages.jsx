@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, Plus, Shield, ArrowLeft } from 'lucide-react';
+import { MessageSquare, Plus, ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import ConversationList from '@/components/messages/ConversationList';
 import MessageThread from '@/components/messages/MessageThread';
@@ -74,7 +74,6 @@ export default function Messages() {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-slate-900">{t('messages.title')}</h1>
-              <p className="text-sm text-slate-500 flex items-center gap-1"><Shield className="w-3 h-3" /> {t('messages.privateMod')}</p>
             </div>
           </div>
           {canModerate && (
