@@ -17,7 +17,19 @@ export default function AttachmentLink({ attachment, mine }) {
     setLoading(true);
     try {
       const res = await base44.integrations.Core.CreateFileSignedUrl({ file_uri: attachment.file_uri });
-      if (res?.signed_url) window.open(res.signed_url, '_blank');
+      if (!res?.signed_url) return;
+      // Fetch as a blob and trigger a real download (browsers otherwise open/play inline)
+      const resp = await fetch(res.signed_url);
+      if (!resp.ok) throw new Error('Download failed');
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = attachment?.name || 'attachment';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
     } finally {
       setLoading(false);
     }
