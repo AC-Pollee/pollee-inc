@@ -759,6 +759,22 @@
     "requiredForMajority": "Required for Majority:",
     "threeOrMore": "3 or more"
   },
+  "budgetSummary": {
+    "title": "Budget summary",
+    "finalised": "Finalised",
+    "draft": "Draft",
+    "engineOn": "Budget engine on",
+    "linesLocked": "{{locked}} of {{total}} line(s) locked",
+    "awaitingFigure": " • {{count}} awaiting a figure",
+    "total": "Total: {{amount}}",
+    "envelopeLegislative": "Envelope (legislative limit)",
+    "envelopeDerived": "Envelope (derived from totals)",
+    "overLimit": "over limit",
+    "pdfSubtitle": "Pollee budget summary",
+    "pdfStatus": "Status",
+    "pdfTotal": "Total",
+    "pdfEnvelope": "Envelope"
+  },
   "transactionForm": {
     "voteChange": "Vote Change",
     "voteChangeDesc": "You previously voted for {{choice}}. You can change your vote by selecting a new option. Only your most recent vote will count.",

@@ -3,9 +3,12 @@ import { motion } from 'framer-motion';
 import { Badge } from "@/components/ui/badge";
 import { Trophy, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { usePollTranslation } from '@/hooks/usePollTranslation';
 
 export default function ResultsChart({ poll, votes }) {
   const { t } = useTranslation();
+  const { options: translatedOptions } = usePollTranslation(poll);
+  const optionLabel = (id, fallback) => translatedOptions.find(o => o.id === id)?.label || fallback;
   const verifiedVotes = votes.filter(v => v.status === 'verified');
   
   const latestVotesByVoter = {};
@@ -58,7 +61,7 @@ export default function ResultsChart({ poll, votes }) {
         <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 flex items-start gap-2">
           <Trophy className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
           <div className="text-sm text-emerald-800">
-            <span className="font-semibold">{t('resultsChart.winner', { names: winningOptions.map(o => o.label).join(', '), votes: maxVotes, percent: ((maxVotes / totalVotes) * 100).toFixed(1) })}</span>
+            <span className="font-semibold">{t('resultsChart.winner', { names: winningOptions.map(o => optionLabel(o.id, o.label)).join(', '), votes: maxVotes, percent: ((maxVotes / totalVotes) * 100).toFixed(1) })}</span>
           </div>
         </div>
       )}
@@ -81,7 +84,7 @@ export default function ResultsChart({ poll, votes }) {
           <div key={option.id} className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2">
-                <span className="font-medium text-slate-700">{option.label}</span>
+                <span className="font-medium text-slate-700">{optionLabel(option.id, option.label)}</span>
                 {isWinner && (
                   <Badge className="bg-emerald-100 text-emerald-700 border-emerald-300 h-5">
                     <Trophy className="w-3 h-3 mr-1" />

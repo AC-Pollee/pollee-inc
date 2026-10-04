@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calculator, Lock, CheckCircle2, AlertCircle } from 'lucide-react';
 import ShareButtons from './ShareButtons';
+import { useTranslation } from 'react-i18next';
+import { usePollTranslation } from '@/hooks/usePollTranslation';
 
 const money = (n) =>
   typeof n === 'number' && Number.isFinite(n)
@@ -10,15 +12,20 @@ const money = (n) =>
     : '—';
 
 export default function BudgetSummary({ poll }) {
+  const { t } = useTranslation();
+  const { title: translatedTitle, budgetLines: translatedBudgetLines } = usePollTranslation(poll);
   const lines = Array.isArray(poll?.budget_lines) ? poll.budget_lines : [];
   if (!poll || poll.budget_enabled === false || lines.length === 0) return null;
 
+  const lineLabel = (id, fallback) =>
+    translatedBudgetLines.find((l) => l.id === id)?.label || fallback;
   const status = poll.budget_status || 'draft';
   const total = lines.reduce((a, l) => a + (typeof l.cost === 'number' ? l.cost : 0), 0);
   const lockedCount = lines.filter((l) => l.locked).length;
   const costedCount = lines.filter((l) => typeof l.cost === 'number' && l.cost > 0).length;
   const money2 = (n) => (typeof n === 'number' && Number.isFinite(n) ? `$${n.toLocaleString()}` : '—');
-  const pollTitle = poll.title || 'Budget';
+  const pollTitle = translatedTitle || poll.title || 'Budget';
+  const statusLabel = status === 'finalised' ? t('budgetSummary.finalised') : t('budgetSummary.draft');
 
   return (
     <Card className="border-0 shadow-xl">
@@ -26,7 +33,7 @@ export default function BudgetSummary({ poll }) {
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-lg">
             <Calculator className="w-5 h-5 text-emerald-600" />
-            Budget summary
+            {t('budgetSummary.title')}
           </CardTitle>
           <div className="flex items-center gap-2">
             <Badge
@@ -36,10 +43,10 @@ export default function BudgetSummary({ poll }) {
                   : 'bg-amber-50 text-amber-700 border-amber-200'
               }
             >
-              {status === 'finalised' ? 'Finalised' : 'Draft'}
+              {statusLabel}
             </Badge>
             <Badge variant="outline" className="text-emerald-700 border-emerald-200">
-              Budget engine on
+              {t('budgetSummary.engineOn')}
             </Badge>
           </div>
         </div>
@@ -51,14 +58,14 @@ export default function BudgetSummary({ poll }) {
             fileName={`budget-${poll.id || 'summary'}`}
             compact
             pdf={{
-              subtitle: 'Pollee budget summary',
+              subtitle: t('budgetSummary.pdfSubtitle'),
               meta: [
-                { label: 'Status', value: status === 'finalised' ? 'Finalised' : 'Draft' },
-                { label: 'Total', value: money2(total) },
-                ...(poll.budget_envelope_set ? [{ label: 'Envelope', value: money2(poll.budget_envelope) }] : []),
+                { label: t('budgetSummary.pdfStatus'), value: statusLabel },
+                { label: t('budgetSummary.pdfTotal'), value: money2(total) },
+                ...(poll.budget_envelope_set ? [{ label: t('budgetSummary.pdfEnvelope'), value: money2(poll.budget_envelope) }] : []),
               ],
               lines: lines.map((l) => ({
-                label: l.ci != null && typeof l.cost === 'number' && l.cost > 0 ? `${l.label} (±${l.ci}%)` : l.label,
+                label: l.ci != null && typeof l.cost === 'number' && l.cost > 0 ? `${lineLabel(l.id, l.label)} (±${l.ci}%)` : lineLabel(l.id, l.label),
                 value: money2(l.cost),
               })),
             }}
@@ -82,7 +89,7 @@ export default function BudgetSummary({ poll }) {
                   ) : (
                     <AlertCircle className="w-3.5 h-3.5 text-amber-500 flex-shrink-0" />
                   )}
-                  <span className="text-sm text-slate-900 truncate">{line.label}</span>
+                  <span className="text-sm text-slate-900 truncate">{lineLabel(line.id, line.label)}</span>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {line.ci != null && hasFigure && (
@@ -101,23 +108,23 @@ export default function BudgetSummary({ poll }) {
 
         <div className="flex items-center justify-between pt-2">
           <span className="text-sm text-slate-500">
-            {lockedCount} of {lines.length} line{lines.length === 1 ? '' : 's'} locked
-            {costedCount < lines.length && ` • ${lines.length - costedCount} awaiting a figure`}
+            {t('budgetSummary.linesLocked', { locked: lockedCount, total: lines.length })}
+            {costedCount < lines.length && t('budgetSummary.awaitingFigure', { count: lines.length - costedCount })}
           </span>
           <span className="text-base font-semibold text-slate-900">
-            Total: {money(total)}
+            {t('budgetSummary.total', { amount: money(total) })}
           </span>
         </div>
 
         {poll.budget_envelope_set && (
           <div className="flex items-center justify-between pt-2 border-t border-slate-100">
             <span className="text-sm text-slate-500">
-              {poll.budget_envelope != null ? 'Envelope (legislative limit)' : 'Envelope (derived from totals)'}
+              {poll.budget_envelope != null ? t('budgetSummary.envelopeLegislative') : t('budgetSummary.envelopeDerived')}
             </span>
             <div className="text-right">
               <span className="text-sm font-medium text-slate-900">{money(poll.budget_envelope)}</span>
               {poll.budget_envelope != null && total > poll.budget_envelope && (
-                <span className="ml-2 text-xs text-red-600">over limit</span>
+                <span className="ml-2 text-xs text-red-600">{t('budgetSummary.overLimit')}</span>
               )}
             </div>
           </div>

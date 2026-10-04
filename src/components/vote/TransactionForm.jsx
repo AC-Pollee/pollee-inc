@@ -9,9 +9,12 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { usePollTranslation } from '@/hooks/usePollTranslation';
 
 export default function TransactionForm({ pollId, pollOptions, onSubmit, currentUser, poll, franchise }) {
   const { t } = useTranslation();
+  const { options: translatedOptions } = usePollTranslation(poll);
+  const optionLabel = (id, fallback) => translatedOptions.find(o => o.id === id)?.label || fallback;
   const [selectedChoice, setSelectedChoice] = useState(null);
   const [carryingDelegation, setCarryingDelegation] = useState(false);
   const [selectedDelegations, setSelectedDelegations] = useState([]);
@@ -100,7 +103,7 @@ export default function TransactionForm({ pollId, pollOptions, onSubmit, current
             <div className="space-y-2">
               <h3 className="font-semibold text-amber-900">{t('transactionForm.voteChange')}</h3>
               <p className="text-sm text-amber-700">
-                {t('transactionForm.voteChangeDesc', { choice: lastVote?.option_label })}
+                {t('transactionForm.voteChangeDesc', { choice: optionLabel(lastVote?.poll_item_id, lastVote?.option_label) })}
               </p>
             </div>
           </div>
@@ -172,7 +175,7 @@ export default function TransactionForm({ pollId, pollOptions, onSubmit, current
                     : 'bg-white text-slate-700 hover:bg-slate-50 border-2 border-slate-200'
                 }`}
               >
-                {option.label}
+                {optionLabel(option.id, option.label)}
                 {isLast && !isSelected && (
                   <span className="ml-auto text-xs font-normal text-slate-400">{t('transactionForm.currentVote')}</span>
                 )}
@@ -192,7 +195,7 @@ export default function TransactionForm({ pollId, pollOptions, onSubmit, current
               <div className="flex justify-between">
                 <span className="text-slate-600">{t('transactionForm.yourChoice')}</span>
                 <span className="font-semibold text-indigo-900">
-                  {pollOptions.find(o => o.id === selectedChoice)?.label}
+                  {optionLabel(selectedChoice, pollOptions.find(o => o.id === selectedChoice)?.label)}
                 </span>
               </div>
               {carryingDelegation && (

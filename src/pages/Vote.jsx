@@ -40,7 +40,7 @@ export default function Vote() {
     enabled: !!pollId
   });
 
-  const { title: translatedTitle, description: translatedDescription } = usePollTranslation(poll);
+  const { title: translatedTitle, description: translatedDescription, options: translatedOptions } = usePollTranslation(poll);
 
   const { data: franchise } = useQuery({
     queryKey: ['franchise', poll?.franchise_id],
@@ -269,7 +269,7 @@ export default function Vote() {
                             <p className="text-indigo-900 font-semibold">{t('vote.yourLastVote')}</p>
                             <div className="flex items-center gap-2">
                               <span className="text-indigo-700">
-                                <span className="font-bold">{lastVote.option_label}</span>
+                                <span className="font-bold">{translatedOptions.find(o => o.id === lastVote.poll_item_id)?.label || lastVote.option_label}</span>
                               </span>
                               <span className="text-xs text-indigo-600 flex items-center gap-1">
                                 <Clock className="w-3 h-3" />
@@ -288,7 +288,7 @@ export default function Vote() {
                   <div className="space-y-4 mb-8">
                     <h3 className="font-semibold text-lg">{t('vote.availableOptions')}</h3>
                     <div className="grid gap-3">
-                      {poll?.options?.map((option) => (
+                      {translatedOptions.map((option) => (
                         <div
                           key={option.id}
                           className={`flex items-center justify-between p-4 rounded-lg border-2 transition-all ${
