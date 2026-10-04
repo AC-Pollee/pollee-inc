@@ -255,16 +255,6 @@ export default function Vote() {
                 </CardHeader>
               </Card>
 
-              {/* Budget */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="mt-6"
-              >
-                <BudgetSummary poll={poll} />
-              </motion.div>
-
               {/* Discussion - available to everyone 12+ only when poll is open or superadmin */}
               {(isSuperAdmin || age >= 12) && !isPollClosed && (
                 <motion.div
@@ -290,6 +280,16 @@ export default function Vote() {
                   <PollDiscussion pollId={pollId} currentUser={user} userAge={age} isClosed={true} poll={poll} />
                 </motion.div>
               )}
+
+              {/* Budget */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+                className="mt-6"
+              >
+                <BudgetSummary poll={poll} />
+              </motion.div>
 
               {/* Active vote + confirmation to terms */}
               <motion.div
