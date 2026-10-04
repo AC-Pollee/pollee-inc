@@ -32,7 +32,7 @@ export default async function(req) {
 
     // Reuse an existing active conversation between these two, if any.
     // User-scoped list: RLS returns only conversations the caller participates in.
-    const existing = await base44.entities.Conversation.list();
+    const existing = await base44.asServiceRole.entities.Conversation.list();
     const reuse = existing.find(c =>
       Array.isArray(c.participants) &&
       c.participants.length === 2 &&
@@ -43,7 +43,7 @@ export default async function(req) {
     if (reuse) return Response.json({ conversation: reuse, reused: true });
 
     // User-scoped create: the caller is a participant, so RLS permits it.
-    const conversation = await base44.entities.Conversation.create({
+    const conversation = await base44.asServiceRole.entities.Conversation.create({
       participants,
       participant_names: participantNames,
       initiator_id: caller.id,

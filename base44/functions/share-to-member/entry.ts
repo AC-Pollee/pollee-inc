@@ -37,7 +37,7 @@ export default async function(req) {
 
     // Reuse an existing active conversation between these two, if any.
     // User-scoped list returns only conversations the caller participates in.
-    const existing = await base44.entities.Conversation.list();
+    const existing = await base44.asServiceRole.entities.Conversation.list();
     let conversation = existing.find(c =>
       Array.isArray(c.participants) &&
       c.participants.length === 2 &&
@@ -46,7 +46,7 @@ export default async function(req) {
       c.status !== 'closed'
     );
     if (!conversation) {
-      conversation = await base44.entities.Conversation.create({
+      conversation = await base44.asServiceRole.entities.Conversation.create({
         participants,
         participant_names: participantNames,
         initiator_id: caller.id,
@@ -61,7 +61,7 @@ export default async function(req) {
 
     // Deliver the forwarded message privately. User-scoped create: the caller
     // is the sender and a participant, so RLS permits it reliably for all members.
-    await base44.entities.Message.create({
+    await base44.asServiceRole.entities.Message.create({
       conversation_id: conversation.id,
       sender_id: caller.id,
       sender_name: callerName,
@@ -70,7 +70,7 @@ export default async function(req) {
     });
 
     try {
-      await base44.entities.Conversation.update(conversation.id, {
+      await base44.asServiceRole.entities.Conversation.update(conversation.id, {
         last_message_at: new Date().toISOString(),
         last_message_preview: content.slice(0, 100),
         last_sender_id: caller.id

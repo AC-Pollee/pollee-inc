@@ -19,7 +19,11 @@ export default function MessageThread({ conversation, currentUser, t }) {
 
   const { data: messages = [] } = useQuery({
     queryKey: ['messages', conversation?.id],
-    queryFn: () => base44.entities.Message.filter({ conversation_id: conversation.id }, 'created_date'),
+    queryFn: async () => {
+      const res = await base44.functions.invoke('listMessages', { conversation_id: conversation.id });
+      if (res.data?.error) throw new Error(res.data.error);
+      return res.data?.messages || [];
+    },
     enabled: !!conversation?.id
   });
 
