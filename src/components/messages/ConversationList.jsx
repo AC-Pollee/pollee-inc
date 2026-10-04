@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { MessageSquare } from 'lucide-react';
 
-export default function ConversationList({ conversations, currentUser, selectedId, onSelect, t }) {
+export default function ConversationList({ conversations, currentUser, selectedId, onSelect, seenIds, t }) {
   if (!conversations || conversations.length === 0) {
     return (
       <div className="text-center py-16 text-slate-400">
@@ -18,7 +18,7 @@ export default function ConversationList({ conversations, currentUser, selectedI
         const other = (c.participant_names || []).find(p => p.user_id !== currentUser?.id)
           || (c.participant_names || [])[0];
         const isSel = c.id === selectedId;
-        const hasNew = !!c.last_sender_id && c.last_sender_id !== currentUser?.id;
+        const hasNew = !!c.last_sender_id && c.last_sender_id !== currentUser?.id && !seenIds?.has(c.id);
         return (
           <button
             key={c.id}

@@ -16,6 +16,20 @@ export default function Messages() {
   const [searchParams] = useSearchParams();
   const [selectedId, setSelectedId] = useState(searchParams.get('c') || null);
   const [showNew, setShowNew] = useState(false);
+  const [seenIds, setSeenIds] = useState(() => {
+    const init = searchParams.get('c');
+    return init ? new Set([init]) : new Set();
+  });
+
+  const handleSelect = (id) => {
+    setSelectedId(id);
+    if (id) setSeenIds(prev => {
+      if (prev.has(id)) return prev;
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+  };
 
   const { data: currentUser } = useQuery({ queryKey: ['currentUser'], queryFn: () => base44.auth.me() });
   const { data: conversations = [], isLoading } = useQuery({
@@ -80,7 +94,8 @@ export default function Messages() {
                   conversations={conversations}
                   currentUser={currentUser}
                   selectedId={selectedId}
-                  onSelect={setSelectedId}
+                  onSelect={handleSelect}
+                  seenIds={seenIds}
                   t={t}
                 />
               )}
@@ -116,6 +131,7 @@ export default function Messages() {
         onCreated={(conv) => {
           setShowNew(false);
           setSelectedId(conv.id);
+          setSeenIds(prev => { const n = new Set(prev); n.add(conv.id); return n; });
           queryClient.invalidateQueries(['conversations']);
         }}
       />
