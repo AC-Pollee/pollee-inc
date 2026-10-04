@@ -44,13 +44,38 @@ export default function MessageThread({ conversation, currentUser, t }) {
       if (res.data?.error) throw new Error(res.data.error);
       return res.data;
     },
-    onSuccess: () => {
+    // Optimistically insert the message immediately so it always appears in the
+    // thread, even before the server responds. Rolled back if the send fails.
+    onMutate: async ({ content, attachment }) => {
+      const queryKey = ['messages', conversation.id];
+      await queryClient.cancelQueries({ queryKey });
+      const previous = queryClient.getQueryData(queryKey) || [];
+      const tempMsg = {
+        id: `temp-${Date.now()}`,
+        conversation_id: conversation.id,
+        sender_id: currentUser?.id,
+        sender_name: currentUser?.full_name || currentUser?.last_name || currentUser?.email,
+        content,
+        attachment: attachment || null,
+        participants: conversation.participants,
+        created_date: new Date().toISOString(),
+        _pending: true
+      };
+      queryClient.setQueryData(queryKey, [...previous, tempMsg]);
+      return { previous };
+    },
+    onSuccess: (data) => {
       setText('');
       setPendingFile(null);
+      // Replace the optimistic entry with the persisted record from the server.
       queryClient.invalidateQueries(['messages', conversation.id]);
       queryClient.invalidateQueries(['conversations']);
     },
-    onError: (error) => {
+    onError: (error, _vars, context) => {
+      // Roll back the optimistic message — the send genuinely failed.
+      if (context?.previous !== undefined) {
+        queryClient.setQueryData(['messages', conversation.id], context.previous);
+      }
       toast({
         title: t('messages.sendFailed', { defaultValue: 'Failed to send message' }),
         description: error?.message || '',

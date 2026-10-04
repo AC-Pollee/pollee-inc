@@ -3,6 +3,9 @@ import { canModerate } from '../../shared/moderation.ts';
 
 // Starts (or reuses) a private 1:1 conversation between the moderator caller
 // and a target member. Moderator-only.
+//
+// Uses the user-scoped client for conversation read/create — the caller is a
+// participant, so RLS permits it for both admins and regular moderators.
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
@@ -27,8 +30,9 @@ export default async function(req) {
       { user_id: target.id, name: targetName, email: target.email }
     ];
 
-    // Reuse an existing active conversation between these two, if any
-    const existing = await base44.asServiceRole.entities.Conversation.list();
+    // Reuse an existing active conversation between these two, if any.
+    // User-scoped list: RLS returns only conversations the caller participates in.
+    const existing = await base44.entities.Conversation.list();
     const reuse = existing.find(c =>
       Array.isArray(c.participants) &&
       c.participants.length === 2 &&
@@ -38,7 +42,8 @@ export default async function(req) {
     );
     if (reuse) return Response.json({ conversation: reuse, reused: true });
 
-    const conversation = await base44.asServiceRole.entities.Conversation.create({
+    // User-scoped create: the caller is a participant, so RLS permits it.
+    const conversation = await base44.entities.Conversation.create({
       participants,
       participant_names: participantNames,
       initiator_id: caller.id,

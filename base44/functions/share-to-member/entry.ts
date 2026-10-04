@@ -5,6 +5,10 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 // forwarded text as a private message, and records a moderation task for the
 // poll's assigned Infomarians (falling back to all active Infomarians) so the
 // forward is reviewable by an Infomarian or Admin and above.
+//
+// Conversation and message writes use the user-scoped client (the caller is a
+// participant/sender, so RLS permits it for all members). System lookups (User,
+// Poll, Infomarian) and the moderation task creation use asServiceRole.
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
@@ -31,8 +35,9 @@ export default async function(req) {
       { user_id: target.id, name: targetName, email: target.email }
     ];
 
-    // Reuse an existing active conversation between these two, if any
-    const existing = await base44.asServiceRole.entities.Conversation.list();
+    // Reuse an existing active conversation between these two, if any.
+    // User-scoped list returns only conversations the caller participates in.
+    const existing = await base44.entities.Conversation.list();
     let conversation = existing.find(c =>
       Array.isArray(c.participants) &&
       c.participants.length === 2 &&
@@ -41,7 +46,7 @@ export default async function(req) {
       c.status !== 'closed'
     );
     if (!conversation) {
-      conversation = await base44.asServiceRole.entities.Conversation.create({
+      conversation = await base44.entities.Conversation.create({
         participants,
         participant_names: participantNames,
         initiator_id: caller.id,
@@ -54,8 +59,9 @@ export default async function(req) {
       });
     }
 
-    // Deliver the forwarded message privately to the target member
-    await base44.asServiceRole.entities.Message.create({
+    // Deliver the forwarded message privately. User-scoped create: the caller
+    // is the sender and a participant, so RLS permits it reliably for all members.
+    await base44.entities.Message.create({
       conversation_id: conversation.id,
       sender_id: caller.id,
       sender_name: callerName,
@@ -63,13 +69,17 @@ export default async function(req) {
       participants: conversation.participants
     });
 
-    await base44.asServiceRole.entities.Conversation.update(conversation.id, {
-      last_message_at: new Date().toISOString(),
-      last_message_preview: content.slice(0, 100),
-      last_sender_id: caller.id
-    });
+    try {
+      await base44.entities.Conversation.update(conversation.id, {
+        last_message_at: new Date().toISOString(),
+        last_message_preview: content.slice(0, 100),
+        last_sender_id: caller.id
+      });
+    } catch (updateErr) {
+      console.warn('Conversation preview update failed:', updateErr?.message || updateErr);
+    }
 
-    // Record the forward for Infomarian / Admin review
+    // Record the forward for Infomarian / Admin review (system-level, service role).
     let poll = null;
     if (pollId) {
       try { poll = await base44.asServiceRole.entities.Poll.get(pollId); } catch {}
