@@ -6,6 +6,7 @@ import { Vote, BarChart3, Settings, User, Shield, AlertTriangle, ShieldAlert, Me
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Badge } from "@/components/ui/badge";
+import ThemeLanguageToggle from '@/components/ThemeLanguageToggle';
 
 export default function Layout({ children, currentPageName }) {
   const { t } = useTranslation();
@@ -173,6 +174,9 @@ export default function Layout({ children, currentPageName }) {
                   </Link>
                 );
               })}
+              <div className="hidden md:flex items-center gap-2 pl-2 ml-2 border-l border-slate-200">
+                <ThemeLanguageToggle />
+              </div>
             </div>
           </div>
         </div>

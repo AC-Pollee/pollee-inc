@@ -5,7 +5,7 @@ import ActiveUsersCounter from '@/components/ActiveUsersCounter';
 
 export default function ThemeLanguageToggle() {
   return (
-    <div className="inline-flex flex-col items-end gap-2">
+    <div className="inline-flex flex-row items-center gap-2">
       <ThemeToggle />
       <LanguageSwitcher />
       <ActiveUsersCounter />
