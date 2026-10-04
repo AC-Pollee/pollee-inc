@@ -28,8 +28,8 @@ export default function MessageThread({ conversation, currentUser, t }) {
   });
 
   useEffect(() => {
-    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-  }, [messages]);
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+  }, [conversation?.id]);
 
   useEffect(() => {
     if (!conversation?.id) return;
@@ -126,11 +126,11 @@ export default function MessageThread({ conversation, currentUser, t }) {
         <p className="font-semibold text-slate-900">{other?.name || 'Unknown'}</p>
         <p className="text-xs text-slate-500 flex items-center gap-1"><Lock className="w-3 h-3" /> {t('messages.private')}</p>
       </div>
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50">
+      <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto p-4 space-y-3 bg-slate-50 overscroll-contain">
         {messages.length === 0 && (
           <p className="text-center text-sm text-slate-400 py-8">{t('messages.noMessages')}</p>
         )}
-        {messages.map(m => {
+        {[...messages].sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).map(m => {
           const mine = m.sender_id === currentUser?.id;
           return (
             <div key={m.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
