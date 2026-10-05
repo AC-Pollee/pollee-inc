@@ -62,7 +62,7 @@ export default function ContentEditDialog({ item, open, onOpenChange, onSaved })
         title: title.trim(),
         description: description.trim(),
         content_type: contentType,
-        url: contentType === 'url' ? url.trim() : (['image', 'video', 'audio', 'pdf'].includes(contentType) ? url : undefined),
+        url: contentType === 'url' ? url.trim() : undefined,
         file_uri: ['image', 'video', 'audio', 'pdf'].includes(contentType) ? url : undefined,
         text_content: contentType === 'text' ? text.trim() : undefined,
         tags: tags ? tags.split(',').map(tg => tg.trim()).filter(Boolean) : [],
