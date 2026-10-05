@@ -29,7 +29,7 @@ export default function ReputationScore({ user }) {
       <CardHeader className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-t-xl">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
-            <Award className="w-6 h-6" />
+            <LevelIcon className="w-6 h-6" />
           </div>
           <CardTitle className="text-2xl">{t('reputation.title')}</CardTitle>
         </div>
@@ -127,39 +127,6 @@ export default function ReputationScore({ user }) {
             </div>
           )}
 
-          {/* Reputation Benefits */}
-          <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg p-4">
-            <h4 className="font-semibold text-indigo-900 mb-2 text-sm">{t('reputation.yourBenefits')}</h4>
-            <ul className="space-y-1 text-sm text-indigo-700">
-              {level === 'newcomer' && (
-                <li>• Basic participation in polls and discussions</li>
-              )}
-              {(level === 'member' || level === 'contributor' || level === 'trusted' || level === 'champion') && (
-                <>
-                  <li>• Full participation privileges</li>
-                  <li>• Can create delegations</li>
-                </>
-              )}
-              {(level === 'contributor' || level === 'trusted' || level === 'champion') && (
-                <>
-                  <li>• Priority comment visibility</li>
-                  <li>• Reduced moderation review time</li>
-                </>
-              )}
-              {(level === 'trusted' || level === 'champion') && (
-                <>
-                  <li>• Can recommend polls</li>
-                  <li>• Eligible for community leadership</li>
-                </>
-              )}
-              {level === 'champion' && (
-                <>
-                  <li>• Featured contributor badge</li>
-                  <li>• Influence on platform improvements</li>
-                </>
-              )}
-            </ul>
-          </div>
         </div>
       </CardContent>
     </Card>
