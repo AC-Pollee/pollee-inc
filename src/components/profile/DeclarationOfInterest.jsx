@@ -29,7 +29,10 @@ export default function DeclarationOfInterest({ user }) {
     if (infomarian) {
       setDeclaration(infomarian.declaration_of_interest || '');
     }
-  }, [infomarian]);
+    // Only sync from stored data when the Infomarian record changes (initial load / record switch),
+    // not on every query refetch — otherwise the user's unsaved edits get overwritten.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [infomarian?.id]);
 
   const save = useMutation({
     mutationFn: async (value) => {
