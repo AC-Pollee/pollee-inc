@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Library, Plus, Link2, Image as ImageIcon, Video, FileText, Music, FileType, Trash2, Check, X, Search, Inbox, Pencil, Folder, FolderOpen, ChevronRight, Home, FolderPlus, Move } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+
 import { useTranslation } from 'react-i18next';
 import ContentEditDialog from './ContentEditDialog';
 import MoveItemDialog from './MoveItemDialog';
@@ -26,7 +26,6 @@ const TYPE_ICONS = {
 
 export default function ContentLibraryPanel({ infomarian }) {
   const { t } = useTranslation();
-  const { toast } = useToast();
   const queryClient = useQueryClient();
   const [showAdd, setShowAdd] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
@@ -59,7 +58,7 @@ export default function ContentLibraryPanel({ infomarian }) {
 
   const createItem = useMutation({
     mutationFn: (data) => base44.entities.ContentLibraryItem.create(data),
-    onSuccess: () => { invalidateAll(); setShowAdd(false); toast({ title: t('contentLibrary.added') }); }
+    onSuccess: () => { invalidateAll(); setShowAdd(false); }
   });
 
   const deleteItem = useMutation({
@@ -69,12 +68,12 @@ export default function ContentLibraryPanel({ infomarian }) {
 
   const updateItem = useMutation({
     mutationFn: ({ id, data }) => base44.entities.ContentLibraryItem.update(id, data),
-    onSuccess: () => { invalidateAll(); setEditingItem(null); toast({ title: t('contentLibrary.updated') }); }
+    onSuccess: () => { invalidateAll(); setEditingItem(null); }
   });
 
   const moveItem = useMutation({
     mutationFn: ({ id, folder_id }) => base44.entities.ContentLibraryItem.update(id, { folder_id: folder_id || null }),
-    onSuccess: () => { invalidateAll(); setMovingItem(null); toast({ title: t('contentLibrary.updated') }); }
+    onSuccess: () => { invalidateAll(); setMovingItem(null); }
   });
 
   const moderateForwarded = useMutation({
@@ -84,12 +83,12 @@ export default function ContentLibraryPanel({ infomarian }) {
 
   const createFolder = useMutation({
     mutationFn: (data) => base44.entities.ContentFolder.create(data),
-    onSuccess: () => { invalidateAll(); setShowNewFolder(false); toast({ title: t('contentLibrary.createFolder') }); }
+    onSuccess: () => { invalidateAll(); setShowNewFolder(false); }
   });
 
   const renameFolder = useMutation({
     mutationFn: ({ id, data }) => base44.entities.ContentFolder.update(id, data),
-    onSuccess: () => { invalidateAll(); setRenamingFolder(null); toast({ title: t('contentLibrary.updated') }); }
+    onSuccess: () => { invalidateAll(); setRenamingFolder(null); }
   });
 
   const deleteFolder = useMutation({
@@ -426,7 +425,6 @@ function RenameFolderDialog({ folder, open, onOpenChange, onSaved }) {
 
 function AddItemDialog({ open, onOpenChange, infomarian, onCreate, folderId, folders }) {
   const { t } = useTranslation();
-  const { toast } = useToast();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [contentType, setContentType] = useState('url');
@@ -454,9 +452,7 @@ function AddItemDialog({ open, onOpenChange, infomarian, onCreate, folderId, fol
       const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file });
       setUrl(file_uri);
       if (!title) setTitle(file.name);
-      toast({ title: t('contentLibrary.uploaded') });
     } catch {
-      toast({ title: t('contentLibrary.uploadFailed'), variant: 'destructive' });
     }
     setUploading(false);
   };
