@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
-import { UserPlus, Save, CheckCircle2, AlertCircle } from 'lucide-react';
+import { UserPlus, Save, CheckCircle2, AlertCircle, MailCheck, Clipboard } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
@@ -28,6 +28,11 @@ export default function NewUserRegistration() {
   });
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [dobDisplay, setDobDisplay] = useState('');
+  const [confirmationStep, setConfirmationStep] = useState(false);
+  const [codeInput, setCodeInput] = useState('');
+  const [confirming, setConfirming] = useState(false);
+  const [confirmError, setConfirmError] = useState('');
+  const [codeSending, setCodeSending] = useState(false);
 
   const { data: user, isLoading } = useQuery({
     queryKey: ['currentUser'],
@@ -75,9 +80,17 @@ export default function NewUserRegistration() {
         );
       }
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries(['currentUser']);
-      navigate('/Profile');
+      try {
+        setCodeSending(true);
+        await base44.functions.invoke('member-confirmation', { action: 'send' });
+      } catch (e) {
+        // code send failed; user can resend
+      } finally {
+        setCodeSending(false);
+      }
+      setConfirmationStep(true);
     }
   });
 
@@ -100,6 +113,43 @@ export default function NewUserRegistration() {
     e.preventDefault();
     if (tooYoung) return;
     register.mutate(formData);
+  };
+
+  const handleVerify = async () => {
+    setConfirmError('');
+    setConfirming(true);
+    try {
+      const res = await base44.functions.invoke('member-confirmation', { action: 'verify', code: codeInput });
+      if (res.data?.verified) {
+        queryClient.invalidateQueries(['currentUser']);
+        navigate('/Profile');
+      }
+    } catch (e) {
+      setConfirmError(e.response?.data?.error || 'Verification failed. Please try again.');
+    } finally {
+      setConfirming(false);
+    }
+  };
+
+  const handleResend = async () => {
+    setConfirmError('');
+    setCodeSending(true);
+    try {
+      await base44.functions.invoke('member-confirmation', { action: 'send' });
+    } catch (e) {
+      setConfirmError('Could not resend code. Please try again.');
+    } finally {
+      setCodeSending(false);
+    }
+  };
+
+  const handlePaste = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text) setCodeInput(text.trim());
+    } catch (e) {
+      // clipboard not available
+    }
   };
 
   const handleDobChange = (e) => {
@@ -177,6 +227,75 @@ export default function NewUserRegistration() {
           </motion.div>
         )}
 
+        {confirmationStep && (
+          <Card className="border-0 shadow-xl">
+            <CardHeader className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-t-xl">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                  <MailCheck className="w-6 h-6" />
+                </div>
+                <CardTitle className="text-2xl">{t('newUserReg.confirmTitle')}</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="p-8 space-y-6">
+              <p className="text-slate-700">
+                {t('newUserReg.confirmSent', { email: user?.email })}
+              </p>
+              <div className="space-y-2">
+                <Label htmlFor="confirmation_code" className="text-base font-semibold">
+                  {t('newUserReg.enterCode')}
+                </Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="confirmation_code"
+                    value={codeInput}
+                    onChange={(e) => setCodeInput(e.target.value)}
+                    placeholder="000000"
+                    maxLength={6}
+                    className="h-12 rounded-lg text-lg tracking-widest"
+                  />
+                  <Button type="button" variant="outline" onClick={handlePaste} className="h-12 px-4">
+                    <Clipboard className="w-4 h-4 mr-1" /> {t('newUserReg.paste')}
+                  </Button>
+                </div>
+              </div>
+              {confirmError && (
+                <Alert className="bg-red-50 border-red-200" variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{confirmError}</AlertDescription>
+                </Alert>
+              )}
+              <Button
+                type="button"
+                onClick={handleVerify}
+                disabled={confirming || !codeInput}
+                className="w-full h-14 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 rounded-lg text-lg disabled:opacity-50"
+              >
+                {confirming ? (
+                  <>
+                    <Save className="w-5 h-5 mr-2 animate-pulse" />
+                    {t('newUserReg.confirming')}
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="w-5 h-5 mr-2" />
+                    {t('newUserReg.confirmAccount')}
+                  </>
+                )}
+              </Button>
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={codeSending}
+                className="w-full text-sm text-indigo-600 hover:text-indigo-700 underline disabled:opacity-50"
+              >
+                {codeSending ? t('newUserReg.sending') : t('newUserReg.resendCode')}
+              </button>
+            </CardContent>
+          </Card>
+        )}
+
+        {!confirmationStep && (
         <Card className="border-0 shadow-xl">
           <CardHeader className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-t-xl">
             <div className="flex items-center gap-3">
@@ -322,6 +441,7 @@ export default function NewUserRegistration() {
             </form>
           </CardContent>
         </Card>
+        )}
       </div>
     </div>
   );

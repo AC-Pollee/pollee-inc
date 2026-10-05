@@ -85,6 +85,15 @@
       "default": "en",
       "description": "User's preferred UI language"
     },
+    "confirmation_code": {
+      "type": "string",
+      "description": "Random 6-digit code emailed to the member for initial account confirmation"
+    },
+    "confirmation_verified": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the member has confirmed their account via the emailed code"
+    },
     "strikes": {
       "type": "array",
       "default": [],

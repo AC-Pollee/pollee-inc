@@ -379,7 +379,15 @@
     "modelRules": "Model Rules",
     "and": "and",
     "registering": "Registering...",
-    "completeRegistration": "Complete Registration"
+    "completeRegistration": "Complete Registration",
+    "confirmTitle": "Confirm Your Account",
+    "confirmSent": "We've sent a confirmation code to {{email}}. Enter it below to complete your registration.",
+    "enterCode": "Enter Confirmation Code",
+    "paste": "Paste",
+    "confirming": "Confirming...",
+    "confirmAccount": "Confirm Account",
+    "resendCode": "Resend code",
+    "sending": "Sending..."
   },
   "incident": {
     "title": "Report an Incident",
