@@ -18,7 +18,7 @@ const TYPE_ICONS = {
   pdf: FileType,
 };
 
-export default function ContentEditDialog({ item, open, onOpenChange, onSaved }) {
+export default function ContentEditDialog({ item, open, onOpenChange, onSaved, folderId, folders }) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const [title, setTitle] = useState('');
@@ -27,6 +27,7 @@ export default function ContentEditDialog({ item, open, onOpenChange, onSaved })
   const [url, setUrl] = useState('');
   const [text, setText] = useState('');
   const [tags, setTags] = useState('');
+  const [selectedFolder, setSelectedFolder] = useState(null);
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
@@ -37,6 +38,7 @@ export default function ContentEditDialog({ item, open, onOpenChange, onSaved })
       setUrl(item.url || item.file_uri || '');
       setText(item.text_content || '');
       setTags((item.tags || []).join(', '));
+      setSelectedFolder(item.folder_id || null);
     }
   }, [item]);
 
@@ -66,6 +68,7 @@ export default function ContentEditDialog({ item, open, onOpenChange, onSaved })
         file_uri: ['image', 'video', 'audio', 'pdf'].includes(contentType) ? url : undefined,
         text_content: contentType === 'text' ? text.trim() : undefined,
         tags: tags ? tags.split(',').map(tg => tg.trim()).filter(Boolean) : [],
+        folder_id: selectedFolder || null,
       }
     });
   };
@@ -125,6 +128,16 @@ export default function ContentEditDialog({ item, open, onOpenChange, onSaved })
             <Label>{t('contentLibrary.tags')}</Label>
             <Input value={tags} onChange={(e) => setTags(e.target.value)} placeholder={t('contentLibrary.tagsPlaceholder')} />
           </div>
+          {folders && (
+            <div>
+              <Label>{t('contentLibrary.moveTo')}</Label>
+              <select value={selectedFolder || ''} onChange={(e) => setSelectedFolder(e.target.value || null)}
+                className="w-full h-9 px-3 rounded-md border border-input bg-background text-sm">
+                <option value="">{t('contentLibrary.rootFolder')}</option>
+                {folders.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
+              </select>
+            </div>
+          )}
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t('contentLibrary.cancel')}</Button>

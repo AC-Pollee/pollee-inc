@@ -7,12 +7,13 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Library, Plus, Link2, Image as ImageIcon, Video, FileText, Music, FileType, Trash2, Check, X, Search, Inbox, Pencil } from 'lucide-react';
+import { Library, Plus, Link2, Image as ImageIcon, Video, FileText, Music, FileType, Trash2, Check, X, Search, Inbox, Pencil, Folder, FolderOpen, ChevronRight, Home, FolderPlus, Move } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { useTranslation } from 'react-i18next';
 import ContentEditDialog from './ContentEditDialog';
+import MoveItemDialog from './MoveItemDialog';
 
 const TYPE_ICONS = {
   url: Link2,
@@ -29,8 +30,13 @@ export default function ContentLibraryPanel({ infomarian }) {
   const queryClient = useQueryClient();
   const [showAdd, setShowAdd] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  const [movingItem, setMovingItem] = useState(null);
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
+  const [currentFolderId, setCurrentFolderId] = useState(null); // null = root
+  const [folderPath, setFolderPath] = useState([]); // breadcrumb [{id, name}]
+  const [showNewFolder, setShowNewFolder] = useState(false);
+  const [renamingFolder, setRenamingFolder] = useState(null);
 
   const { data: items = [] } = useQuery({
     queryKey: ['content-library', infomarian?.infomarian_id],
@@ -38,55 +44,104 @@ export default function ContentLibraryPanel({ infomarian }) {
     enabled: !!infomarian?.infomarian_id
   });
 
+  const { data: folders = [] } = useQuery({
+    queryKey: ['content-folders', infomarian?.infomarian_id],
+    queryFn: () => base44.entities.ContentFolder.filter({ infomarian_id: infomarian.infomarian_id }, 'name'),
+    enabled: !!infomarian?.infomarian_id
+  });
+
+  const invalidateAll = () => {
+    queryClient.invalidateQueries(['content-library', infomarian?.infomarian_id]);
+    queryClient.invalidateQueries(['content-folders', infomarian?.infomarian_id]);
+    queryClient.invalidateQueries(['evidence-library-select', infomarian?.infomarian_id]);
+    queryClient.invalidateQueries(['forwarded-content', infomarian?.infomarian_id]);
+  };
+
   const createItem = useMutation({
     mutationFn: (data) => base44.entities.ContentLibraryItem.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['content-library', infomarian?.infomarian_id]);
-      queryClient.invalidateQueries(['evidence-library-select', infomarian?.infomarian_id]);
-      queryClient.invalidateQueries(['forwarded-content', infomarian?.infomarian_id]);
-      setShowAdd(false);
-      toast({ title: t('contentLibrary.added') });
-    }
+    onSuccess: () => { invalidateAll(); setShowAdd(false); toast({ title: t('contentLibrary.added') }); }
   });
 
   const deleteItem = useMutation({
     mutationFn: (id) => base44.entities.ContentLibraryItem.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['content-library', infomarian?.infomarian_id]);
-      queryClient.invalidateQueries(['evidence-library-select', infomarian?.infomarian_id]);
-      queryClient.invalidateQueries(['forwarded-content', infomarian?.infomarian_id]);
-    }
+    onSuccess: () => invalidateAll()
   });
 
   const updateItem = useMutation({
     mutationFn: ({ id, data }) => base44.entities.ContentLibraryItem.update(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['content-library', infomarian?.infomarian_id]);
-      queryClient.invalidateQueries(['evidence-library-select', infomarian?.infomarian_id]);
-      queryClient.invalidateQueries(['forwarded-content', infomarian?.infomarian_id]);
-      setEditingItem(null);
-      toast({ title: t('contentLibrary.updated') });
-    }
+    onSuccess: () => { invalidateAll(); setEditingItem(null); toast({ title: t('contentLibrary.updated') }); }
+  });
+
+  const moveItem = useMutation({
+    mutationFn: ({ id, folder_id }) => base44.entities.ContentLibraryItem.update(id, { folder_id: folder_id || null }),
+    onSuccess: () => { invalidateAll(); setMovingItem(null); toast({ title: t('contentLibrary.updated') }); }
   });
 
   const moderateForwarded = useMutation({
     mutationFn: ({ id, status }) => base44.entities.ContentLibraryItem.update(id, { moderation_status: status }),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['content-library', infomarian?.infomarian_id]);
-      queryClient.invalidateQueries(['evidence-library-select', infomarian?.infomarian_id]);
-      queryClient.invalidateQueries(['forwarded-content', infomarian?.infomarian_id]);
-    }
+    onSuccess: () => invalidateAll()
+  });
+
+  const createFolder = useMutation({
+    mutationFn: (data) => base44.entities.ContentFolder.create(data),
+    onSuccess: () => { invalidateAll(); setShowNewFolder(false); toast({ title: t('contentLibrary.createFolder') }); }
+  });
+
+  const renameFolder = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.ContentFolder.update(id, data),
+    onSuccess: () => { invalidateAll(); setRenamingFolder(null); toast({ title: t('contentLibrary.updated') }); }
+  });
+
+  const deleteFolder = useMutation({
+    mutationFn: async (folder) => {
+      // Move items in this folder up to the parent (current folder)
+      const childItems = items.filter(i => i.folder_id === folder.id);
+      if (childItems.length > 0) {
+        await base44.entities.ContentLibraryItem.bulkUpdate(
+          childItems.map(i => ({ id: i.id, folder_id: folder.parent_id || null }))
+        );
+      }
+      // Move child folders up to the parent
+      const childFolders = folders.filter(f => f.parent_id === folder.id);
+      if (childFolders.length > 0) {
+        await base44.entities.ContentFolder.bulkUpdate(
+          childFolders.map(f => ({ id: f.id, parent_id: folder.parent_id || null }))
+        );
+      }
+      await base44.entities.ContentFolder.delete(folder.id);
+    },
+    onSuccess: () => invalidateAll()
   });
 
   const libraryItems = items.filter(i => i.source !== 'member_forward' || i.moderation_status === 'approved');
   const forwardedItems = items.filter(i => i.source === 'member_forward' && i.moderation_status === 'pending');
 
-  const filtered = libraryItems.filter(item => {
+  // Folders visible in the current folder
+  const subfolders = folders.filter(f => (f.parent_id || null) === (currentFolderId || null));
+  // Items in the current folder
+  const folderItems = libraryItems.filter(i => (i.folder_id || null) === (currentFolderId || null));
+
+  const filtered = folderItems.filter(item => {
     if (filter !== 'all' && item.content_type !== filter) return false;
     if (search && !item.title?.toLowerCase().includes(search.toLowerCase()) &&
         !item.description?.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
+
+  const navigateInto = (folder) => {
+    setCurrentFolderId(folder.id);
+    setFolderPath(prev => [...prev, folder]);
+  };
+
+  const navigateTo = (index) => {
+    if (index < 0) {
+      setCurrentFolderId(null);
+      setFolderPath([]);
+    } else {
+      setCurrentFolderId(folderPath[index].id);
+      setFolderPath(folderPath.slice(0, index + 1));
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -98,10 +153,39 @@ export default function ContentLibraryPanel({ infomarian }) {
           </h2>
           <p className="text-sm text-slate-500 mt-1">{t('contentLibrary.subtitle')}</p>
         </div>
-        <Button onClick={() => setShowAdd(true)} className="bg-indigo-600 hover:bg-indigo-700">
-          <Plus className="w-4 h-4 mr-2" />
-          {t('contentLibrary.addItem')}
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setShowNewFolder(true)}>
+            <FolderPlus className="w-4 h-4 mr-2" />
+            {t('contentLibrary.newFolder')}
+          </Button>
+          <Button onClick={() => setShowAdd(true)} className="bg-indigo-600 hover:bg-indigo-700">
+            <Plus className="w-4 h-4 mr-2" />
+            {t('contentLibrary.addItem')}
+          </Button>
+        </div>
+      </div>
+
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-1 flex-wrap text-sm">
+        <button
+          onClick={() => navigateTo(-1)}
+          className={`flex items-center gap-1 px-1.5 py-0.5 rounded hover:bg-slate-100 ${currentFolderId === null ? 'text-indigo-700 font-medium' : 'text-slate-600'}`}
+        >
+          <Home className="w-3.5 h-3.5" />
+          {t('contentLibrary.rootFolder')}
+        </button>
+        {folderPath.map((f, i) => (
+          <React.Fragment key={f.id}>
+            <ChevronRight className="w-3 h-3 text-slate-400" />
+            <button
+              onClick={() => navigateTo(i)}
+              className={`flex items-center gap-1 px-1.5 py-0.5 rounded hover:bg-slate-100 ${i === folderPath.length - 1 ? 'text-indigo-700 font-medium' : 'text-slate-600'}`}
+            >
+              <Folder className="w-3.5 h-3.5" />
+              {f.name}
+            </button>
+          </React.Fragment>
+        ))}
       </div>
 
       {forwardedItems.length > 0 && (
@@ -165,10 +249,52 @@ export default function ContentLibraryPanel({ infomarian }) {
         </Tabs>
       </div>
 
-      {filtered.length === 0 ? (
+      {/* Folders in current location (hidden when filtering/searching) */}
+      {filter === 'all' && !search && subfolders.length > 0 && (
+        <div>
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">{t('contentLibrary.folders')}</p>
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {subfolders.map(folder => {
+              const count = items.filter(i => (i.folder_id || null) === folder.id).length;
+              return (
+                <Card key={folder.id} className="shadow-sm hover:shadow-md transition-shadow group cursor-pointer"
+                  onClick={() => navigateInto(folder)}>
+                  <CardContent className="p-4 flex items-center gap-3">
+                    <FolderOpen className="w-8 h-8 text-indigo-500 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm text-slate-900 truncate">{folder.name}</p>
+                      <p className="text-xs text-slate-500">{count} {count === 1 ? 'item' : 'items'}</p>
+                    </div>
+                    <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity" onClick={e => e.stopPropagation()}>
+                      <Button size="icon" variant="ghost" className="h-7 w-7 text-indigo-500 hover:bg-indigo-50"
+                        onClick={() => setRenamingFolder(folder)}>
+                        <Pencil className="w-3.5 h-3.5" />
+                      </Button>
+                      <Button size="icon" variant="ghost" className="h-7 w-7 text-red-500 hover:bg-red-50"
+                        onClick={() => { if (confirm(t('contentLibrary.confirmDeleteFolder'))) deleteFolder.mutate(folder); }}>
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Items in current location */}
+      {filter === 'all' && !search && subfolders.length > 0 && filtered.length > 0 && (
+        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">{t('contentLibrary.items')}</p>
+      )}
+      {filtered.length === 0 && subfolders.length === 0 ? (
         <div className="text-center py-12 text-slate-400">
           <Library className="w-12 h-12 mx-auto mb-3 opacity-40" />
-          <p className="text-sm">{t('contentLibrary.empty')}</p>
+          <p className="text-sm">{search || filter !== 'all' ? t('contentLibrary.empty') : (currentFolderId ? t('contentLibrary.emptyFolder') : t('contentLibrary.empty'))}</p>
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="text-center py-8 text-slate-400">
+          <p className="text-sm">{t('contentLibrary.emptyFolder')}</p>
         </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -183,6 +309,10 @@ export default function ContentLibraryPanel({ infomarian }) {
                       <Badge variant="secondary" className="text-xs capitalize">{item.content_type}</Badge>
                     </div>
                     <div className="flex gap-0.5">
+                      <Button size="icon" variant="ghost" className="h-7 w-7 text-slate-500 hover:bg-slate-100" title={t('contentLibrary.move')}
+                        onClick={() => setMovingItem(item)}>
+                        <Move className="w-3.5 h-3.5" />
+                      </Button>
                       <Button size="icon" variant="ghost" className="h-7 w-7 text-indigo-500 hover:bg-indigo-50"
                         onClick={() => setEditingItem(item)}>
                         <Pencil className="w-3.5 h-3.5" />
@@ -209,13 +339,92 @@ export default function ContentLibraryPanel({ infomarian }) {
         </div>
       )}
 
-      <AddItemDialog open={showAdd} onOpenChange={setShowAdd} infomarian={infomarian} onCreate={createItem.mutate} />
-      <ContentEditDialog item={editingItem} open={!!editingItem} onOpenChange={(o) => !o && setEditingItem(null)} onSaved={updateItem.mutate} />
+      <AddItemDialog open={showAdd} onOpenChange={setShowAdd} infomarian={infomarian} onCreate={createItem.mutate} folderId={currentFolderId} folders={folders} />
+      <ContentEditDialog item={editingItem} open={!!editingItem} onOpenChange={(o) => !o && setEditingItem(null)} onSaved={updateItem.mutate} folderId={currentFolderId} folders={folders} />
+      <MoveItemDialog open={!!movingItem} onOpenChange={(o) => !o && setMovingItem(null)} infomarian={infomarian} itemId={movingItem?.id} currentFolderId={movingItem?.folder_id} onMove={moveItem.mutate} />
+      <NewFolderDialog open={showNewFolder} onOpenChange={setShowNewFolder} parentId={currentFolderId} infomarian={infomarian} onCreate={createFolder.mutate} />
+      <RenameFolderDialog folder={renamingFolder} open={!!renamingFolder} onOpenChange={(o) => !o && setRenamingFolder(null)} onSaved={renameFolder.mutate} />
     </div>
   );
 }
 
-function AddItemDialog({ open, onOpenChange, infomarian, onCreate }) {
+function NewFolderDialog({ open, onOpenChange, parentId, infomarian, onCreate }) {
+  const { t } = useTranslation();
+  const [name, setName] = useState('');
+
+  React.useEffect(() => { if (open) setName(''); }, [open]);
+
+  const handleSubmit = () => {
+    if (!name.trim()) return;
+    onCreate({
+      name: name.trim(),
+      infomarian_id: infomarian.infomarian_id,
+      parent_id: parentId || null
+    });
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-sm">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <FolderPlus className="w-5 h-5 text-indigo-600" />
+            {t('contentLibrary.newFolder')}
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-2">
+          <Label>{t('contentLibrary.folderName')}</Label>
+          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('contentLibrary.folderNamePlaceholder')}
+            onKeyDown={(e) => e.key === 'Enter' && handleSubmit()} autoFocus />
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>{t('contentLibrary.cancel')}</Button>
+          <Button onClick={handleSubmit} disabled={!name.trim()} className="bg-indigo-600 hover:bg-indigo-700">
+            {t('contentLibrary.createFolder')}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function RenameFolderDialog({ folder, open, onOpenChange, onSaved }) {
+  const { t } = useTranslation();
+  const [name, setName] = useState('');
+
+  React.useEffect(() => { if (folder) setName(folder.name || ''); }, [folder]);
+
+  const handleSubmit = () => {
+    if (!name.trim()) return;
+    onSaved({ id: folder.id, data: { name: name.trim() } });
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-sm">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Pencil className="w-5 h-5 text-indigo-600" />
+            {t('contentLibrary.renameFolder')}
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-2">
+          <Label>{t('contentLibrary.folderName')}</Label>
+          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('contentLibrary.folderNamePlaceholder')}
+            onKeyDown={(e) => e.key === 'Enter' && handleSubmit()} autoFocus />
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>{t('contentLibrary.cancel')}</Button>
+          <Button onClick={handleSubmit} disabled={!name.trim()} className="bg-indigo-600 hover:bg-indigo-700">
+            {t('contentLibrary.saveChanges')}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function AddItemDialog({ open, onOpenChange, infomarian, onCreate, folderId, folders }) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const [title, setTitle] = useState('');
@@ -224,10 +433,17 @@ function AddItemDialog({ open, onOpenChange, infomarian, onCreate }) {
   const [url, setUrl] = useState('');
   const [text, setText] = useState('');
   const [tags, setTags] = useState('');
+  const [selectedFolder, setSelectedFolder] = useState(null);
   const [uploading, setUploading] = useState(false);
 
+  React.useEffect(() => {
+    if (open) {
+      setSelectedFolder(folderId || null);
+    }
+  }, [open, folderId]);
+
   const reset = () => {
-    setTitle(''); setDescription(''); setContentType('url'); setUrl(''); setText(''); setTags('');
+    setTitle(''); setDescription(''); setContentType('url'); setUrl(''); setText(''); setTags(''); setSelectedFolder(null);
   };
 
   const handleFile = async (e) => {
@@ -256,9 +472,10 @@ function AddItemDialog({ open, onOpenChange, infomarian, onCreate }) {
       text_content: contentType === 'text' ? text.trim() : undefined,
       infomarian_id: infomarian.infomarian_id,
       infomarian_name: infomarian.full_name,
-      tags: tags ? tags.split(',').map(t => t.trim()).filter(Boolean) : [],
+      tags: tags ? tags.split(',').map(tg => tg.trim()).filter(Boolean) : [],
       source: 'infomarian',
-      moderation_status: 'approved'
+      moderation_status: 'approved',
+      folder_id: selectedFolder || null
     });
     reset();
   };
@@ -317,6 +534,14 @@ function AddItemDialog({ open, onOpenChange, infomarian, onCreate }) {
           <div>
             <Label>{t('contentLibrary.tags')}</Label>
             <Input value={tags} onChange={(e) => setTags(e.target.value)} placeholder={t('contentLibrary.tagsPlaceholder')} />
+          </div>
+          <div>
+            <Label>{t('contentLibrary.moveTo')}</Label>
+            <select value={selectedFolder || ''} onChange={(e) => setSelectedFolder(e.target.value || null)}
+              className="w-full h-9 px-3 rounded-md border border-input bg-background text-sm">
+              <option value="">{t('contentLibrary.rootFolder')}</option>
+              {folders.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
+            </select>
           </div>
         </div>
         <DialogFooter>

@@ -79,6 +79,10 @@
       ],
       "default": "approved",
       "description": "Moderation status \u2014 pending for member-forwarded items"
+    },
+    "folder_id": {
+      "type": "string",
+      "description": "ContentFolder ID this item is filed under. Null or empty for root-level (unfiled) items."
     }
   },
   "required": [

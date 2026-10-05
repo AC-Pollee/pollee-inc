@@ -1,0 +1,23 @@
+{
+  "name": "ContentFolder",
+  "type": "object",
+  "description": "A folder in an Infomarian's Content Library, used to organise content items. Folders may be nested.",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Folder name"
+    },
+    "infomarian_id": {
+      "type": "string",
+      "description": "Infomarian who owns this folder"
+    },
+    "parent_id": {
+      "type": "string",
+      "description": "Parent folder ID. Null or empty for a root-level folder."
+    }
+  },
+  "required": [
+    "name",
+    "infomarian_id"
+  ]
+}
