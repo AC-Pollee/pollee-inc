@@ -35,20 +35,28 @@ export default function DeclarationOfInterest({ user }) {
   }, [infomarian?.id]);
 
   const save = useMutation({
-    mutationFn: async (value) => {
-      return await base44.entities.Infomarian.update(infomarian.id, {
+    mutationFn: async ({ id, value }) => {
+      return await base44.entities.Infomarian.update(id, {
         declaration_of_interest: value
       });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['myInfomarian']);
+    onSuccess: (data) => {
+      // Explicitly set the declaration from the returned record so the textarea
+      // always reflects the persisted value immediately after saving.
+      setDeclaration(data?.declaration_of_interest ?? '');
+      queryClient.invalidateQueries({ queryKey: ['myInfomarian'] });
       setSavedMessage(t('declaration.saved'));
       setTimeout(() => setSavedMessage(''), 3000);
+    },
+    onError: (err) => {
+      setSavedMessage('');
+      console.error('Declaration save failed:', err);
     }
   });
 
   const handleSave = () => {
-    save.mutate(declaration.trim());
+    if (!infomarian?.id) return;
+    save.mutate({ id: infomarian.id, value: declaration.trim() });
   };
 
   if (isLoading || !infomarian) return null;
