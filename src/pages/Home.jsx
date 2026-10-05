@@ -160,7 +160,7 @@ export default function Home() {
       </div>
 
       {/* Discussion Preview */}
-      <DiscussionPreview />
+      <DiscussionPreview constituencyFilter={selectedConstituencies} />
 
       {/* Footer Explanatory Section */}
       <div className="max-w-6xl mx-auto px-4 pb-12">

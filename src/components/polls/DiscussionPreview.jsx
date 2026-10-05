@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Link } from 'react-router-dom';
@@ -15,7 +15,7 @@ import { usePollTranslation } from '@/hooks/usePollTranslation';
 import PollTitle from '@/components/polls/PollTitle';
 import CommentTranslation from '@/components/polls/CommentTranslation';
 
-export default function DiscussionPreview() {
+export default function DiscussionPreview({ constituencyFilter = [] }) {
   const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [selectedPollId, setSelectedPollId] = useState(null);
@@ -40,12 +40,16 @@ export default function DiscussionPreview() {
     return counts;
   }, [comments]);
 
-  // Build discussion list with activity, sorted by most active
+  // Build discussion list with activity, sorted by most active.
+  // Applies the active-poll constituency filter so the discussions shown match the polls above.
   const discussions = useMemo(() => {
-    return polls
+    const scoped = constituencyFilter.length > 0
+      ? polls.filter((p) => constituencyFilter.includes(p.franchise_id))
+      : polls;
+    return scoped
       .map((p) => ({ ...p, commentCount: commentCounts[p.id] || 0 }))
       .sort((a, b) => b.commentCount - a.commentCount);
-  }, [polls, commentCounts]);
+  }, [polls, commentCounts, constituencyFilter]);
 
   // Filter by search (title or id)
   const filtered = useMemo(() => {
@@ -57,6 +61,13 @@ export default function DiscussionPreview() {
         (p.id || '').toLowerCase().includes(q)
     );
   }, [discussions, search]);
+
+  // Reset an explicit selection when it falls outside the active constituency scope
+  useEffect(() => {
+    if (selectedPollId && !discussions.some((p) => p.id === selectedPollId)) {
+      setSelectedPollId(null);
+    }
+  }, [selectedPollId, discussions]);
 
   // The preview target: explicitly selected, else most active, else first filtered
   const previewPoll = useMemo(() => {
