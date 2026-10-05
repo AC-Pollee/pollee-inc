@@ -151,6 +151,9 @@ export default function Layout({ children, currentPageName }) {
                   className="h-16 w-auto rounded-full hidden dark:block"
                 />
               </Link>
+              <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500 select-none -ml-1">
+                v2026.10.05
+              </span>
             </div>
             
             <div className="flex items-center gap-1">
