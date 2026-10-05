@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { base44 } from '@/api/base44Client';
@@ -10,9 +10,11 @@ import { Vote, Plus, BarChart3, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PollCard from '@/components/polls/PollCard';
 import DiscussionPreview from '@/components/polls/DiscussionPreview';
+import ConstituencyFilter from '@/components/polls/ConstituencyFilter';
 
 export default function Home() {
   const { t } = useTranslation();
+  const [selectedConstituencies, setSelectedConstituencies] = useState([]);
   const { data: polls = [], isLoading: loadingPolls } = useQuery({
     queryKey: ['polls'],
     queryFn: () => base44.entities.Poll.list('-created_date')
@@ -24,6 +26,10 @@ export default function Home() {
   });
 
   const activePolls = polls.filter((p) => p.status === 'active' && (p.moderation_status === 'approved' || !p.moderation_status));
+
+  const filteredPolls = selectedConstituencies.length > 0
+    ? activePolls.filter((p) => selectedConstituencies.includes(p.franchise_id))
+    : activePolls;
 
   const getVoteCount = (pollId) => {
     const pollVotes = votes.filter((v) => v.poll_id === pollId && v.status === 'verified');
@@ -99,9 +105,12 @@ export default function Home() {
             <p className="text-slate-500 mt-1">{t('home.activePollsSub')}</p>
           </div>
           
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-100">
-            <Vote className="w-4 h-4 text-emerald-600" />
-            <span className="text-sm font-medium text-emerald-700">{t('home.activeCount', { count: activePolls.length })}</span>
+          <div className="flex items-center gap-3">
+            <ConstituencyFilter selected={selectedConstituencies} onChange={setSelectedConstituencies} />
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-100">
+              <Vote className="w-4 h-4 text-emerald-600" />
+              <span className="text-sm font-medium text-emerald-700">{t('home.activeCount', { count: filteredPolls.length })}</span>
+            </div>
           </div>
         </div>
         
@@ -116,7 +125,7 @@ export default function Home() {
               </div>
           )}
           </div> :
-        activePolls.length === 0 ?
+        filteredPolls.length === 0 ?
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -136,7 +145,7 @@ export default function Home() {
           </motion.div> :
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {activePolls.map((poll, index) =>
+            {filteredPolls.map((poll, index) =>
           <motion.div
             key={poll.id}
             initial={{ opacity: 0, y: 20 }}
