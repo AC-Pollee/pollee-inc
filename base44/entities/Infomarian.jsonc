@@ -26,6 +26,10 @@
       "type": "string",
       "description": "URL to an uploaded PDF version of the bio for public display"
     },
+    "declaration_of_interest": {
+      "type": "string",
+      "description": "Declaration of interest \u2014 any financial, professional, personal, or political interests that could create a conflict when moderating a poll. Reviewed against poll content during assignment."
+    },
     "expertise_areas": {
       "type": "array",
       "items": {

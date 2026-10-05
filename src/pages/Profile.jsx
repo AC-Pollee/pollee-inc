@@ -22,6 +22,7 @@ import ReputationBadge from '@/components/profile/ReputationBadge';
 import UserHelp from '@/components/help/UserHelp';
 import AvatarUploader from '@/components/profile/AvatarUploader';
 import ConstituencySelector from '@/components/profile/ConstituencySelector';
+import DeclarationOfInterest from '@/components/profile/DeclarationOfInterest';
 import { useTranslation } from 'react-i18next';
 
 export default function Profile() {
@@ -691,6 +692,11 @@ export default function Profile() {
                 </div>
               </CardContent>
             </Card>
+          )}
+
+          {/* Declaration of Interest — Infomarians only */}
+          {(user?.user_role === 'infomarian' || user?.user_role === 'franchise_manager' || user?.user_role === 'master_franchiser' || isSuperAdmin) && (
+            <DeclarationOfInterest user={user} />
           )}
 
           {/* Reputation Score */}

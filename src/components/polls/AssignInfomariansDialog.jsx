@@ -4,15 +4,16 @@ import { base44 } from '@/api/base44Client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Shield, CheckCircle2 } from 'lucide-react';
+import { Loader2, Shield, CheckCircle2, AlertTriangle, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export default function AssignInfomariansDialog({ poll, open, onOpenChange }) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [selectedIds, setSelectedIds] = useState([]);
+  const [scanResults, setScanResults] = useState({});
+  const [detailsFor, setDetailsFor] = useState(null);
 
   const { data: infomarians = [], isLoading } = useQuery({
     queryKey: ['infomarians-list'],
@@ -22,6 +23,7 @@ export default function AssignInfomariansDialog({ poll, open, onOpenChange }) {
   useEffect(() => {
     if (open && poll) {
       setSelectedIds(poll.assigned_infomarians || []);
+      setScanResults({});
     }
   }, [open, poll]);
 
@@ -35,17 +37,34 @@ export default function AssignInfomariansDialog({ poll, open, onOpenChange }) {
 
   const activeInfomarians = infomarians.filter(i => i.status !== 'inactive' && i.status !== 'suspended');
 
+  const runScan = async (infomarianId) => {
+    setScanResults(prev => ({ ...prev, [infomarianId]: { loading: true } }));
+    try {
+      const res = await base44.functions.invoke('conflict-of-interest-scan', {
+        infomarian_id: infomarianId,
+        poll_id: poll.id
+      });
+      setScanResults(prev => ({ ...prev, [infomarianId]: { data: res.data } }));
+    } catch (error) {
+      setScanResults(prev => ({ ...prev, [infomarianId]: { error: error.message || 'failed' } }));
+    }
+  };
+
   const toggle = (infomarianId) => {
-    setSelectedIds(prev =>
-      prev.includes(infomarianId)
-        ? prev.filter(id => id !== infomarianId)
-        : [...prev, infomarianId]
-    );
+    setSelectedIds(prev => {
+      if (prev.includes(infomarianId)) {
+        return prev.filter(id => id !== infomarianId);
+      }
+      // Newly selected — run the conflict-of-interest scan
+      if (!scanResults[infomarianId]) {
+        runScan(infomarianId);
+      }
+      return [...prev, infomarianId];
+    });
   };
 
   const handleSave = async () => {
     const previouslyAssigned = poll.assigned_infomarians || [];
-    // Determine which infomarians are newly assigned (not assigned before)
     const newlyAssignedIds = selectedIds.filter(id => !previouslyAssigned.includes(id));
     const newlyAssigned = newlyAssignedIds
       .map(id => infomarians.find(i => i.infomarian_id === id || i.id === id || i.user_email === id))
@@ -56,7 +75,6 @@ export default function AssignInfomariansDialog({ poll, open, onOpenChange }) {
       data: { assigned_infomarians: selectedIds }
     });
 
-    // Send an automatic email to each newly assigned infomarian
     newlyAssigned.forEach((inf) => {
       base44.integrations.Core.SendEmail({
         to: inf.user_email,
@@ -75,6 +93,62 @@ export default function AssignInfomariansDialog({ poll, open, onOpenChange }) {
     .map(id => infomarians.find(i => i.infomarian_id === id || i.id === id || i.user_email === id))
     .filter(Boolean)
     .map(i => i.full_name);
+
+  const renderScanBadge = (infomarianId) => {
+    const scan = scanResults[infomarianId];
+    if (!scan) return null;
+
+    if (scan.loading) {
+      return (
+        <div className="flex items-center gap-1 text-xs text-slate-400">
+          <Loader2 className="w-3 h-3 animate-spin" />
+          <span>{t('conflictScan.scanning')}</span>
+        </div>
+      );
+    }
+    if (scan.error) {
+      return <span className="text-xs text-slate-400">{t('conflictScan.scanFailed')}</span>;
+    }
+    const d = scan.data;
+    if (!d) return null;
+
+    if (!d.has_conflict && d.severity === 'none' && d.summary && d.summary.toLowerCase().includes('no declaration')) {
+      return (
+        <button
+          onClick={(e) => { e.stopPropagation(); setDetailsFor(infomarianId); }}
+          className="flex items-center gap-1 text-xs text-amber-600 hover:underline"
+        >
+          <AlertTriangle className="w-3 h-3" />
+          {t('conflictScan.noDeclaration')}
+        </button>
+      );
+    }
+    if (!d.has_conflict) {
+      return (
+        <div className="flex items-center gap-1 text-xs text-emerald-600">
+          <CheckCircle2 className="w-3 h-3" />
+          {t('conflictScan.noConflict')}
+        </div>
+      );
+    }
+
+    const tone = d.severity === 'high' ? 'text-red-600' : d.severity === 'medium' ? 'text-orange-600' : 'text-amber-600';
+    const label = d.severity === 'high' ? t('conflictScan.conflictHigh')
+      : d.severity === 'medium' ? t('conflictScan.conflictMedium')
+      : t('conflictScan.conflictLow');
+    return (
+      <button
+        onClick={(e) => { e.stopPropagation(); setDetailsFor(infomarianId); }}
+        className={`flex items-center gap-1 text-xs ${tone} hover:underline`}
+      >
+        <AlertTriangle className="w-3 h-3" />
+        {label}
+      </button>
+    );
+  };
+
+  const detailsScan = detailsFor ? scanResults[detailsFor] : null;
+  const detailsData = detailsScan?.data;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -119,6 +193,7 @@ export default function AssignInfomariansDialog({ poll, open, onOpenChange }) {
                         {inf.full_name}
                       </span>
                       <p className="text-xs text-slate-500 truncate">{inf.user_email}</p>
+                      {checked && renderScanBadge(inf.infomarian_id)}
                     </div>
                     <div className="flex flex-wrap gap-1 justify-end">
                       {(Array.isArray(inf.moderation_level) ? inf.moderation_level : inf.moderation_level ? [inf.moderation_level] : []).map(level => (
@@ -164,6 +239,59 @@ export default function AssignInfomariansDialog({ poll, open, onOpenChange }) {
           </Button>
         </DialogFooter>
       </DialogContent>
+
+      {/* Conflict of interest assessment details */}
+      <Dialog open={!!detailsFor} onOpenChange={() => setDetailsFor(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-amber-600" />
+              {t('conflictScan.detailsTitle')}
+            </DialogTitle>
+          </DialogHeader>
+          {detailsData ? (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <p className="text-slate-500">{t('conflictScan.infomarian')}</p>
+                  <p className="font-medium">{detailsData.infomarian_name || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-slate-500">{t('conflictScan.severity')}</p>
+                  <p className={`font-medium capitalize ${
+                    detailsData.severity === 'high' ? 'text-red-600' :
+                    detailsData.severity === 'medium' ? 'text-orange-600' :
+                    detailsData.severity === 'low' ? 'text-amber-600' : 'text-emerald-600'
+                  }`}>{detailsData.severity}</p>
+                </div>
+              </div>
+              <div>
+                <p className="text-sm text-slate-500 mb-1">{t('conflictScan.summary')}</p>
+                <p className="text-sm text-slate-800">{detailsData.summary}</p>
+              </div>
+              <div>
+                <p className="text-sm text-slate-500 mb-1">{t('conflictScan.flaggedInterests')}</p>
+                {detailsData.flagged_interests && detailsData.flagged_interests.length > 0 ? (
+                  <ul className="list-disc list-inside text-sm text-slate-800 space-y-1">
+                    {detailsData.flagged_interests.map((f, i) => <li key={i}>{f}</li>)}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-slate-500">{t('conflictScan.none')}</p>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center py-6">
+              <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDetailsFor(null)}>
+              {t('conflictScan.close')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Dialog>
   );
 }
