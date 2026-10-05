@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import ConversationList from '@/components/messages/ConversationList';
 import MessageThread from '@/components/messages/MessageThread';
 import NewConversationDialog from '@/components/messages/NewConversationDialog';
+import ShareConsentRequests from '@/components/messages/ShareConsentRequests';
 
 export default function Messages() {
   const { t } = useTranslation();
@@ -83,6 +84,7 @@ export default function Messages() {
           )}
         </div>
 
+        <ShareConsentRequests currentUser={currentUser} onSelectConversation={handleSelect} />
         <Card className="border-0 shadow-lg overflow-hidden">
           <div className="grid md:grid-cols-3 h-[70vh]">
             <div className={`md:border-r border-slate-200 flex flex-col ${selectedId ? 'hidden md:block' : 'block'}`}>

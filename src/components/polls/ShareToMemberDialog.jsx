@@ -54,7 +54,8 @@ export default function ShareToMemberDialog({ open, onOpenChange, comment, pollI
         poll_id: pollId,
         comment_id: comment?.id,
         subject: t('pollDiscussion.sharedCommentSubject', { defaultValue: 'Shared comment from discussion' }),
-        content: messageContent
+        content: messageContent,
+        note: note.trim()
       });
       if (res.data?.error) throw new Error(res.data.error);
     },

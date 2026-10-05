@@ -1240,6 +1240,18 @@
     "change": "Change",
     "directMessage": "Direct Message"
   },
+  "shareConsent": {
+    "title": "Comment share consent requests",
+    "requestFrom": "{{name}} wants to share your comment",
+    "shareTo": "Share to: {{name}}",
+    "note": "Note from requester:",
+    "accept": "Accept",
+    "reject": "Reject",
+    "reply": "Reply",
+    "accepted": "Comment shared",
+    "rejected": "Request declined",
+    "failed": "Could not respond to request"
+  },
   "userDirectory": {
     "title": "Users",
     "subtitle": "Member directory — edit basic details and constituency assignment. Bank details are never shown; only verification status is visible.",

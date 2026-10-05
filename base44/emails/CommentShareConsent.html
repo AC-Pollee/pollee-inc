@@ -1,0 +1,82 @@
+<mjml>
+  <mj-head>
+    <mj-title>Pollee — Consent requested to share your comment</mj-title>
+    <mj-preview>A member is asking your consent to share your comment</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="Arial, Helvetica, sans-serif" />
+      <mj-section background-color="#ffffff" padding="0 36px" />
+      <mj-text color="#0a0a0a" font-size="15px" line-height="1.6" padding="0" />
+      <mj-button background-color="#0a0a0a" border-radius="8px" font-weight="700" inner-padding="14px 28px" align="left" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#f4f4f5">
+    <mj-section background-color="#0a0a0a" padding="20px 36px">
+      <mj-column>
+        <mj-image src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69415ee66a530550d1e35558/646a8b925_pollee.png" alt="Pollee Inc" width="48px" padding="0" />
+        <mj-text color="#ffffff" font-size="20px" font-weight="700" padding="8px 0 0 0">
+          Pollee Inc
+        </mj-text>
+        <mj-text color="#ffffff" font-size="13px" padding="4px 0 0 0">
+          Real Democracy, one transaction at a time
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="40px 36px 12px">
+      <mj-column>
+        <mj-text font-size="28px" font-weight="700" line-height="1.2">
+          Consent requested
+        </mj-text>
+        <mj-text color="#737373" padding="8px 0 0 0">
+          {{requester_name}} is asking your consent to share your comment to {{target_name}}.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="12px 36px">
+      <mj-column>
+        <mj-text font-size="13px" color="#737373" padding="0 0 8px 0">
+          Your comment:
+        </mj-text>
+        <mj-text font-size="15px" padding="16px 24px" background-color="#f4f4f5" border-radius="8px" border="1px solid #e5e7eb">
+          {{comment_preview}}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="12px 36px">
+      <mj-column>
+        <mj-text font-size="13px" color="#737373" padding="0 0 4px 0">
+          Note from {{requester_name}}:
+        </mj-text>
+        <mj-text font-size="15px" padding="0">
+          {{requester_note}}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="24px 36px">
+      <mj-column>
+        <mj-button href="{{consent_url}}">
+          Review and respond
+        </mj-button>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="8px 36px 40px">
+      <mj-column>
+        <mj-text color="#737373" font-size="13px">
+          Click the button to open your messages, where you can accept or reject the request, or reply to {{requester_name}} directly.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#0a0a0a" padding="20px 36px">
+      <mj-column>
+        <mj-text color="#ffffff" font-size="12px" align="center">
+          Pollee Inc, Real Democracy, one transaction at a time
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

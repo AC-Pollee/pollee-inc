@@ -1,0 +1,121 @@
+{
+  "name": "ShareRequest",
+  "type": "object",
+  "description": "Pending consent request raised when a member wants to share another member's discussion comment. The originating commenter must accept or reject before the comment is delivered to the target.",
+  "properties": {
+    "requester_id": {
+      "type": "string",
+      "description": "User who requested to share the comment"
+    },
+    "requester_name": {
+      "type": "string"
+    },
+    "requester_email": {
+      "type": "string"
+    },
+    "commenter_id": {
+      "type": "string",
+      "description": "User who wrote the comment \u2014 their consent is required"
+    },
+    "commenter_email": {
+      "type": "string"
+    },
+    "target_id": {
+      "type": "string",
+      "description": "Member the comment is being shared to"
+    },
+    "target_name": {
+      "type": "string"
+    },
+    "target_email": {
+      "type": "string"
+    },
+    "comment_id": {
+      "type": "string",
+      "description": "The comment being shared"
+    },
+    "poll_id": {
+      "type": "string"
+    },
+    "comment_content": {
+      "type": "string",
+      "description": "Snapshot of the comment text at time of request"
+    },
+    "note": {
+      "type": "string",
+      "description": "Optional note from the requester to the commenter"
+    },
+    "conversation_id": {
+      "type": "string",
+      "description": "Conversation between requester and commenter for consent discussion"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted",
+        "rejected"
+      ],
+      "default": "pending"
+    },
+    "responded_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "delivery_conversation_id": {
+      "type": "string",
+      "description": "Conversation created with the target on acceptance"
+    }
+  },
+  "required": [
+    "requester_id",
+    "commenter_id",
+    "target_id",
+    "comment_id",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.requester_id": "{{user.id}}"
+        },
+        {
+          "data.commenter_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "data.requester_id": "{{user.id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "data.commenter_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.requester_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
