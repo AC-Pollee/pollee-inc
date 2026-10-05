@@ -287,6 +287,7 @@
     "infomarianIdPlaceholder": "Enter your Infomarian ID",
     "phoneNumber": "Phone Number",
     "bankNote": "We use banks transactions because they are secure, confidential and fully accountable by both Parties. It is also a serious crime to interfere with financial transactions",
+    "layerSuspended": "Transaction Layer Suspended — fields are not editable.",
     "bankDetails": "Australian Bank Details",
     "bsbNumber": "BSB Number",
     "accountNumber": "Account Number",

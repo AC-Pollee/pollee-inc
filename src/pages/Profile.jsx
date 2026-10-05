@@ -441,13 +441,17 @@ export default function Profile() {
                 />
               </div>
 
-              <div className="border-t border-slate-200 pt-6 mt-6">
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                  <p className="text-sm text-blue-800">
+              <div className="border-t border-slate-200 pt-6 mt-6 opacity-60 pointer-events-none">
+                <div className="bg-slate-100 border border-slate-300 rounded-lg p-4 mb-4">
+                  <p className="text-sm text-slate-500 font-semibold flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4" />
+                    {t('profile.layerSuspended')}
+                  </p>
+                  <p className="text-sm text-slate-500 mt-1">
                     {t('profile.bankNote')}
                   </p>
                 </div>
-                <h3 className="text-lg font-semibold text-slate-900 mb-4">{t('profile.bankDetails')}</h3>
+                <h3 className="text-lg font-semibold text-slate-400 mb-4">{t('profile.bankDetails')}</h3>
                 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
