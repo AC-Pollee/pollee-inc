@@ -2,10 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { createPageUrl } from '@/utils';
-import { Vote, BarChart3, Settings, User, Shield, AlertTriangle, ShieldAlert, MessageSquare } from 'lucide-react';
+import { Vote, BarChart3, Settings, User, Shield, AlertTriangle, ShieldAlert, MessageSquare, LogOut } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import ThemeLanguageToggle from '@/components/ThemeLanguageToggle';
 
 export default function Layout({ children, currentPageName }) {
@@ -220,6 +221,16 @@ export default function Layout({ children, currentPageName }) {
             </div>
           )}
           <ThemeLanguageToggle />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => base44.auth.logout()}
+            className="text-slate-600 hover:text-red-600 hover:bg-red-50 h-8 px-3"
+            title={t('nav.logout', { defaultValue: 'Log out' })}
+          >
+            <LogOut className="w-4 h-4" />
+            <span className="hidden sm:inline">{t('nav.logout', { defaultValue: 'Log out' })}</span>
+          </Button>
         </div>
         {children}
       </main>
