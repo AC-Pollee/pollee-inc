@@ -169,7 +169,7 @@ export default function Layout({ children, currentPageName }) {
                       flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all relative
                       ${isActive 
                         ? 'bg-indigo-50 text-indigo-700' 
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                        : 'text-slate-600 hover:text-indigo-700 hover:bg-indigo-50'
                       }
                     `}
                   >
