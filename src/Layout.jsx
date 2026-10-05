@@ -221,16 +221,15 @@ export default function Layout({ children, currentPageName }) {
             </div>
           )}
           <ThemeLanguageToggle />
-          <Button
-            variant="ghost"
-            size="sm"
+          <button
+            type="button"
             onClick={() => base44.auth.logout()}
-            className="text-slate-600 hover:text-red-600 hover:bg-red-50 h-8 px-3"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-red-600 hover:bg-red-50"
             title={t('nav.logout', { defaultValue: 'Log out' })}
           >
             <LogOut className="w-4 h-4" />
             <span className="hidden sm:inline">{t('nav.logout', { defaultValue: 'Log out' })}</span>
-          </Button>
+          </button>
         </div>
         {children}
       </main>
