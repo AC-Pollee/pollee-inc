@@ -224,7 +224,7 @@ export default function Layout({ children, currentPageName }) {
           <button
             type="button"
             onClick={() => base44.auth.logout()}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all text-red-600 bg-red-50"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all text-white bg-red-600"
             title={t('nav.logout', { defaultValue: 'Log out' })}
           >
             <LogOut className="w-4 h-4" />
