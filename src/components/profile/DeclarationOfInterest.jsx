@@ -14,43 +14,47 @@ export default function DeclarationOfInterest({ user }) {
   const queryClient = useQueryClient();
   const [declaration, setDeclaration] = useState('');
   const [savedMessage, setSavedMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isDirty, setIsDirty] = useState(false);
+  const queryKey = ['myInfomarian', user?.email];
 
   const { data: infomarian, isLoading } = useQuery({
-    queryKey: ['myInfomarian', user?.email],
+    queryKey,
     queryFn: async () => {
       if (!user?.email) return null;
-      const list = await base44.entities.Infomarian.list();
-      return list.find((i) => i.user_email === user.email) || null;
+      const list = await base44.entities.Infomarian.filter({ user_email: user.email });
+      return list[0] || null;
     },
     enabled: !!user?.email
   });
 
+  // Always show the stored declaration unless the user is mid-edit.
+  const storedDeclaration = infomarian?.declaration_of_interest || '';
   useEffect(() => {
-    if (infomarian) {
-      setDeclaration(infomarian.declaration_of_interest || '');
-    }
-    // Only sync from stored data when the Infomarian record changes (initial load / record switch),
-    // not on every query refetch — otherwise the user's unsaved edits get overwritten.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [infomarian?.id]);
+    if (!isDirty) setDeclaration(storedDeclaration);
+  }, [storedDeclaration, isDirty]);
 
   const save = useMutation({
     mutationFn: async ({ id, value }) => {
-      return await base44.entities.Infomarian.update(id, {
-        declaration_of_interest: value
-      });
+      await base44.entities.Infomarian.update(id, { declaration_of_interest: value });
+      // Read back to confirm the value actually persisted
+      const fresh = await base44.entities.Infomarian.get(id);
+      if ((fresh?.declaration_of_interest || '') !== value) {
+        throw new Error('The declaration did not save. Please try again.');
+      }
+      return fresh;
     },
-    onSuccess: (data) => {
-      // Explicitly set the declaration from the returned record so the textarea
-      // always reflects the persisted value immediately after saving.
-      setDeclaration(data?.declaration_of_interest ?? '');
-      queryClient.invalidateQueries({ queryKey: ['myInfomarian'] });
+    onSuccess: (fresh) => {
+      queryClient.setQueryData(queryKey, fresh);
+      setDeclaration(fresh.declaration_of_interest || '');
+      setIsDirty(false);
+      setErrorMessage('');
       setSavedMessage(t('declaration.saved'));
       setTimeout(() => setSavedMessage(''), 3000);
     },
     onError: (err) => {
       setSavedMessage('');
-      console.error('Declaration save failed:', err);
+      setErrorMessage(err?.message || 'Save failed. Please try again.');
     }
   });
 
@@ -93,6 +97,7 @@ export default function DeclarationOfInterest({ user }) {
               let value = e.target.value;
               if (value.length > 2000) value = value.slice(0, 2000);
               setDeclaration(value);
+              setIsDirty(true);
             }}
             placeholder={t('declaration.placeholder')}
             maxLength={2000}
@@ -113,7 +118,14 @@ export default function DeclarationOfInterest({ user }) {
           </Alert>
         )}
 
+        {errorMessage && (
+          <Alert variant="destructive">
+            <AlertDescription>{errorMessage}</AlertDescription>
+          </Alert>
+        )}
+
         <Button
+          type="button"
           onClick={handleSave}
           disabled={save.isPending}
           className="bg-amber-600 hover:bg-amber-700"
