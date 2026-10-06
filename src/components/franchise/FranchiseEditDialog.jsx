@@ -126,7 +126,7 @@ export default function FranchiseEditDialog({ franchise, open, onClose, onSave, 
                 id="edit-status"
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                className="w-full h-10 px-3 rounded-md border border-slate-200"
+                className="w-full h-10 px-3 rounded-md border border-slate-200 bg-white text-slate-900 dark:bg-slate-800 dark:text-slate-100"
               >
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>

@@ -827,8 +827,8 @@ export default function FranchiseAdmin() {
                           infomarian_id: generatedId
                         });
                       }}
-                      className="w-full h-10 px-3 rounded-md border border-slate-200"
-                    >
+                      className="w-full h-10 px-3 rounded-md border border-slate-200 bg-white text-slate-900 dark:bg-slate-800 dark:text-slate-100"
+                      >
                       <option value="">Select constituency...</option>
                       {franchises.map(f => (
                         <option key={f.id} value={f.id}>{f.franchise_name} ({f.id})</option>
