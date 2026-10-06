@@ -656,9 +656,9 @@ export default function FranchiseAdmin() {
                       <div className="space-y-2">
                         <div className="flex items-center gap-3">
                           <h3 className="text-lg font-semibold">{franchise.franchise_name}</h3>
-                          <Badge className={franchise.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'}>
+                          <span className={`inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-semibold capitalize ${franchise.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-700'}`}>
                             {franchise.status}
-                          </Badge>
+                          </span>
                         </div>
                         <p className="text-sm text-slate-600">
                           {franchise.state} • Primary: {franchise.postcode} • Serves: {franchise.postcodes_served?.join(', ')}
@@ -938,9 +938,9 @@ export default function FranchiseAdmin() {
                           <Badge className="bg-purple-100 text-purple-700">
                             {info.infomarian_id}
                           </Badge>
-                          <Badge className={info.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'}>
+                          <span className={`inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-semibold capitalize ${info.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-700'}`}>
                             {info.status}
-                          </Badge>
+                          </span>
                         </div>
                         <p className="text-sm text-slate-600">{info.user_email}</p>
                         <p className="text-sm text-slate-500">
