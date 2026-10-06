@@ -43,7 +43,7 @@ export default function UserDirectory() {
     return users.filter((u) => {
       if (roleFilter !== 'all' && (u.user_role || 'voter') !== roleFilter) return false;
       if (!q) return true;
-      const name = `${u.full_name} ${u.last_name}`.trim().toLowerCase();
+      const name = (u.full_name || '').trim().toLowerCase();
       return name.includes(q) || (u.email || '').toLowerCase().includes(q) || (u.phone_number || '').includes(q);
     });
   }, [users, search, roleFilter]);
@@ -110,7 +110,7 @@ export default function UserDirectory() {
                 {filtered.map((u) => (
                   <tr key={u.id} className="hover:bg-slate-50">
                     <td className="px-4 py-3">
-                      <p className="font-medium text-slate-900">{`${u.full_name} ${u.last_name}`.trim() || u.email}</p>
+                      <p className="font-medium text-slate-900">{u.full_name?.trim() || u.email}</p>
                       <p className="text-xs text-slate-500 md:hidden">{u.email}</p>
                     </td>
                     <td className="px-4 py-3 hidden md:table-cell">
