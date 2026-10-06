@@ -54,7 +54,8 @@ export default async function(req) {
       reputation_score: u.reputation_score ?? 0,
       reputation_level: u.reputation_level || 'newcomer',
       avatar_url: u.avatar_url || '',
-      created_date: u.created_date || ''
+      created_date: u.created_date || '',
+      last_active_at: u.last_active_at || ''
     }));
 
     return Response.json({ users: safe });

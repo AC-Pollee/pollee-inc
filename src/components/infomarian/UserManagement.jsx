@@ -13,6 +13,16 @@ import { AlertCircle, Search, Flag, CheckCircle2, User, MessageSquare, Pencil, S
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 
+// A user is "in session" if their presence heartbeat landed within the active
+// window used by the track-presence function (2 minutes).
+const ACTIVE_WINDOW_MS = 2 * 60 * 1000;
+const isUserActive = (u) => {
+  if (!u.last_active_at) return false;
+  const ts = new Date(u.last_active_at).getTime();
+  if (isNaN(ts)) return false;
+  return Date.now() - ts < ACTIVE_WINDOW_MS;
+};
+
 export default function UserManagement({ infomarian }) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
@@ -264,18 +274,29 @@ export default function UserManagement({ infomarian }) {
                 ) : assignedUsers.length === 0 ? (
                   <p className="text-sm text-slate-400 p-2">{t('userMgmt.noAssigned') || 'No members assigned to your constituency yet.'}</p>
                 ) : (
-                  assignedUsers.map((u) => (
+                  assignedUsers.map((u) => {
+                    const active = isUserActive(u);
+                    return (
                     <button
                       key={u.id}
                       type="button"
                       onClick={() => selectUserFull(u)}
-                      className="w-full flex items-center justify-between text-left px-3 py-2 rounded hover:bg-slate-100 transition"
+                      className={`
+                        w-full flex items-center justify-between text-left px-3 py-2 rounded transition
+                        ${active ? 'bg-emerald-50 ring-1 ring-emerald-200 hover:bg-emerald-100' : 'hover:bg-slate-100'}
+                      `}
                     >
-                      <div>
-                        <p className="text-sm font-medium text-slate-900">{(u.first_name || u.full_name)?.trim() || u.email}</p>
-                        <p className="text-xs text-slate-500">{u.email}</p>
+                      <div className="flex items-center gap-2">
+                        <span className={`w-2 h-2 rounded-full ${active ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
+                        <div>
+                          <p className={`text-sm font-medium ${active ? 'text-emerald-900' : 'text-slate-900'}`}>{(u.first_name || u.full_name)?.trim() || u.email}</p>
+                          <p className="text-xs text-slate-500">{u.email}</p>
+                        </div>
                       </div>
                       <div className="flex items-center gap-2">
+                        {active && (
+                          <Badge className="bg-emerald-500 text-white">In session</Badge>
+                        )}
                         {u.account_validated ? (
                           <Badge className="bg-emerald-100 text-emerald-700">Verified</Badge>
                         ) : (
@@ -284,7 +305,8 @@ export default function UserManagement({ infomarian }) {
                         <Badge variant="outline" className="capitalize">{u.user_role || 'voter'}</Badge>
                       </div>
                     </button>
-                  ))
+                    );
+                  })
                 )}
               </div>
               <p className="text-xs text-slate-400 mt-2">
@@ -295,20 +317,32 @@ export default function UserManagement({ infomarian }) {
 
           {searchResults.length > 0 && (
             <div className="space-y-1 border border-slate-200 rounded-md p-2 bg-white max-h-64 overflow-y-auto">
-              {searchResults.map((u) => (
+              {searchResults.map((u) => {
+                const active = isUserActive(u);
+                return (
                 <button
                   key={u.id}
                   type="button"
                   onClick={() => { setSelectedUser(u); setSearchResults([]); }}
-                  className="w-full flex items-center justify-between text-left px-3 py-2 rounded hover:bg-slate-100 transition"
+                  className={`
+                    w-full flex items-center justify-between text-left px-3 py-2 rounded transition
+                    ${active ? 'bg-emerald-50 ring-1 ring-emerald-200 hover:bg-emerald-100' : 'hover:bg-slate-100'}
+                  `}
                 >
-                  <div>
-                    <p className="text-sm font-medium text-slate-900">{u.name}</p>
-                    <p className="text-xs text-slate-500">{u.email}</p>
+                  <div className="flex items-center gap-2">
+                    <span className={`w-2 h-2 rounded-full ${active ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
+                    <div>
+                      <p className={`text-sm font-medium ${active ? 'text-emerald-900' : 'text-slate-900'}`}>{u.name || u.first_name || u.full_name}</p>
+                      <p className="text-xs text-slate-500">{u.email}</p>
+                    </div>
                   </div>
-                  <Badge variant="outline" className="capitalize">{u.role}</Badge>
+                  <div className="flex items-center gap-2">
+                    {active && <Badge className="bg-emerald-500 text-white">In session</Badge>}
+                    <Badge variant="outline" className="capitalize">{u.user_role || u.role || 'voter'}</Badge>
+                  </div>
                 </button>
-              ))}
+                );
+              })}
             </div>
           )}
 
@@ -317,7 +351,12 @@ export default function UserManagement({ infomarian }) {
               <CardContent className="pt-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h3 className="font-semibold text-lg">{selectedUser.first_name || selectedUser.name || selectedUser.full_name}</h3>
+                    <h3 className="font-semibold text-lg flex items-center gap-2">
+                      {selectedUser.first_name || selectedUser.name || selectedUser.full_name}
+                      {isUserActive(selectedUser) && (
+                        <Badge className="bg-emerald-500 text-white">In session</Badge>
+                      )}
+                    </h3>
                     <p className="text-sm text-slate-600">{selectedUser.email}</p>
                     {selectedUser.voter_id && (
                       <Badge className="mt-2">Voter ID: {selectedUser.voter_id}</Badge>

@@ -17,14 +17,17 @@ export default async function(req) {
       await base44.asServiceRole.entities.User.update(user.id, { confirmation_code: code });
 
       try {
+        const firstName = user.first_name || user.full_name || '';
         await base44.asServiceRole.integrations.Core.SendEmail({
           to: user.email,
           template_name: 'AccountConfirmation',
+          subject: 'Your Pollee confirmation code',
           variables: {
-            first_name: user.first_name || user.full_name || '',
+            first_name: firstName,
             confirmation_code: code,
             confirmation_url: 'https://pollee-app.org/NewUserRegistration'
-          }
+          },
+          text: `Hi ${firstName},\n\nYour Pollee account confirmation code is ${code}.\n\nReturn to Pollee and enter this code to finish setting up your account:\nhttps://pollee-app.org/NewUserRegistration\n\nIf you did not create a Pollee account, you can ignore this email.\n\nPollee Inc`
         });
       } catch (e) {
         // email send failed; code still stored so user can verify if email arrives
