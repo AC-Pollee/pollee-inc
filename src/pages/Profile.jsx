@@ -52,6 +52,7 @@ export default function Profile() {
   const [validationError, setValidationError] = useState('');
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [bioError, setBioError] = useState('');
+  const [formInitialized, setFormInitialized] = useState(false);
 
   const containsExternalUrl = (text) => {
     return /\b(https?:\/\/|www\.)\S+/i.test(text);
@@ -65,8 +66,11 @@ export default function Profile() {
     }
   });
 
+  // Only seed the form once, on first user data arrival. Re-running this on
+  // every `user` change would overwrite the user's in-progress edits whenever
+  // a background refetch (e.g. auto-validate) produces a new object reference.
   useEffect(() => {
-    if (user) {
+    if (user && !formInitialized) {
       setFormData({
         first_name: user.first_name || user.full_name || '',
         last_name: user.last_name || '',
@@ -80,8 +84,9 @@ export default function Profile() {
         account_name: user.account_name || '',
         personal_bio: user.personal_bio || ''
       });
+      setFormInitialized(true);
     }
-  }, [user]);
+  }, [user, formInitialized]);
 
   const updateProfile = useMutation({
     mutationFn: async (data) => {
@@ -91,6 +96,10 @@ export default function Profile() {
       queryClient.invalidateQueries(['currentUser']);
       setSuccessMessage(t('profile.profileUpdated'));
       setTimeout(() => setSuccessMessage(''), 3000);
+    },
+    onError: (error) => {
+      setSuccessMessage('');
+      setBioError(t('profile.profileUpdateFailed', { defaultValue: 'Failed to save profile. Please try again.' }));
     }
   });
 
