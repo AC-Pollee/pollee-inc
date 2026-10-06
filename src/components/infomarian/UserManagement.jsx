@@ -43,7 +43,7 @@ export default function UserManagement({ infomarian }) {
   };
   const startEdit = () => {
     setEditData({
-      full_name: selectedUser.name || selectedUser.full_name || '',
+      first_name: selectedUser.first_name || selectedUser.full_name || '',
       email: selectedUser.email || '',
       last_name: selectedUser.last_name || '',
       date_of_birth: selectedUser.date_of_birth || '',
@@ -272,7 +272,7 @@ export default function UserManagement({ infomarian }) {
                       className="w-full flex items-center justify-between text-left px-3 py-2 rounded hover:bg-slate-100 transition"
                     >
                       <div>
-                        <p className="text-sm font-medium text-slate-900">{u.full_name?.trim() || u.email}</p>
+                        <p className="text-sm font-medium text-slate-900">{(u.first_name || u.full_name)?.trim() || u.email}</p>
                         <p className="text-xs text-slate-500">{u.email}</p>
                       </div>
                       <div className="flex items-center gap-2">
@@ -317,7 +317,7 @@ export default function UserManagement({ infomarian }) {
               <CardContent className="pt-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h3 className="font-semibold text-lg">{selectedUser.name || selectedUser.full_name}</h3>
+                    <h3 className="font-semibold text-lg">{selectedUser.first_name || selectedUser.name || selectedUser.full_name}</h3>
                     <p className="text-sm text-slate-600">{selectedUser.email}</p>
                     {selectedUser.voter_id && (
                       <Badge className="mt-2">Voter ID: {selectedUser.voter_id}</Badge>
@@ -433,10 +433,10 @@ export default function UserManagement({ infomarian }) {
                     </p>
                     <div className="grid md:grid-cols-2 gap-3">
                       <div className="space-y-1">
-                        <Label className="text-xs">Full Name</Label>
+                        <Label className="text-xs">First Name</Label>
                         <Input
-                          value={editData.full_name || ''}
-                          onChange={(e) => setEditData({ ...editData, full_name: e.target.value })}
+                          value={editData.first_name || ''}
+                          onChange={(e) => setEditData({ ...editData, first_name: e.target.value })}
                         />
                       </div>
                       <div className="space-y-1">

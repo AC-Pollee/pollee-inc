@@ -193,7 +193,7 @@ export default function FranchiseAdmin() {
     if (email.length >= 2) {
       const matches = allUsers.filter(user => 
         user.email.toLowerCase().includes(email.toLowerCase()) ||
-        user.full_name?.toLowerCase().includes(email.toLowerCase())
+        (user.first_name || user.full_name || '')?.toLowerCase().includes(email.toLowerCase())
       ).slice(0, 5);
       setUserSearchResults(matches);
       setShowUserDropdown(matches.length > 0);
@@ -208,7 +208,7 @@ export default function FranchiseAdmin() {
     setInfomarianData({
       ...infomarianData, 
       user_email: user.email,
-      full_name: user.full_name || '',
+      full_name: `${user.first_name || user.full_name || ''} ${user.last_name || ''}`.trim(),
       infomarian_id: generatedId,
       selected_user_id: user.id
     });
@@ -221,7 +221,7 @@ export default function FranchiseAdmin() {
     
     if (name.length >= 2) {
       const matches = allUsers.filter(user => 
-        user.full_name?.toLowerCase().includes(name.toLowerCase()) ||
+        (user.first_name || user.full_name || '')?.toLowerCase().includes(name.toLowerCase()) ||
         user.email.toLowerCase().includes(name.toLowerCase())
       ).slice(0, 5);
       setNameSearchResults(matches);
@@ -237,7 +237,7 @@ export default function FranchiseAdmin() {
     setInfomarianData({
       ...infomarianData, 
       user_email: user.email,
-      full_name: user.full_name || '',
+      full_name: `${user.first_name || user.full_name || ''} ${user.last_name || ''}`.trim(),
       infomarian_id: generatedId,
       selected_user_id: user.id
     });
@@ -262,7 +262,7 @@ export default function FranchiseAdmin() {
     if (search.length >= 2) {
       const matches = allUsers.filter(user => 
         user.email.toLowerCase().includes(search.toLowerCase()) ||
-        user.full_name?.toLowerCase().includes(search.toLowerCase())
+        (user.first_name || user.full_name || '')?.toLowerCase().includes(search.toLowerCase())
       ).slice(0, 5);
       setOwnerSearchResults(matches);
       setShowOwnerDropdown(matches.length > 0);

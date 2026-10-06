@@ -7,7 +7,7 @@ function isAdmin(user) {
 
 // Fields a moderator is permitted to edit on a user record after creation.
 const EDITABLE_FIELDS = [
-  'full_name',
+  'first_name',
   'last_name',
   'date_of_birth',
   'phone_number',
@@ -85,7 +85,7 @@ export default async function(req) {
       changeEntries.push({
         date: now,
         changed_by_id: caller.id,
-        changed_by_name: caller.full_name || caller.email,
+        changed_by_name: caller.first_name || caller.full_name || caller.email,
         changed_by_role: moderatorRole,
         field,
         old_value: oldVal ?? null,

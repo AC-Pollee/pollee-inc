@@ -36,6 +36,7 @@ export default async function(req) {
     const safe = users.map(u => ({
       id: u.id,
       full_name: u.full_name || '',
+      first_name: u.first_name || u.full_name || '',
       last_name: u.last_name || '',
       email: u.email || '',
       date_of_birth: u.date_of_birth || '',
