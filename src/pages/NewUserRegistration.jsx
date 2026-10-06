@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -38,6 +38,15 @@ export default function NewUserRegistration() {
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me()
   });
+
+  // A returning user who has already filled in their profile but hasn't
+  // confirmed their code should land straight on the confirmation step,
+  // not the registration form.
+  useEffect(() => {
+    if (user && user.date_of_birth && user.last_name && !user.confirmation_verified) {
+      setConfirmationStep(true);
+    }
+  }, [user]);
 
   const { data: franchises = [] } = useQuery({
     queryKey: ['activeFranchises'],

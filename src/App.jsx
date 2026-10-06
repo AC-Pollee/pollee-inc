@@ -43,7 +43,7 @@ const AuthenticatedApp = () => {
   // Route new signups with an incomplete profile straight to registration
   useEffect(() => {
     if (authError || isLoadingAuth || isLoadingPublicSettings || !user) return;
-    const registrationComplete = user.date_of_birth && user.last_name;
+    const registrationComplete = user.date_of_birth && user.last_name && user.confirmation_verified;
     if (!registrationComplete &&
         location.pathname !== '/NewUserRegistration' &&
         location.pathname !== '/Profile') {
