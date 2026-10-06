@@ -46,7 +46,8 @@ export default function FranchiseManagerDashboard() {
   const myFranchisePolls = polls.filter(p => p.franchise_id === myFranchise?.id);
   const activePolls = myFranchisePolls.filter(p => p.status === 'active');
 
-  if (user?.user_role !== 'franchise_manager' && user?.email !== 'ac@acproductiondesign.com') {
+  const isAdminRole = user?.user_role === 'admin' || user?.user_role === 'franchise_manager' || user?.user_role === 'master_franchiser';
+  if (!isAdminRole && user?.email !== 'ac@acproductiondesign.com') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 p-8">
         <Card className="max-w-md mx-auto text-center">

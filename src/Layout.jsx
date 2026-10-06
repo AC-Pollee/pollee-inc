@@ -67,19 +67,10 @@ export default function Layout({ children, currentPageName }) {
       ];
     }
 
-    if (userRole === 'master_franchiser') {
+    if (userRole === 'admin' || userRole === 'master_franchiser' || userRole === 'franchise_manager') {
       return [
         { name: 'MasterFranchiserDashboard', icon: Shield, label: 'nav.dashboard' },
         { name: 'FranchiseAdmin', icon: Settings, label: 'nav.constituencies' },
-        { name: 'Admin', icon: Settings, label: 'nav.admin' },
-        { name: 'Profile', icon: User, label: 'nav.profile' },
-      ];
-    }
-
-    if (userRole === 'franchise_manager') {
-      return [
-        { name: 'FranchiseManagerDashboard', icon: Vote, label: 'nav.dashboard' },
-        { name: 'FranchiseAdmin', icon: Settings, label: 'nav.infomarians' },
         { name: 'Admin', icon: Settings, label: 'nav.admin' },
         { name: 'Profile', icon: User, label: 'nav.profile' },
       ];
@@ -121,7 +112,7 @@ export default function Layout({ children, currentPageName }) {
 
   // Moderation Alerts — visible only to Infomarians and Constituency administrators
   const isSuperAdmin = user?.email === 'ac@acproductiondesign.com';
-  const canModerate = isSuperAdmin || !!infomarian || !!ownedFranchise || user?.user_role === 'master_franchiser' || user?.user_role === 'franchise_manager';
+  const canModerate = isSuperAdmin || !!infomarian || !!ownedFranchise || user?.user_role === 'admin' || user?.user_role === 'master_franchiser' || user?.user_role === 'franchise_manager';
   if (canModerate) {
     navItems.push({ name: 'ModerationAlerts', icon: ShieldAlert, label: 'nav.moderation', badge: pendingCount > 0 ? pendingCount : null });
   }

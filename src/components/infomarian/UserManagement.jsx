@@ -162,7 +162,9 @@ export default function UserManagement({ infomarian }) {
   const canRevokeStrike = !!currentUser && (
     currentUser.email === 'ac@acproductiondesign.com' ||
     currentUser.role === 'admin' ||
-    currentUser.user_role === 'master_franchiser'
+    currentUser.user_role === 'admin' ||
+    currentUser.user_role === 'master_franchiser' ||
+    currentUser.user_role === 'franchise_manager'
   );
 
   const [revokingStrike, setRevokingStrike] = useState(null);
@@ -521,6 +523,7 @@ export default function UserManagement({ infomarian }) {
                         >
                           <option value="voter">Voter</option>
                           <option value="infomarian">Infomarian</option>
+                          <option value="admin">Admin</option>
                           <option value="franchise_manager">Constituency Manager</option>
                           <option value="master_franchiser">Master Franchiser</option>
                         </select>

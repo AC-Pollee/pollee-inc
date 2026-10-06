@@ -17,7 +17,7 @@ import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 
 const SUPERADMIN = 'ac@acproductiondesign.com';
-const ELEVATED = ['infomarian', 'master_franchiser', 'franchise_manager'];
+const ELEVATED = ['infomarian', 'admin', 'master_franchiser', 'franchise_manager'];
 
 function HelpNote({ children }) {
   return (

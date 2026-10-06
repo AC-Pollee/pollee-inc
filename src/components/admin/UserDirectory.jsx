@@ -93,6 +93,7 @@ export default function UserDirectory() {
             <option value="all">{t('userDirectory.allRoles')}</option>
             <option value="voter">{t('userDirectory.voter')}</option>
             <option value="infomarian">{t('userDirectory.infomarian')}</option>
+            <option value="admin">{t('userDirectory.admin', { defaultValue: 'Admin' })}</option>
             <option value="franchise_manager">{t('userDirectory.franchiseManager')}</option>
             <option value="master_franchiser">{t('userDirectory.masterFranchiser')}</option>
           </select>

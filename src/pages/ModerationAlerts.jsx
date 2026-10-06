@@ -39,7 +39,7 @@ export default function ModerationAlerts() {
   const isSuperAdmin = user?.email === 'ac@acproductiondesign.com';
   const myInfomarian = infomarians.find(i => i.user_email === user?.email);
   const myFranchise = franchises.find(f => f.owner_email === user?.email);
-  const isMaster = user?.user_role === 'master_franchiser';
+  const isMaster = user?.user_role === 'master_franchiser' || user?.user_role === 'admin';
   const isManager = user?.user_role === 'franchise_manager';
   const hasAccess = isSuperAdmin || isMaster || isManager || !!myInfomarian || !!myFranchise;
 

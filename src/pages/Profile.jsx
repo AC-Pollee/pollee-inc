@@ -723,8 +723,8 @@ export default function Profile() {
             </Card>
           )}
 
-          {/* Declaration of Interest — Infomarians only */}
-          {(user?.user_role === 'infomarian' || user?.user_role === 'franchise_manager' || user?.user_role === 'master_franchiser' || isSuperAdmin) && (
+          {/* Declaration of Interest — Infomarians and above */}
+          {(user?.user_role === 'infomarian' || user?.user_role === 'admin' || user?.user_role === 'franchise_manager' || user?.user_role === 'master_franchiser' || isSuperAdmin) && (
             <DeclarationOfInterest user={user} />
           )}
 
@@ -745,7 +745,7 @@ export default function Profile() {
           )}
 
           {/* Delegations Held Register - Visible to Infomarians and above */}
-          {(user?.user_role === 'infomarian' || user?.user_role === 'franchise_manager' || user?.user_role === 'master_franchiser' || isSuperAdmin) && (
+          {(user?.user_role === 'infomarian' || user?.user_role === 'admin' || user?.user_role === 'franchise_manager' || user?.user_role === 'master_franchiser' || isSuperAdmin) && (
             <DelegationsHeldRegister userId={user?.id} />
           )}
 

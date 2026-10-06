@@ -52,7 +52,8 @@ export default function MasterFranchiserDashboard() {
   const activePolls = polls.filter(p => p.status === 'active');
   const totalVotes = votes.filter(v => v.status === 'verified').reduce((sum, v) => sum + (v.delegated_votes_count || 1), 0);
 
-  if (user?.user_role !== 'master_franchiser' && user?.email !== 'ac@acproductiondesign.com') {
+  const isAdminRole = user?.user_role === 'admin' || user?.user_role === 'master_franchiser' || user?.user_role === 'franchise_manager';
+  if (!isAdminRole && user?.email !== 'ac@acproductiondesign.com') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 p-8">
         <Card className="max-w-md mx-auto text-center">

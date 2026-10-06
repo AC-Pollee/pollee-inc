@@ -24,7 +24,8 @@ export default function FranchiseAdmin() {
   });
   
   const isSuperAdmin = currentUser?.email === 'ac@acproductiondesign.com';
-  const hasAccess = isSuperAdmin || currentUser?.user_role === 'master_franchiser' || currentUser?.user_role === 'franchise_manager';
+  const isAdminRole = currentUser?.user_role === 'admin' || currentUser?.user_role === 'master_franchiser' || currentUser?.user_role === 'franchise_manager';
+  const hasAccess = isSuperAdmin || isAdminRole;
   const [activeTab, setActiveTab] = useState('franchises');
 
   // Franchise state

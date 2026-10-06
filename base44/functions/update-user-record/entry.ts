@@ -2,7 +2,11 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { canModerate } from '../../shared/moderation.ts';
 
 function isAdmin(user) {
-  return !!user && (user.role === 'admin' || user.email === 'ac@acproductiondesign.com');
+  if (!user) return false;
+  if (user.email === 'ac@acproductiondesign.com') return true;
+  if (user.role === 'admin') return true;
+  const ur = user.user_role;
+  return ur === 'admin' || ur === 'master_franchiser' || ur === 'franchise_manager';
 }
 
 // Fields a moderator is permitted to edit on a user record after creation.

@@ -29,7 +29,7 @@ export default async function(req) {
       if (u.user_role) return u.user_role;
       const email = (u.email || '').toLowerCase();
       if (infomarianEmails.has(email)) return 'infomarian';
-      if (franchiseOwnerEmails.has(email)) return 'franchise_manager';
+      if (franchiseOwnerEmails.has(email)) return 'admin';
       return 'voter';
     };
 

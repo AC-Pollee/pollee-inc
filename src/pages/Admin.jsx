@@ -84,18 +84,17 @@ export default function Admin() {
   // constituency managers, AND users who own a Constituency or have an Infomarian record.
   const isInfomarian = infomarians.some(i => i.user_email === currentUser?.email);
   const isFranchiseOwner = franchises.some(f => f.owner_email === currentUser?.email);
+  const isAdminRole = currentUser?.user_role === 'admin' || currentUser?.user_role === 'master_franchiser' || currentUser?.user_role === 'franchise_manager';
   const hasAccess = isSuperAdmin
     || currentUser?.role === 'admin'
-    || currentUser?.user_role === 'master_franchiser'
-    || currentUser?.user_role === 'franchise_manager'
+    || isAdminRole
     || isInfomarian
     || isFranchiseOwner;
 
   // Infomarian or above can enter/lock budget figures.
   const canBudget = isSuperAdmin
     || currentUser?.role === 'admin'
-    || currentUser?.user_role === 'master_franchiser'
-    || currentUser?.user_role === 'franchise_manager'
+    || isAdminRole
     || isInfomarian;
   
   const createPoll = useMutation({

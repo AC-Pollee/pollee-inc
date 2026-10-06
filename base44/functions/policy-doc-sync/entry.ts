@@ -22,7 +22,7 @@ export default async function(req) {
     if (caller) {
       const isAdmin = caller.email === SUPER_ADMIN_EMAIL
         || caller.role === 'admin'
-        || ['master_franchiser', 'franchise_manager', 'infomarian'].includes(caller.user_role);
+        || ['admin', 'master_franchiser', 'franchise_manager', 'infomarian'].includes(caller.user_role);
       if (!isAdmin) {
         return Response.json({ error: 'Not authorized' }, { status: 403 });
       }

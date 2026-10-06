@@ -18,7 +18,8 @@ async function canRevoke(base44, user) {
   if (!user) return false;
   if (user.email === 'ac@acproductiondesign.com') return true;
   if (user.role === 'admin') return true;
-  if (user.user_role === 'master_franchiser') return true;
+  const ur = user.user_role;
+  if (ur === 'admin' || ur === 'master_franchiser' || ur === 'franchise_manager') return true;
   return false;
 }
 

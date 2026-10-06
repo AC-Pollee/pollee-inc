@@ -7,6 +7,6 @@ export async function canModerate(base44, user) {
   if (user.email === 'ac@acproductiondesign.com') return true;
   if (user.role === 'admin') return true;
   const ur = user.user_role;
-  if (ur === 'master_franchiser' || ur === 'franchise_manager' || ur === 'infomarian') return true;
+  if (ur === 'admin' || ur === 'master_franchiser' || ur === 'franchise_manager' || ur === 'infomarian') return true;
   return false;
 }

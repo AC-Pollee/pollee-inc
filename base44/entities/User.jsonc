@@ -71,11 +71,12 @@
       "enum": [
         "voter",
         "infomarian",
+        "admin",
         "franchise_manager",
         "master_franchiser"
       ],
       "default": "voter",
-      "description": "User role in the system"
+      "description": "User role in the system. 'admin' is the consolidated constituency administrator (creates sub-constituencies, grants Infomarian status). 'master_franchiser' and 'franchise_manager' are legacy values treated as 'admin' for backward compatibility."
     },
     "language": {
       "type": "string",
@@ -204,7 +205,7 @@
           },
           "changed_by_name": {
             "type": "string",
-            "description": "Name of the moderator who made the change"
+            "description": "Name of the moderator"
           },
           "changed_by_role": {
             "type": "string",

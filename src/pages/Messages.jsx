@@ -53,7 +53,7 @@ export default function Messages() {
   const canModerate = !!currentUser && (
     currentUser.email === 'ac@acproductiondesign.com' ||
     currentUser.role === 'admin' ||
-    ['master_franchiser', 'franchise_manager', 'infomarian'].includes(currentUser.user_role) ||
+    ['admin', 'master_franchiser', 'franchise_manager', 'infomarian'].includes(currentUser.user_role) ||
     infomarians.some(i => i.user_email === currentUser.email) ||
     franchises.some(f => f.owner_email === currentUser.email)
   );

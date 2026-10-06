@@ -29,7 +29,7 @@ export default async function(req) {
     // fields on the caller's own User record, never from member-writable entities.
     const isSuperAdmin = caller.email === 'ac@acproductiondesign.com';
     const elevatedRole = caller.role === 'admin'
-      || ['master_franchiser', 'franchise_manager', 'infomarian'].includes(caller.user_role);
+      || ['admin', 'master_franchiser', 'franchise_manager', 'infomarian'].includes(caller.user_role);
     if (!isSuperAdmin && !elevatedRole) {
       return Response.json({ error: 'Not authorized to moderate' }, { status: 403 });
     }
