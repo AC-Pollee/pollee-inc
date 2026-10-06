@@ -377,10 +377,11 @@ export default function Profile() {
                   id="date_of_birth"
                   type="text"
                   placeholder="DD/MM/YYYY"
-                  value={formData.date_of_birth ? (() => {
-                    const [year, month, day] = formData.date_of_birth.split('-');
-                    return `${day}/${month}/${year}`;
-                  })() : ''}
+                  value={(() => {
+                    const dob = formData.date_of_birth || '';
+                    const m = dob.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+                    return m ? `${m[3]}/${m[2]}/${m[1]}` : dob;
+                  })()}
                   onChange={(e) => {
                     const input = e.target.value;
                     // Convert DD/MM/YYYY to YYYY-MM-DD for storage
