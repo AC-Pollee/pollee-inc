@@ -46,8 +46,9 @@ export default function FranchiseManagerDashboard() {
   const myFranchisePolls = polls.filter(p => p.franchise_id === myFranchise?.id);
   const activePolls = myFranchisePolls.filter(p => p.status === 'active');
 
-  const isAdminRole = user?.user_role === 'admin' || user?.user_role === 'franchise_manager' || user?.user_role === 'master_franchiser';
-  if (!isAdminRole && user?.email !== 'ac@acproductiondesign.com') {
+  // Admin dashboard — admin role only (legacy master_franchiser / franchise_manager treated as admin)
+  const isAdminRole = user?.user_role === 'admin' || user?.user_role === 'master_franchiser' || user?.user_role === 'franchise_manager';
+  if (!isAdminRole) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 p-8">
         <Card className="max-w-md mx-auto text-center">
@@ -81,7 +82,7 @@ export default function FranchiseManagerDashboard() {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <Building2 className="w-8 h-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-slate-900">{t('franchiseManagerDash.title')}</h1>
+            <h1 className="text-3xl font-bold text-slate-900">{t('adminDash.title', { defaultValue: 'Admin Dashboard' })}</h1>
           </div>
           <p className="text-slate-500">{myFranchise.franchise_name} • {myFranchise.postcode}</p>
         </div>

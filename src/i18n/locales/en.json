@@ -47,6 +47,8 @@
     "profile": "Profile",
     "dashboard": "Dashboard",
     "master": "Master",
+    "adminDashboard": "Admin",
+    "infomarianDashboard": "Infomarian",
     "constituencies": "Constituencies",
     "infomarians": "Infomarians",
     "report": "Report",
@@ -648,9 +650,9 @@
     "noItemsPending": "No items pending moderation"
   },
   "franchiseManagerDash": {
-    "title": "Constituency Manager Dashboard",
+    "title": "Admin Dashboard",
     "accessDenied": "Access Denied",
-    "accessDeniedDesc": "You don't have Constituency Manager access.",
+    "accessDeniedDesc": "You don't have Admin access.",
     "noConstituency": "No Constituency Assigned",
     "noConstituencyDesc": "Contact your administrator to assign a constituency to your account.",
     "myInfomarians": "My Infomarians",

@@ -58,10 +58,11 @@ export default function Layout({ children, currentPageName }) {
 
     if (isSuperAdmin) {
       return [
-        { name: 'InfomarianDashboard', icon: Shield, label: 'nav.dashboard', badge: pendingCount > 0 ? pendingCount : null },
+        { name: 'MasterFranchiserDashboard', icon: Shield, label: 'nav.master' },
+        { name: 'FranchiseManagerDashboard', icon: Shield, label: 'nav.adminDashboard' },
+        { name: 'InfomarianDashboard', icon: Shield, label: 'nav.infomarianDashboard', badge: pendingCount > 0 ? pendingCount : null },
         { name: 'Home', icon: Vote, label: 'nav.polls' },
         { name: 'Results', icon: BarChart3, label: 'nav.results' },
-        { name: 'MasterFranchiserDashboard', icon: Shield, label: 'nav.master' },
         { name: 'Admin', icon: Settings, label: 'nav.admin' },
         { name: 'Profile', icon: User, label: 'nav.profile' },
       ];
@@ -69,7 +70,7 @@ export default function Layout({ children, currentPageName }) {
 
     if (userRole === 'admin' || userRole === 'master_franchiser' || userRole === 'franchise_manager') {
       return [
-        { name: 'MasterFranchiserDashboard', icon: Shield, label: 'nav.dashboard' },
+        { name: 'FranchiseManagerDashboard', icon: Shield, label: 'nav.adminDashboard' },
         { name: 'FranchiseAdmin', icon: Settings, label: 'nav.constituencies' },
         { name: 'Admin', icon: Settings, label: 'nav.admin' },
         { name: 'Profile', icon: User, label: 'nav.profile' },
@@ -78,7 +79,7 @@ export default function Layout({ children, currentPageName }) {
 
     if (userRole === 'infomarian' || infomarian) {
       return [
-        { name: 'InfomarianDashboard', icon: Shield, label: 'nav.dashboard', badge: pendingCount > 0 ? pendingCount : null },
+        { name: 'InfomarianDashboard', icon: Shield, label: 'nav.infomarianDashboard', badge: pendingCount > 0 ? pendingCount : null },
         { name: 'Home', icon: Vote, label: 'nav.polls' },
         { name: 'Admin', icon: Settings, label: 'nav.admin' },
         { name: 'Results', icon: BarChart3, label: 'nav.results' },
@@ -118,7 +119,7 @@ export default function Layout({ children, currentPageName }) {
   }
 
   // Administration tools live on the lower bar; everything else stays on the top line
-  const adminToolNames = ['InfomarianDashboard', 'MasterFranchiserDashboard', 'Admin'];
+  const adminToolNames = ['InfomarianDashboard', 'MasterFranchiserDashboard', 'FranchiseManagerDashboard', 'Admin'];
   const publicNavItems = navItems.filter(i => !adminToolNames.includes(i.name));
   const adminNavItems = navItems.filter(i => adminToolNames.includes(i.name));
 
