@@ -16,6 +16,22 @@ export default async function(req) {
     if (!allowed) return Response.json({ error: 'Moderators only' }, { status: 403 });
 
     const users = await base44.asServiceRole.entities.User.list();
+    const infomarians = await base44.asServiceRole.entities.Infomarian.list();
+    const franchises = await base44.asServiceRole.entities.Franchise.list();
+
+    const infomarianEmails = new Set(infomarians.map(i => i.user_email).filter(Boolean));
+    const franchiseOwnerEmails = new Set(franchises.map(f => f.owner_email).filter(Boolean));
+
+    // Derive the effective role: an explicit user_role wins, otherwise infer
+    // from the Infomarian / Franchise records so the directory reflects reality
+    // even when user_role was never set at creation time.
+    const deriveRole = (u) => {
+      if (u.user_role && u.user_role !== 'voter') return u.user_role;
+      const email = (u.email || '').toLowerCase();
+      if (infomarianEmails.has(email)) return 'infomarian';
+      if (franchiseOwnerEmails.has(email)) return 'franchise_manager';
+      return u.user_role || 'voter';
+    };
 
     const safe = users.map(u => ({
       id: u.id,
@@ -25,7 +41,7 @@ export default async function(req) {
       date_of_birth: u.date_of_birth || '',
       phone_number: u.phone_number || '',
       language: u.language || 'en',
-      user_role: u.user_role || 'voter',
+      user_role: deriveRole(u),
       role: u.role || '',
       franchise_id: u.franchise_id || '',
       infomarian_id: u.infomarian_id || '',
