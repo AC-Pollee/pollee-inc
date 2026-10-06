@@ -25,6 +25,11 @@ import ConstituencySelector from '@/components/profile/ConstituencySelector';
 import DeclarationOfInterest from '@/components/profile/DeclarationOfInterest';
 import { useTranslation } from 'react-i18next';
 
+// Temporarily suspend the validation deposit requirement.
+// When true, users are auto-validated on profile load and the deposit card is hidden.
+// Set back to false to restore the deposit flow.
+const VALIDATION_DEPOSIT_SUSPENDED = true;
+
 export default function Profile() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
@@ -125,8 +130,18 @@ export default function Profile() {
   const age = calculateAge(user?.date_of_birth);
   const isSuperAdmin = user?.email === 'ac@acproductiondesign.com';
   const isProfileComplete = isSuperAdmin || (user?.last_name && user?.infomarian_id && user?.date_of_birth);
-  const isAccountValidated = isSuperAdmin || user?.account_validated || false;
+  const isAccountValidated = VALIDATION_DEPOSIT_SUSPENDED || isSuperAdmin || user?.account_validated || false;
   const validationInitiatedState = user?.validation_initiated || false;
+
+  // Auto-validate users while the deposit requirement is suspended, so they get a
+  // voter ID and are treated as validated members app-wide without making a deposit.
+  useEffect(() => {
+    if (!VALIDATION_DEPOSIT_SUSPENDED || !user || isSuperAdmin || user.account_validated) return;
+    const voterId = `V${Date.now()}${Math.floor(Math.random() * 10000)}`;
+    base44.auth.updateMe({ account_validated: true, voter_id: voterId }).then(() => {
+      queryClient.invalidateQueries(['currentUser']);
+    });
+  }, [user, isSuperAdmin, queryClient]);
 
   const handleInitiateValidation = async () => {
     // Mark that user has made the 0.55 AUD deposit
