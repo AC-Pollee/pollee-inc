@@ -61,7 +61,7 @@ Every user has a **Profile** page showing:
 - Vote history (polls you have voted on).
 - Delegations you hold (votes others have delegated to you) and delegations you have made.
 - Conduct strikes, if any.
-- **Declaration of Interest** (Infomarians only) — any financial, professional, personal, or political interests that could create a conflict when moderating a poll.
+- **Declaration of Interest** (Infomarians only) — any financial, professional, personal, or political interests that could create a conflict when moderating a poll. Edits are saved with explicit confirmation; if a save fails, a red error message appears under the text box.
 - **Australian Bank Details** — greyed out and non-editable with a "Transaction Layer Suspended" notice.
 
 ### Important Documents
@@ -425,7 +425,7 @@ Reputation reflects your contribution to the community. It influences your privi
 
 ### Reputation Levels
 
-Your reputation score maps to a badge shown on your profile and next to your comments. Higher reputation signals a trusted, active member of the community.
+Your reputation score maps to a badge shown on your profile and next to your comments. Each reputation level displays its own icon. Higher reputation signals a trusted, active member of the community.
 
 ### Suspended Users
 
