@@ -11,6 +11,10 @@
       "format": "date-time",
       "description": "ISO timestamp of the user's most recent presence heartbeat, used to count active sessions"
     },
+    "first_name": {
+      "type": "string",
+      "description": "First name of the user (custom field, settable via updateMe \u2014 unlike the built-in full_name which the platform auto-populates from the email prefix)"
+    },
     "last_name": {
       "type": "string",
       "description": "Last name of the user"

@@ -67,7 +67,7 @@ export default function DelegationManager({ user }) {
     e.preventDefault();
     createDelegation.mutate({
       delegator_user_id: user.id,
-      delegator_full_name: `${user.full_name} ${user.last_name || ''}`.trim(),
+      delegator_full_name: `${user.first_name || user.full_name || ''} ${user.last_name || ''}`.trim(),
       delegate_user_id: formData.delegate_user_id,
       delegate_full_name: formData.delegate_full_name,
       delegation_type: formData.delegation_type,

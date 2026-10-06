@@ -20,7 +20,7 @@ export default function UserEditDialog({ user, open, onOpenChange, franchises, o
   useEffect(() => {
     if (user) {
       setForm({
-        full_name: user.full_name || '',
+        first_name: user.first_name || user.full_name || '',
         last_name: user.last_name || '',
         phone_number: user.phone_number || '',
         language: user.language || 'en',
@@ -78,7 +78,7 @@ export default function UserEditDialog({ user, open, onOpenChange, franchises, o
         <div className="grid md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <Label className="text-xs">{t('userDirectory.firstName')}</Label>
-            <Input value={form.full_name || ''} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
+            <Input value={form.first_name || ''} onChange={(e) => setForm({ ...form, first_name: e.target.value })} />
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs">{t('userDirectory.lastName')}</Label>

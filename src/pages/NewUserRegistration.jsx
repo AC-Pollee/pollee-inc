@@ -17,7 +17,7 @@ export default function NewUserRegistration() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
-    full_name: '',
+    first_name: '',
     last_name: '',
     date_of_birth: '',
     franchise_id: '',
@@ -64,14 +64,16 @@ export default function NewUserRegistration() {
   const register = useMutation({
     mutationFn: async (data) => {
       await base44.auth.updateMe(data);
-      // Alert this constituency's Infomarians of the new constituent and
-      // request they assign a supporting Infomarian to the user.
+      // Notify this constituency's Infomarians that a new constituent has
+      // registered. This is a notification only — a supporting Infomarian is
+      // assigned to the user by the constituency administrator or above, not
+      // by the Infomarians receiving this notice.
       const constituencyInfomarians = allInfomarians.filter(
         i => i.franchise_id === data.franchise_id && i.status === 'active'
       );
       if (constituencyInfomarians.length > 0) {
-        const constituentName = `${data.full_name} ${data.last_name}`.trim();
-        const description = `New constituent ${constituentName} (${user?.email}) has registered and selected your constituency. Please review their details and assign a supporting Infomarian to their account.`;
+        const constituentName = `${data.first_name} ${data.last_name}`.trim();
+        const description = `New constituent ${constituentName} (${user?.email}) has registered and selected your constituency. A supporting Infomarian will be assigned to their account by the constituency administrator.`;
         await base44.entities.InfomarianTask.bulkCreate(
           constituencyInfomarians.map(i => ({
             assigned_to_id: i.infomarian_id,
@@ -79,9 +81,9 @@ export default function NewUserRegistration() {
             assigned_by_id: 'system',
             assigned_by_name: 'Pollee System',
             task_type: 'user_support',
-            title: 'New constituent — assignment required',
+            title: 'New constituent registration',
             description,
-            priority: 'medium',
+            priority: 'low',
             status: 'pending',
             related_entity_type: 'user',
             related_entity_id: user?.id || ''
@@ -325,13 +327,13 @@ export default function NewUserRegistration() {
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="full_name" className="text-base font-semibold">
+                  <Label htmlFor="first_name" className="text-base font-semibold">
                     {t('newUserReg.firstName')} <span className="text-red-500">*</span>
                   </Label>
                   <Input
-                    id="full_name"
-                    value={formData.full_name}
-                    onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                    id="first_name"
+                    value={formData.first_name}
+                    onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
                     placeholder="Enter your first name"
                     className="h-12 rounded-lg"
                     required

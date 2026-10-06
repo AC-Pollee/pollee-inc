@@ -21,7 +21,7 @@ export default async function(req) {
           to: user.email,
           template_name: 'AccountConfirmation',
           variables: {
-            first_name: user.full_name || '',
+            first_name: user.first_name || user.full_name || '',
             confirmation_code: code,
             confirmation_url: 'https://pollee-app.org/NewUserRegistration'
           }

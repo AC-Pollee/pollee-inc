@@ -34,7 +34,7 @@ export default function Profile() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
-    full_name: '',
+    first_name: '',
     last_name: '',
     email: '',
     date_of_birth: '',
@@ -68,7 +68,7 @@ export default function Profile() {
   useEffect(() => {
     if (user) {
       setFormData({
-        full_name: user.full_name || '',
+        first_name: user.first_name || user.full_name || '',
         last_name: user.last_name || '',
         email: user.email || '',
         date_of_birth: user.date_of_birth || '',
@@ -102,7 +102,7 @@ export default function Profile() {
     }
     setBioError('');
     updateProfile.mutate({
-      full_name: formData.full_name,
+      first_name: formData.first_name,
       last_name: formData.last_name,
       date_of_birth: formData.date_of_birth,
       infomarian_id: formData.infomarian_id,
@@ -342,13 +342,13 @@ export default function Profile() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="full_name" className="text-base font-semibold">
+                  <Label htmlFor="first_name" className="text-base font-semibold">
                     {t('profile.firstName')} <span className="text-red-500">*</span>
                   </Label>
                   <Input
-                    id="full_name"
-                    value={formData.full_name?.split(' ')[0] || formData.full_name}
-                    onChange={(e) => setFormData({...formData, full_name: e.target.value})}
+                    id="first_name"
+                    value={formData.first_name}
+                    onChange={(e) => setFormData({...formData, first_name: e.target.value})}
                     placeholder={t('profile.firstNamePlaceholder')}
                     className="h-12 rounded-lg"
                     required

@@ -457,7 +457,7 @@ export default function FranchiseAdmin() {
                             onClick={() => handleSelectOwner(user)}
                             className="w-full text-left px-4 py-3 hover:bg-indigo-50 transition-colors border-b border-slate-100 last:border-b-0"
                           >
-                            <p className="font-medium text-slate-900">{user.full_name || 'No name'}</p>
+                            <p className="font-medium text-slate-900">{user.first_name || user.full_name || 'No name'}</p>
                             <p className="text-sm text-slate-500">{user.email}</p>
                             {user.phone_number && (
                               <p className="text-xs text-slate-400">{user.phone_number}</p>
@@ -736,7 +736,7 @@ export default function FranchiseAdmin() {
                             onClick={() => handleSelectUserByName(user)}
                             className="w-full text-left px-4 py-3 hover:bg-indigo-50 transition-colors border-b border-slate-100 last:border-b-0"
                           >
-                            <p className="font-medium text-slate-900">{user.full_name || 'No name'}</p>
+                            <p className="font-medium text-slate-900">{user.first_name || user.full_name || 'No name'}</p>
                             <p className="text-sm text-slate-500">{user.email}</p>
                             {user.user_role && (
                               <Badge className="mt-1 text-xs bg-slate-100 text-slate-600">
@@ -774,7 +774,7 @@ export default function FranchiseAdmin() {
                             onClick={() => handleSelectUser(user)}
                             className="w-full text-left px-4 py-3 hover:bg-indigo-50 transition-colors border-b border-slate-100 last:border-b-0"
                           >
-                            <p className="font-medium text-slate-900">{user.full_name || 'No name'}</p>
+                            <p className="font-medium text-slate-900">{user.first_name || user.full_name || 'No name'}</p>
                             <p className="text-sm text-slate-500">{user.email}</p>
                             {user.user_role && (
                               <Badge className="mt-1 text-xs bg-slate-100 text-slate-600">
