@@ -28,16 +28,13 @@ const uid = () =>
     ? crypto.randomUUID()
     : Date.now().toString(36) + Math.random().toString(36).slice(2);
 
+// Derive moderator status ONLY from platform-protected fields on the user's
+// own User record — never from member-writable Infomarian/Franchise entities.
 async function isInfomarianOrAbove(base44: any, user: any): Promise<boolean> {
   if (user?.email === SUPERADMIN) return true;
   if (ELEVATED_ROLES.includes(user?.user_role)) return true;
   if (user?.role === "admin") return true;
-  try {
-    const records = await base44.entities.Infomarian.filter({ user_email: user.email });
-    return Array.isArray(records) && records.length > 0;
-  } catch {
-    return false;
-  }
+  return false;
 }
 
 // A nominated budget editor (Poll.budget_editors) may co-edit figures on lines, but cannot

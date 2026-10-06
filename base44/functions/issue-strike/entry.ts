@@ -25,18 +25,17 @@ export default async function(req) {
       return Response.json({ error: 'target_id and reason are required' }, { status: 400 });
     }
 
-    // Verify caller has moderation rights
+    // Verify caller has moderation rights — derive ONLY from platform-protected
+    // fields on the caller's own User record, never from member-writable entities.
     const isSuperAdmin = caller.email === 'ac@acproductiondesign.com';
-    const [infomarians, franchises] = await Promise.all([
-      base44.asServiceRole.entities.Infomarian.list(),
-      base44.asServiceRole.entities.Franchise.list()
-    ]);
-    const isInfomarian = infomarians.some(i => i.user_email === caller.email);
-    const isConstituencyOwner = franchises.some(f => f.owner_email === caller.email);
-    const canModerate = isSuperAdmin || isInfomarian || isConstituencyOwner
-      || caller.user_role === 'master_franchiser' || caller.user_role === 'franchise_manager';
-    if (!canModerate) return Response.json({ error: 'Not authorized to moderate' }, { status: 403 });
+    const elevatedRole = caller.role === 'admin'
+      || ['master_franchiser', 'franchise_manager', 'infomarian'].includes(caller.user_role);
+    if (!isSuperAdmin && !elevatedRole) {
+      return Response.json({ error: 'Not authorized to moderate' }, { status: 403 });
+    }
 
+    // Look up the caller's Infomarian profile for the moderator ID stamp (read-only)
+    const infomarians = await base44.asServiceRole.entities.Infomarian.list();
     const myInfomarian = infomarians.find(i => i.user_email === caller.email);
     const moderatorId = myInfomarian?.infomarian_id || caller.email;
     const moderatorName = caller.full_name || caller.email;

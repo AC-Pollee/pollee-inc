@@ -25,6 +25,11 @@
     "target_user_email": {
       "type": "string",
       "description": "Email of the comment author who receives the clap"
+    },
+    "awarded": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the +1 reputation point for this clap has already been paid to the comment author. Prevents repeatable reputation farming."
     }
   },
   "required": [

@@ -20,7 +20,7 @@ import MemberForwardContent from './MemberForwardContent';
 import ShareButtons from './ShareButtons';
 import ShareToMemberDialog from './ShareToMemberDialog';
 import { useToast } from "@/components/ui/use-toast";
-import { awardReputation } from '@/lib/reputation';
+
 import { useTranslation } from 'react-i18next';
 
 export default function PollDiscussion({ pollId, currentUser, userAge, isClosed = false, poll }) {
@@ -97,7 +97,7 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
   const clapsForComment = (commentId) => claps.filter(c => c.comment_id === commentId);
 
   const addComment = useMutation({
-    mutationFn: (data) => base44.entities.Comment.create(data),
+    mutationFn: (data) => base44.functions.invoke('post-comment', data).then(res => res.data?.comment || res.comment),
     onSuccess: (comment) => {
       queryClient.invalidateQueries(['comments', pollId]);
       queryClient.invalidateQueries(['poll-comments', pollId]);
@@ -109,10 +109,6 @@ export default function PollDiscussion({ pollId, currentUser, userAge, isClosed 
         title: "Comment posted",
         description: "Your comment is now visible to everyone.",
       });
-      // Award +3 reputation to the author for contributing to the discussion
-      if (comment?.user_email) {
-        awardReputation(comment.user_email, 3, 'approved_comments').catch(() => {});
-      }
     },
     onError: (error) => {
       toast({

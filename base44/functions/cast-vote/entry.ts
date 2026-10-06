@@ -2,11 +2,12 @@
  * Cast a vote with server-side validation.
  *
  * Authenticates the caller, verifies each claimed delegation against the
- * Delegation entity for that caller and poll, and sets the vote status
- * server-side instead of trusting client-supplied fields.
+ * Delegation entity for that caller and poll, sets the vote status
+ * server-side, and awards +5 reputation for verified votes.
  */
 
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { applyReputation } from '../../shared/reputation.ts';
 
 export default async function(req) {
   try {
@@ -83,6 +84,11 @@ export default async function(req) {
       destination_account_bsb: destination_account_bsb || '',
       destination_account_number: destination_account_number || ''
     });
+
+    // Award +5 reputation to the voter (server-side, idempotent via vote record)
+    if (!isVoteChange) {
+      await applyReputation(base44, caller.email, 5, 'verified_votes').catch(() => {});
+    }
 
     return Response.json({ ok: true, vote });
   } catch (error) {

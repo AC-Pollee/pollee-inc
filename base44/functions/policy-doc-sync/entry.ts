@@ -11,6 +11,23 @@ export default async function(req) {
     const meta = data._provider_meta || {};
     const state = meta['x-goog-resource-state'];
 
+    // Authenticate: allow either (a) an admin/moderator manual invocation, or
+    // (b) a platform-workflow invocation carrying Google Drive webhook metadata.
+    // Anonymous direct calls are rejected to prevent unauthenticated sync spam.
+    const caller = await base44.auth.me().catch(() => null);
+    const isWebhook = !!state;
+    if (!caller && !isWebhook) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (caller) {
+      const isAdmin = caller.email === SUPER_ADMIN_EMAIL
+        || caller.role === 'admin'
+        || ['master_franchiser', 'franchise_manager', 'infomarian'].includes(caller.user_role);
+      if (!isAdmin) {
+        return Response.json({ error: 'Not authorized' }, { status: 403 });
+      }
+    }
+
     // Google Drive sends a 'sync' ack on first webhook registration — nothing to process
     if (state === 'sync') return Response.json({ status: 'sync_ack' });
 
