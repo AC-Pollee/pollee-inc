@@ -14,7 +14,8 @@ function levelFor(score) {
 }
 
 // Awards +1 reputation to the author of a clapped comment.
-// Runs as the service role so any logged-in user's clap counts (bypasses User RLS).
+// Verifies a Clap record by the caller exists for this comment (server-side
+// deduplication), and rejects self-claps.
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
@@ -29,6 +30,20 @@ export default async function(req) {
 
     const comment = await base44.asServiceRole.entities.Comment.get(comment_id);
     if (!comment) return Response.json({ error: 'Comment not found' }, { status: 404 });
+
+    // Reject self-claps
+    if (comment.user_email && comment.user_email === caller.email) {
+      return Response.json({ ok: true, awarded: false, note: 'cannot clap own comment' });
+    }
+
+    // Verify a Clap record by this caller exists for this comment
+    const claps = await base44.asServiceRole.entities.Clap.filter({
+      comment_id,
+      clapper_user_id: caller.id
+    });
+    if (!claps || claps.length === 0) {
+      return Response.json({ error: 'No clap record found for this caller and comment' }, { status: 403 });
+    }
 
     const authorEmail = comment.user_email;
     if (!authorEmail) {

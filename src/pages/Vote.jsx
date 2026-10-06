@@ -98,7 +98,8 @@ export default function Vote() {
   
   const submitVote = useMutation({
     mutationFn: async (voteData) => {
-      return await base44.entities.Vote.create(voteData);
+      const res = await base44.functions.invoke('cast-vote', voteData);
+      return res.data?.vote;
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['votes']);

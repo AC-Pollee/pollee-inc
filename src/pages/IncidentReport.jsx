@@ -109,29 +109,19 @@ export default function IncidentReport() {
         forwarded_to: forwardedTo,
       });
 
-      // Forward via email to each recipient
+      // Forward via email — the backend validates recipients against registered
+      // app users so user-supplied input can never direct emails to arbitrary
+      // external addresses.
       const subject = `[Pollee Incident Report] ${PRIORITY_META[priority].label} priority — ${LEVEL_META[targetLevels[0]]?.label || 'General'}`;
-      const body = `A new incident report has been filed on Pollee Inc.
-
-From: ${currentUser.full_name || currentUser.email} (${currentUser.email})
-Priority: ${PRIORITY_META[priority].label}
-Forwarded to: ${targetLevels.map(l => LEVEL_META[l].label).join(', ')}
-
-Description:
-${description}
-
-You are receiving this because the report was forwarded to your level. Please review it in the Pollee app.`;
-
-      for (const recipient of forwardedTo) {
-        try {
-          await base44.integrations.Core.SendEmail({
-            to: recipient,
-            subject,
-            body,
-          });
-        } catch (err) {
-          // Non-registered recipients may be refused; continue with others
-        }
+      try {
+        await base44.functions.invoke('send-notification-email', {
+          recipients: forwardedTo,
+          subject,
+          message: description,
+          context_label: `Incident report — Priority: ${PRIORITY_META[priority].label}, Forwarded to: ${targetLevels.map(l => LEVEL_META[l].label).join(', ')}`
+        });
+      } catch (err) {
+        // email send is best-effort; the report record is already saved
       }
 
       return record;

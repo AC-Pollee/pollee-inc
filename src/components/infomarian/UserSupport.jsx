@@ -17,11 +17,13 @@ export default function UserSupport({ infomarian }) {
 
   const sendSupportMessage = useMutation({
     mutationFn: async ({ recipient, content }) => {
-      // In a real implementation, this would send a notification or create a support ticket
-      await base44.integrations.Core.SendEmail({
-        to: recipient,
+      // Route through the backend so the recipient is validated against
+      // registered app users — never send to an arbitrary external address.
+      await base44.functions.invoke('send-notification-email', {
+        recipients: [recipient],
         subject: `Support from ${infomarian.full_name}`,
-        body: content
+        message: content,
+        context_label: `Support message from ${infomarian.full_name}`
       });
       return { success: true };
     },

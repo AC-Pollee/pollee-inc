@@ -1,23 +1,31 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { canModerate } from '../../shared/moderation.ts';
 
+function isAdmin(user) {
+  return !!user && (user.role === 'admin' || user.email === 'ac@acproductiondesign.com');
+}
+
 // Fields a moderator is permitted to edit on a user record after creation.
 const EDITABLE_FIELDS = [
   'full_name',
-  'email',
   'last_name',
   'date_of_birth',
   'phone_number',
   'language',
-  'user_role',
   'franchise_id',
   'infomarian_id',
+  'avatar_url'
+];
+
+// Fields that only admins may change — privilege/identity/bank details.
+const ADMIN_ONLY_FIELDS = [
+  'email',
+  'user_role',
   'bsb',
   'account_number',
   'account_name',
   'account_validated',
-  'voter_id',
-  'avatar_url'
+  'voter_id'
 ];
 
 export default async function(req) {
@@ -40,6 +48,17 @@ export default async function(req) {
       return Response.json({ error: 'updates object is required' }, { status: 400 });
     }
 
+    // Non-admins may not touch admin-only fields (role, email, bank details, etc.)
+    if (!isAdmin(caller)) {
+      const blocked = ADMIN_ONLY_FIELDS.filter(f => f in updates);
+      if (blocked.length > 0) {
+        return Response.json(
+          { error: `Not authorized to change admin-only fields: ${blocked.join(', ')}` },
+          { status: 403 }
+        );
+      }
+    }
+
     // Load the target user (service role — moderators are not necessarily admins).
     const users = await base44.asServiceRole.entities.User.list();
     const target = users.find(u => u.id === target_user_id || u.email === target_user_id);
@@ -53,7 +72,8 @@ export default async function(req) {
     const now = new Date().toISOString();
     const moderatorRole = caller.user_role || (caller.email === 'ac@acproductiondesign.com' ? 'admin' : 'moderator');
 
-    for (const field of EDITABLE_FIELDS) {
+    const allEditable = isAdmin(caller) ? [...EDITABLE_FIELDS, ...ADMIN_ONLY_FIELDS] : EDITABLE_FIELDS;
+    for (const field of allEditable) {
       if (!(field in updates)) continue;
       const newVal = updates[field];
       const oldVal = target[field];
