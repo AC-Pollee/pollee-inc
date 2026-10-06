@@ -129,9 +129,9 @@ export default function UserManagement({ infomarian }) {
     queryFn: () => base44.entities.Franchise.list()
   });
 
-  const assignedUsers = allUsers.filter(
-    (u) => u.franchise_id && u.franchise_id === infomarian.franchise_id
-  );
+  const assignedUsers = infomarian
+    ? allUsers.filter((u) => u.franchise_id && u.franchise_id === infomarian.franchise_id)
+    : allUsers;
 
   // The directory shows every user (across all constituencies), filtered
   // client-side by the search field. list-users already returns the full
@@ -203,8 +203,8 @@ export default function UserManagement({ infomarian }) {
 
       const newStrike = {
         date: new Date().toISOString(),
-        infomarian_id: infomarian.infomarian_id,
-        infomarian_name: infomarian.full_name,
+        infomarian_id: infomarian?.infomarian_id || currentUser?.id || '',
+        infomarian_name: infomarian?.full_name || currentUser?.full_name || currentUser?.email || '',
         reason: strikeInfo.reason,
         severity: strikeInfo.severity,
         comment_id: strikeInfo.comment_id || null

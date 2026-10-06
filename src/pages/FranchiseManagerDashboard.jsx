@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import ConstituencyHelp from '@/components/help/ConstituencyHelp';
 import Admin from '@/pages/Admin';
+import UserManagement from '@/components/infomarian/UserManagement';
 import { useTranslation } from 'react-i18next';
 
 export default function FranchiseManagerDashboard() {
@@ -148,6 +149,7 @@ export default function FranchiseManagerDashboard() {
             <TabsTrigger value="polls" className="rounded-lg">{t('franchiseManagerDash.polls')}</TabsTrigger>
             <TabsTrigger value="poll-mgmt" className="rounded-lg">{t('adminDash.pollManagement', { defaultValue: 'Poll Management' })}</TabsTrigger>
             <TabsTrigger value="registration" className="rounded-lg">{t('franchiseManagerDash.userRegistration')}</TabsTrigger>
+            <TabsTrigger value="users" className="rounded-lg">{t('userDirectory.title', { defaultValue: 'Users' })}</TabsTrigger>
             <TabsTrigger value="help" className="rounded-lg">{t('franchiseManagerDash.help')}</TabsTrigger>
           </TabsList>
 
@@ -302,6 +304,10 @@ export default function FranchiseManagerDashboard() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="users" className="mt-6">
+            <UserManagement />
           </TabsContent>
 
           <TabsContent value="help" className="mt-6">

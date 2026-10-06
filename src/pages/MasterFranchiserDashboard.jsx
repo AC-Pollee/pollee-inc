@@ -13,7 +13,7 @@ import InfomarianEditDialog from '@/components/infomarian/InfomarianEditDialog';
 import InfomarianCreateDialog from '@/components/infomarian/InfomarianCreateDialog';
 import FranchiseCreateDialog from '@/components/franchise/FranchiseCreateDialog';
 import FranchiseEditDialog from '@/components/franchise/FranchiseEditDialog';
-import UserDirectory from '@/components/admin/UserDirectory';
+import UserManagement from '@/components/infomarian/UserManagement';
 import { useTranslation } from 'react-i18next';
 
 export default function MasterFranchiserDashboard() {
@@ -379,7 +379,7 @@ export default function MasterFranchiserDashboard() {
           </TabsContent>
 
           <TabsContent value="users" className="mt-6">
-            <UserDirectory />
+            <UserManagement />
           </TabsContent>
 
           <TabsContent value="help" className="mt-6">
