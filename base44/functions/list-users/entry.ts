@@ -22,15 +22,15 @@ export default async function(req) {
     const infomarianEmails = new Set(infomarians.map(i => i.user_email).filter(Boolean));
     const franchiseOwnerEmails = new Set(franchises.map(f => f.owner_email).filter(Boolean));
 
-    // Derive the effective role: an explicit user_role wins, otherwise infer
-    // from the Infomarian / Franchise records so the directory reflects reality
-    // even when user_role was never set at creation time.
+    // Derive the effective role: an explicitly set user_role always wins
+    // (including 'voter'), so an admin edit is respected. Only infer from
+    // the Infomarian / Franchise records when user_role was never set.
     const deriveRole = (u) => {
-      if (u.user_role && u.user_role !== 'voter') return u.user_role;
+      if (u.user_role) return u.user_role;
       const email = (u.email || '').toLowerCase();
       if (infomarianEmails.has(email)) return 'infomarian';
       if (franchiseOwnerEmails.has(email)) return 'franchise_manager';
-      return u.user_role || 'voter';
+      return 'voter';
     };
 
     const safe = users.map(u => ({
