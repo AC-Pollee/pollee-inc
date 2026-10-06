@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
@@ -127,6 +127,18 @@ export default function UserManagement({ infomarian }) {
     (u) => u.franchise_id && u.franchise_id === infomarian.franchise_id
   );
 
+  // The directory shows every user (across all constituencies), filtered
+  // client-side by the search field. list-users already returns the full
+  // moderator directory, so no extra round-trip is needed for search.
+  const filteredUsers = useMemo(() => {
+    const q = searchEmail.trim().toLowerCase();
+    if (!q) return allUsers;
+    return allUsers.filter((u) => {
+      const name = (u.first_name || u.full_name || '').trim().toLowerCase();
+      return name.includes(q) || (u.email || '').toLowerCase().includes(q);
+    });
+  }, [allUsers, searchEmail]);
+
   // Selecting from the assigned list fetches the full record (with the strikes
   // array) so the strike-history detail view keeps working.
   const selectUserFull = async (u) => {
@@ -249,102 +261,63 @@ export default function UserManagement({ infomarian }) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex gap-3">
-            <div className="flex-1">
+            <div className="flex-1 relative">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <Input
                 placeholder="Search by name or email..."
                 value={searchEmail}
                 onChange={(e) => setSearchEmail(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && searchUser()}
+                className="pl-9"
               />
             </div>
-            <Button onClick={searchUser} disabled={searching}>
-              <Search className="w-4 h-4 mr-2" />
-              {searching ? 'Searching...' : t('userMgmt.search')}
-            </Button>
           </div>
 
-          {searchResults.length === 0 && (
-            <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase mb-2">
-                {t('userMgmt.assignedMembers') || 'Assigned Members'} ({assignedUsers.length})
-              </p>
-              <div className="space-y-1 border border-slate-200 rounded-md p-2 bg-white max-h-64 overflow-y-auto">
-                {loadingAssigned ? (
-                  <p className="text-sm text-slate-400 p-2">{t('common.loading') || 'Loading…'}</p>
-                ) : assignedUsers.length === 0 ? (
-                  <p className="text-sm text-slate-400 p-2">{t('userMgmt.noAssigned') || 'No members assigned to your constituency yet.'}</p>
-                ) : (
-                  assignedUsers.map((u) => {
-                    const active = isUserActive(u);
-                    return (
-                    <button
-                      key={u.id}
-                      type="button"
-                      onClick={() => selectUserFull(u)}
-                      className={`
-                        w-full flex items-center justify-between text-left px-3 py-2 rounded transition
-                        ${active ? 'bg-emerald-50 ring-1 ring-emerald-200 hover:bg-emerald-100' : 'hover:bg-slate-100'}
-                      `}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className={`w-2 h-2 rounded-full ${active ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
-                        <div>
-                          <p className={`text-sm font-medium ${active ? 'text-emerald-900' : 'text-slate-900'}`}>{(u.first_name || u.full_name)?.trim() || u.email}</p>
-                          <p className="text-xs text-slate-500">{u.email}</p>
-                        </div>
+          <div>
+            <p className="text-xs font-semibold text-slate-500 uppercase mb-2">
+              All Users ({filteredUsers.length})
+            </p>
+            <div className="space-y-1 border border-slate-200 rounded-md p-2 bg-white max-h-80 overflow-y-auto">
+              {loadingAssigned ? (
+                <p className="text-sm text-slate-400 p-2">{t('common.loading') || 'Loading…'}</p>
+              ) : filteredUsers.length === 0 ? (
+                <p className="text-sm text-slate-400 p-2">No users match your search.</p>
+              ) : (
+                filteredUsers.map((u) => {
+                  const active = isUserActive(u);
+                  return (
+                  <button
+                    key={u.id}
+                    type="button"
+                    onClick={() => selectUserFull(u)}
+                    className={`
+                      w-full flex items-center justify-between text-left px-3 py-2 rounded transition
+                      ${active ? 'bg-emerald-50 ring-1 ring-emerald-200 hover:bg-emerald-100' : 'hover:bg-slate-100'}
+                    `}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className={`w-2 h-2 rounded-full shrink-0 ${active ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
+                      <div>
+                        <p className={`text-sm font-medium ${active ? 'text-emerald-900' : 'text-slate-900'}`}>{(u.first_name || u.full_name)?.trim() || u.email}</p>
+                        <p className="text-xs text-slate-500">{u.email}</p>
                       </div>
-                      <div className="flex items-center gap-2">
-                        {active && (
-                          <Badge className="bg-emerald-500 text-white">In session</Badge>
-                        )}
-                        {u.account_validated ? (
-                          <Badge className="bg-emerald-100 text-emerald-700">Verified</Badge>
-                        ) : (
-                          <Badge className="bg-amber-100 text-amber-700">Pending</Badge>
-                        )}
-                        <Badge variant="outline" className="capitalize">{u.user_role || 'voter'}</Badge>
-                      </div>
-                    </button>
-                    );
-                  })
-                )}
-              </div>
-              <p className="text-xs text-slate-400 mt-2">
-                {t('userMgmt.searchAllHint') || 'Use the search above to find any user across all constituencies.'}
-              </p>
-            </div>
-          )}
-
-          {searchResults.length > 0 && (
-            <div className="space-y-1 border border-slate-200 rounded-md p-2 bg-white max-h-64 overflow-y-auto">
-              {searchResults.map((u) => {
-                const active = isUserActive(u);
-                return (
-                <button
-                  key={u.id}
-                  type="button"
-                  onClick={() => { setSelectedUser(u); setSearchResults([]); }}
-                  className={`
-                    w-full flex items-center justify-between text-left px-3 py-2 rounded transition
-                    ${active ? 'bg-emerald-50 ring-1 ring-emerald-200 hover:bg-emerald-100' : 'hover:bg-slate-100'}
-                  `}
-                >
-                  <div className="flex items-center gap-2">
-                    <span className={`w-2 h-2 rounded-full ${active ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
-                    <div>
-                      <p className={`text-sm font-medium ${active ? 'text-emerald-900' : 'text-slate-900'}`}>{u.name || u.first_name || u.full_name}</p>
-                      <p className="text-xs text-slate-500">{u.email}</p>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {active && <Badge className="bg-emerald-500 text-white">In session</Badge>}
-                    <Badge variant="outline" className="capitalize">{u.user_role || u.role || 'voter'}</Badge>
-                  </div>
-                </button>
-                );
-              })}
+                    <div className="flex items-center gap-2">
+                      {active && (
+                        <Badge className="bg-emerald-500 text-white">In session</Badge>
+                      )}
+                      {u.account_validated ? (
+                        <Badge className="bg-emerald-100 text-emerald-700">Verified</Badge>
+                      ) : (
+                        <Badge className="bg-amber-100 text-amber-700">Pending</Badge>
+                      )}
+                      <Badge variant="outline" className="capitalize">{u.user_role || 'voter'}</Badge>
+                    </div>
+                  </button>
+                  );
+                })
+              )}
             </div>
-          )}
+          </div>
 
           {selectedUser && (
             <Card className="bg-slate-50">
