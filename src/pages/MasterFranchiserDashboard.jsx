@@ -5,11 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Shield, Building2, Users, Vote, BarChart3, Pencil } from 'lucide-react';
+import { Shield, Building2, Users, Vote, BarChart3, Pencil, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import ConstituencyHelp from '@/components/help/ConstituencyHelp';
 import InfomarianEditDialog from '@/components/infomarian/InfomarianEditDialog';
+import InfomarianCreateDialog from '@/components/infomarian/InfomarianCreateDialog';
+import FranchiseCreateDialog from '@/components/franchise/FranchiseCreateDialog';
 import UserDirectory from '@/components/admin/UserDirectory';
 import { useTranslation } from 'react-i18next';
 
@@ -17,6 +19,8 @@ export default function MasterFranchiserDashboard() {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('overview');
   const [editingInfomarian, setEditingInfomarian] = useState(null);
+  const [showCreateFranchise, setShowCreateFranchise] = useState(false);
+  const [showCreateInfomarian, setShowCreateInfomarian] = useState(false);
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -200,26 +204,38 @@ export default function MasterFranchiserDashboard() {
           <TabsContent value="franchises" className="mt-6">
             <Card className="border-0 shadow-lg">
               <CardHeader>
-                <CardTitle>{t('masterDash.allConstituencies')}</CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle>{t('masterDash.allConstituencies')}</CardTitle>
+                  <Button size="sm" onClick={() => setShowCreateFranchise(true)} className="bg-indigo-600 hover:bg-indigo-700">
+                    <Plus className="w-4 h-4 mr-1" />
+                    {t('franchiseCreateDialog.title', { defaultValue: 'Create Constituency' })}
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  {franchises.map(franchise => (
-                    <div key={franchise.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
-                      <div>
-                        <p className="font-semibold text-slate-900">{franchise.franchise_name}</p>
-                        <p className="text-sm text-slate-500">{franchise.postcode} • {franchise.state}</p>
+                {franchises.length === 0 ? (
+                  <div className="text-center py-8 text-slate-500">
+                    {t('masterDash.noConstituencies', { defaultValue: 'No constituencies yet. Create one to get started.' })}
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {franchises.map(franchise => (
+                      <div key={franchise.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+                        <div>
+                          <p className="font-semibold text-slate-900">{franchise.franchise_name}</p>
+                          <p className="text-sm text-slate-500">{franchise.postcode} • {franchise.state}</p>
+                        </div>
+                        <Badge className={
+                          franchise.status === 'active' ? 'bg-emerald-100 text-emerald-700' :
+                          franchise.status === 'suspended' ? 'bg-red-100 text-red-700' :
+                          'bg-slate-100 text-slate-600'
+                        }>
+                          {franchise.status}
+                        </Badge>
                       </div>
-                      <Badge className={
-                        franchise.status === 'active' ? 'bg-emerald-100 text-emerald-700' :
-                        franchise.status === 'suspended' ? 'bg-red-100 text-red-700' :
-                        'bg-slate-100 text-slate-600'
-                      }>
-                        {franchise.status}
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -227,37 +243,55 @@ export default function MasterFranchiserDashboard() {
           <TabsContent value="infomarians" className="mt-6">
             <Card className="border-0 shadow-lg">
               <CardHeader>
-                <CardTitle>{t('masterDash.allInfomarians')}</CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle>{t('masterDash.allInfomarians')}</CardTitle>
+                  <Button size="sm" onClick={() => setShowCreateInfomarian(true)} className="bg-indigo-600 hover:bg-indigo-700">
+                    <Plus className="w-4 h-4 mr-1" />
+                    {t('infomarianCreateDialog.title', { defaultValue: 'Create & Assign Infomarian' })}
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  {infomarians.map(infomarian => (
-                    <div key={infomarian.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
-                      <div>
-                        <p className="font-semibold text-slate-900">{infomarian.full_name}</p>
-                        <p className="text-sm text-slate-500">ID: {infomarian.infomarian_id}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge className={
-                          infomarian.status === 'active' ? 'bg-emerald-100 text-emerald-700' :
-                          infomarian.status === 'suspended' ? 'bg-red-100 text-red-700' :
-                          'bg-slate-100 text-slate-600'
-                        }>
-                          {infomarian.status}
-                        </Badge>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setEditingInfomarian(infomarian)}
-                          className="text-slate-400 hover:text-indigo-600"
-                          title="Edit Infomarian"
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                {infomarians.length === 0 ? (
+                  <div className="text-center py-8 text-slate-500">
+                    {t('masterDash.noInfomarians', { defaultValue: 'No infomarians yet. Create and assign one to a constituency.' })}
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {infomarians.map(infomarian => {
+                      const franchise = franchises.find(f => f.id === infomarian.franchise_id);
+                      return (
+                        <div key={infomarian.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+                          <div>
+                            <p className="font-semibold text-slate-900">{infomarian.full_name}</p>
+                            <p className="text-sm text-slate-500">
+                              ID: {infomarian.infomarian_id}
+                              {franchise && <span> • {franchise.franchise_name}</span>}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge className={
+                              infomarian.status === 'active' ? 'bg-emerald-100 text-emerald-700' :
+                              infomarian.status === 'suspended' ? 'bg-red-100 text-red-700' :
+                              'bg-slate-100 text-slate-600'
+                            }>
+                              {infomarian.status}
+                            </Badge>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => setEditingInfomarian(infomarian)}
+                              className="text-slate-400 hover:text-indigo-600"
+                              title="Edit Infomarian"
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -336,6 +370,17 @@ export default function MasterFranchiserDashboard() {
         infomarian={editingInfomarian}
         open={!!editingInfomarian}
         onOpenChange={(v) => !v && setEditingInfomarian(null)}
+        franchises={franchises}
+      />
+
+      <FranchiseCreateDialog
+        open={showCreateFranchise}
+        onOpenChange={setShowCreateFranchise}
+      />
+
+      <InfomarianCreateDialog
+        open={showCreateInfomarian}
+        onOpenChange={setShowCreateInfomarian}
         franchises={franchises}
       />
     </div>
