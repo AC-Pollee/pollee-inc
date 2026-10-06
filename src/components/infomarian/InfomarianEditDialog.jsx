@@ -17,6 +17,7 @@ export default function InfomarianEditDialog({ infomarian, open, onOpenChange, f
       setFormData({
         full_name: infomarian.full_name || '',
         user_email: infomarian.user_email || '',
+        franchise_id: infomarian.franchise_id || '',
         bio: infomarian.bio || '',
         expertise_areas: Array.isArray(infomarian.expertise_areas) ? infomarian.expertise_areas.join(', ') : '',
         assigned_postcodes: Array.isArray(infomarian.assigned_postcodes) ? infomarian.assigned_postcodes.join(', ') : '',
@@ -53,6 +54,7 @@ export default function InfomarianEditDialog({ infomarian, open, onOpenChange, f
       data: {
         full_name: formData.full_name,
         user_email: formData.user_email,
+        franchise_id: formData.franchise_id,
         bio: formData.bio,
         expertise_areas: expertise,
         assigned_postcodes: postcodes,
@@ -78,7 +80,21 @@ export default function InfomarianEditDialog({ infomarian, open, onOpenChange, f
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
           <div className="flex flex-wrap gap-2">
             <Badge className="bg-purple-100 text-purple-700">{infomarian.infomarian_id}</Badge>
-            {franchise && <Badge variant="outline">{franchise.franchise_name}</Badge>}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="edit_franchise">Assigned Constituency</Label>
+            <select
+              id="edit_franchise"
+              value={formData.franchise_id}
+              onChange={(e) => setFormData({ ...formData, franchise_id: e.target.value })}
+              className="w-full h-10 px-3 rounded-md border border-slate-200 bg-white text-slate-900 dark:bg-slate-800 dark:text-slate-100"
+            >
+              <option value="">Select a constituency...</option>
+              {franchises.map(f => (
+                <option key={f.id} value={f.id}>{f.franchise_name} ({f.postcode})</option>
+              ))}
+            </select>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

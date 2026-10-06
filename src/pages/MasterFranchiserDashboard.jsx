@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,15 +12,26 @@ import ConstituencyHelp from '@/components/help/ConstituencyHelp';
 import InfomarianEditDialog from '@/components/infomarian/InfomarianEditDialog';
 import InfomarianCreateDialog from '@/components/infomarian/InfomarianCreateDialog';
 import FranchiseCreateDialog from '@/components/franchise/FranchiseCreateDialog';
+import FranchiseEditDialog from '@/components/franchise/FranchiseEditDialog';
 import UserDirectory from '@/components/admin/UserDirectory';
 import { useTranslation } from 'react-i18next';
 
 export default function MasterFranchiserDashboard() {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('overview');
   const [editingInfomarian, setEditingInfomarian] = useState(null);
   const [showCreateFranchise, setShowCreateFranchise] = useState(false);
   const [showCreateInfomarian, setShowCreateInfomarian] = useState(false);
+  const [editingFranchise, setEditingFranchise] = useState(null);
+
+  const updateFranchise = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.Franchise.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['franchises']);
+      setEditingFranchise(null);
+    }
+  });
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -225,13 +236,24 @@ export default function MasterFranchiserDashboard() {
                           <p className="font-semibold text-slate-900">{franchise.franchise_name}</p>
                           <p className="text-sm text-slate-500">{franchise.postcode} • {franchise.state}</p>
                         </div>
-                        <Badge className={
-                          franchise.status === 'active' ? 'bg-emerald-100 text-emerald-700' :
-                          franchise.status === 'suspended' ? 'bg-red-100 text-red-700' :
-                          'bg-slate-100 text-slate-600'
-                        }>
-                          {franchise.status}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge className={
+                            franchise.status === 'active' ? 'bg-emerald-100 text-emerald-700' :
+                            franchise.status === 'suspended' ? 'bg-red-100 text-red-700' :
+                            'bg-slate-100 text-slate-600'
+                          }>
+                            {franchise.status}
+                          </Badge>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setEditingFranchise(franchise)}
+                            className="text-slate-400 hover:text-indigo-600"
+                            title={t('common.edit', { defaultValue: 'Edit' })}
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -376,6 +398,14 @@ export default function MasterFranchiserDashboard() {
       <FranchiseCreateDialog
         open={showCreateFranchise}
         onOpenChange={setShowCreateFranchise}
+      />
+
+      <FranchiseEditDialog
+        franchise={editingFranchise}
+        open={!!editingFranchise}
+        onClose={() => setEditingFranchise(null)}
+        saving={updateFranchise.isPending}
+        onSave={(data) => updateFranchise.mutate({ id: editingFranchise.id, data })}
       />
 
       <InfomarianCreateDialog
