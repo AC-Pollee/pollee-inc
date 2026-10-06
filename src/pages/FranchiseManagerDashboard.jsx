@@ -9,6 +9,7 @@ import { Building2, Users, Vote, BarChart3, UserPlus, Shield } from 'lucide-reac
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import ConstituencyHelp from '@/components/help/ConstituencyHelp';
+import Admin from '@/pages/Admin';
 import { useTranslation } from 'react-i18next';
 
 export default function FranchiseManagerDashboard() {
@@ -145,6 +146,7 @@ export default function FranchiseManagerDashboard() {
             <TabsTrigger value="overview" className="rounded-lg">{t('franchiseManagerDash.overview')}</TabsTrigger>
             <TabsTrigger value="infomarians" className="rounded-lg">{t('franchiseManagerDash.infomarians')}</TabsTrigger>
             <TabsTrigger value="polls" className="rounded-lg">{t('franchiseManagerDash.polls')}</TabsTrigger>
+            <TabsTrigger value="poll-mgmt" className="rounded-lg">{t('adminDash.pollManagement', { defaultValue: 'Poll Management' })}</TabsTrigger>
             <TabsTrigger value="registration" className="rounded-lg">{t('franchiseManagerDash.userRegistration')}</TabsTrigger>
             <TabsTrigger value="help" className="rounded-lg">{t('franchiseManagerDash.help')}</TabsTrigger>
           </TabsList>
@@ -277,6 +279,10 @@ export default function FranchiseManagerDashboard() {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="poll-mgmt" className="mt-6">
+            <Admin />
           </TabsContent>
 
           <TabsContent value="registration" className="mt-6">

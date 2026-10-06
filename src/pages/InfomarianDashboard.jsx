@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, BarChart3, MessageSquare, Image, DollarSign, AlertCircle, CheckCircle2, Library, UserPlus } from 'lucide-react';
+import { ArrowLeft, BarChart3, MessageSquare, Image, DollarSign, AlertCircle, CheckCircle2, Library, UserPlus, Plus } from 'lucide-react';
 import { motion } from 'framer-motion';
 import AssignedPolls from '@/components/infomarian/AssignedPolls';
 import BudgetManagement from '@/components/infomarian/BudgetManagement';
@@ -20,6 +20,7 @@ import UserSupport from '@/components/infomarian/UserSupport';
 import TaskAssignment from '@/components/infomarian/TaskAssignment';
 import PollModeration from '@/components/infomarian/PollModeration';
 import ContentLibraryPanel from '@/components/infomarian/ContentLibraryPanel';
+import CreatePollPanel from '@/components/infomarian/CreatePollPanel';
 import InfomarianHelp from '@/components/help/InfomarianHelp';
 import { useTranslation } from 'react-i18next';
 
@@ -266,6 +267,10 @@ export default function InfomarianDashboard() {
               <Library className="w-4 h-4 mr-2" />
               {t('infomarianDash.library')}
             </TabsTrigger>
+            <TabsTrigger value="create-poll" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
+              <Plus className="w-4 h-4 mr-2" />
+              {t('infomarianDash.createPoll', { defaultValue: 'Create Poll' })}
+            </TabsTrigger>
             <TabsTrigger value="earnings" className="rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white px-4">
               <DollarSign className="w-4 h-4 mr-2" />
               {t('infomarianDash.earnings')}
@@ -313,6 +318,10 @@ export default function InfomarianDashboard() {
 
           <TabsContent value="library">
             <ContentLibraryPanel infomarian={infomarian} />
+          </TabsContent>
+
+          <TabsContent value="create-poll">
+            <CreatePollPanel infomarian={infomarian} user={user} />
           </TabsContent>
 
           <TabsContent value="earnings">

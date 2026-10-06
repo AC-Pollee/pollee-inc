@@ -16,6 +16,7 @@ export default function PollCard({ poll, voteCount }) {
   const { t } = useTranslation();
   const { title: translatedTitle, description: translatedDescription } = usePollTranslation(poll);
   const isActive = poll.status === 'active';
+  const isPending = poll.moderation_status === 'pending';
   
   const { data: comments = [] } = useQuery({
     queryKey: ['poll-comments', poll.id],
@@ -33,15 +34,19 @@ export default function PollCard({ poll, voteCount }) {
       
       <CardContent className="relative p-6">
         <div className="flex items-start justify-between mb-4">
-          <Badge 
-            className={`px-3 py-1 text-xs font-medium rounded-full ${
-              isActive 
-                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
-                : 'bg-slate-100 text-slate-600 border border-slate-200'
-            }`}
-          >
-            {isActive ? t('pollCard.active') : t('pollCard.closed')}
-          </Badge>
+          <div className="flex items-center gap-1.5">
+            <Badge 
+              className={`px-3 py-1 text-xs font-medium rounded-full ${
+                isPending
+                  ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                  : isActive 
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                    : 'bg-slate-100 text-slate-600 border border-slate-200'
+              }`}
+            >
+              {isPending ? t('common.pending', { defaultValue: 'Pending' }) : isActive ? t('pollCard.active') : t('pollCard.closed')}
+            </Badge>
+          </div>
           
           <div className="flex items-center gap-1.5 text-slate-400">
             <Users className="w-4 h-4" />

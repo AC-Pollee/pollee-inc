@@ -49,6 +49,7 @@
     "master": "Master",
     "adminDashboard": "Admin",
     "infomarianDashboard": "Infomarian",
+    "pollTools": "Poll Tools",
     "constituencies": "Constituencies",
     "infomarians": "Infomarians",
     "report": "Report",
@@ -450,7 +451,8 @@
     "tasks": "Tasks",
     "earnings": "Earnings",
     "help": "Help",
-    "library": "Content Library"
+    "library": "Content Library",
+    "createPoll": "Create Poll"
   },
   "contentLibrary": {
     "title": "Content Library",

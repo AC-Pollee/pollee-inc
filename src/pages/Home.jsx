@@ -25,7 +25,11 @@ export default function Home() {
     queryFn: () => base44.entities.Vote.list()
   });
 
-  const activePolls = polls.filter((p) => p.status === 'active' && (p.moderation_status === 'approved' || !p.moderation_status));
+  // Show approved polls (fully live) and pending polls (awaiting moderator approval).
+  // Drafts are excluded — they're only visible to their creator.
+  const activePolls = polls.filter(
+    (p) => p.status === 'active' && (p.moderation_status === 'approved' || p.moderation_status === 'pending' || !p.moderation_status)
+  );
 
   const filteredPolls = selectedConstituencies.length > 0
     ? activePolls.filter((p) => selectedConstituencies.includes(p.franchise_id))

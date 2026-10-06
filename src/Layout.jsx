@@ -63,7 +63,6 @@ export default function Layout({ children, currentPageName }) {
         { name: 'InfomarianDashboard', icon: Shield, label: 'nav.infomarianDashboard', badge: pendingCount > 0 ? pendingCount : null },
         { name: 'Home', icon: Vote, label: 'nav.polls' },
         { name: 'Results', icon: BarChart3, label: 'nav.results' },
-        { name: 'Admin', icon: Settings, label: 'nav.admin' },
         { name: 'Profile', icon: User, label: 'nav.profile' },
       ];
     }
@@ -72,7 +71,8 @@ export default function Layout({ children, currentPageName }) {
       return [
         { name: 'FranchiseManagerDashboard', icon: Shield, label: 'nav.adminDashboard' },
         { name: 'FranchiseAdmin', icon: Settings, label: 'nav.constituencies' },
-        { name: 'Admin', icon: Settings, label: 'nav.admin' },
+        { name: 'Home', icon: Vote, label: 'nav.polls' },
+        { name: 'Results', icon: BarChart3, label: 'nav.results' },
         { name: 'Profile', icon: User, label: 'nav.profile' },
       ];
     }
@@ -81,17 +81,16 @@ export default function Layout({ children, currentPageName }) {
       return [
         { name: 'InfomarianDashboard', icon: Shield, label: 'nav.infomarianDashboard', badge: pendingCount > 0 ? pendingCount : null },
         { name: 'Home', icon: Vote, label: 'nav.polls' },
-        { name: 'Admin', icon: Settings, label: 'nav.admin' },
         { name: 'Results', icon: BarChart3, label: 'nav.results' },
         { name: 'Profile', icon: User, label: 'nav.profile' },
       ];
     }
 
-    // Franchise owners (without an infomarian record) also get admin access to create polls
+    // Franchise owners (without an infomarian record) also get poll creation access
     if (ownedFranchise) {
       return [
         { name: 'Home', icon: Vote, label: 'nav.polls' },
-        { name: 'Admin', icon: Settings, label: 'nav.admin' },
+        { name: 'Admin', icon: Settings, label: 'nav.pollTools', badge: null },
         { name: 'Results', icon: BarChart3, label: 'nav.results' },
         { name: 'Profile', icon: User, label: 'nav.profile' },
       ];
@@ -119,7 +118,7 @@ export default function Layout({ children, currentPageName }) {
   }
 
   // Administration tools live on the lower bar; everything else stays on the top line
-  const adminToolNames = ['InfomarianDashboard', 'MasterFranchiserDashboard', 'FranchiseManagerDashboard', 'Admin'];
+  const adminToolNames = ['InfomarianDashboard', 'MasterFranchiserDashboard', 'FranchiseManagerDashboard'];
   const publicNavItems = navItems.filter(i => !adminToolNames.includes(i.name));
   const adminNavItems = navItems.filter(i => adminToolNames.includes(i.name));
 

@@ -86,12 +86,13 @@
     "moderation_status": {
       "type": "string",
       "enum": [
+        "draft",
         "pending",
         "approved",
         "rejected"
       ],
       "default": "pending",
-      "description": "Moderation status for new polls"
+      "description": "Moderation status \u2014 draft while the creator is still editing and adding evidence, pending once published for moderator review, then approved or rejected."
     },
     "moderated_by": {
       "type": "string",
