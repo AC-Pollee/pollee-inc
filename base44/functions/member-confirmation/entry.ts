@@ -51,10 +51,19 @@ export default async function(req) {
         return Response.json({ error: 'The code does not match. Please try again.' }, { status: 400 });
       }
 
-      await base44.asServiceRole.entities.User.update(user.id, {
+      // The validation deposit is currently suspended, so confirming the
+      // email code IS the validation step. Mark the account validated and
+      // issue a voter ID here so the member directory reflects the verified
+      // status immediately, without waiting for a separate Profile-page visit.
+      const updates = {
         confirmation_code: '',
         confirmation_verified: true
-      });
+      };
+      if (!freshUser.account_validated) {
+        updates.account_validated = true;
+        updates.voter_id = freshUser.voter_id || `V${Date.now()}${Math.floor(Math.random() * 10000)}`;
+      }
+      await base44.asServiceRole.entities.User.update(user.id, updates);
       return Response.json({ ok: true, verified: true });
     }
 

@@ -132,7 +132,7 @@ export default function NewUserRegistration() {
     try {
       const res = await base44.functions.invoke('member-confirmation', { action: 'verify', code: codeInput });
       if (res.data?.verified) {
-        queryClient.invalidateQueries(['currentUser']);
+        await queryClient.refetchQueries({ queryKey: ['currentUser'] });
         navigate('/Profile');
       }
     } catch (e) {

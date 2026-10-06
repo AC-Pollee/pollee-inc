@@ -147,7 +147,7 @@ export default function UserDirectory() {
                       <Badge variant="outline" className="capitalize">{u.user_role || 'voter'}</Badge>
                     </td>
                     <td className="px-4 py-3">
-                      {u.account_validated ? (
+                      {(u.account_validated || u.confirmation_verified) ? (
                         <span className="inline-flex items-center gap-1 text-emerald-700"><ShieldCheck className="w-4 h-4" /> {t('userDirectory.verified')}</span>
                       ) : (
                         <span className="inline-flex items-center gap-1 text-amber-600"><ShieldAlert className="w-4 h-4" /> {t('userDirectory.notVerified')}</span>

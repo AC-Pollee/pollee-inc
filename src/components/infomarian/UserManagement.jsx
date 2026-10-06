@@ -305,7 +305,7 @@ export default function UserManagement({ infomarian }) {
                       {active && (
                         <Badge className="bg-emerald-500 text-white">In session</Badge>
                       )}
-                      {u.account_validated ? (
+                      {(u.account_validated || u.confirmation_verified) ? (
                         <Badge className="bg-emerald-100 text-emerald-700">Verified</Badge>
                       ) : (
                         <Badge className="bg-amber-100 text-amber-700">Pending</Badge>

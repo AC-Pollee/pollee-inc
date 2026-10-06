@@ -48,6 +48,7 @@ export default async function(req) {
       infomarian_id: u.infomarian_id || '',
       voter_id: u.voter_id || '',
       account_validated: !!u.account_validated,
+      confirmation_verified: !!u.confirmation_verified,
       validation_initiated: !!u.validation_initiated,
       strikes_count: Array.isArray(u.strikes) ? u.strikes.length : 0,
       commenting_restricted: !!u.commenting_restricted,
