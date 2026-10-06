@@ -1273,6 +1273,7 @@
     "subtitle": "Member directory — edit basic details and constituency assignment. Bank details are never shown; only verification status is visible.",
     "searchPlaceholder": "Search by name, email, or phone...",
     "allRoles": "All Roles",
+    "allConstituencies": "All Constituencies",
     "voter": "Voter",
     "infomarian": "Infomarian",
     "franchiseManager": "Constituency Manager",

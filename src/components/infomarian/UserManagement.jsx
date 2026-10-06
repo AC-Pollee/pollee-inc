@@ -28,6 +28,7 @@ export default function UserManagement({ infomarian }) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [searchEmail, setSearchEmail] = useState('');
+  const [constituencyFilter, setConstituencyFilter] = useState('all');
   const [selectedUser, setSelectedUser] = useState(null);
   const [dmLoading, setDmLoading] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
@@ -123,6 +124,11 @@ export default function UserManagement({ infomarian }) {
     }
   });
 
+  const { data: franchises = [] } = useQuery({
+    queryKey: ['franchises'],
+    queryFn: () => base44.entities.Franchise.list()
+  });
+
   const assignedUsers = allUsers.filter(
     (u) => u.franchise_id && u.franchise_id === infomarian.franchise_id
   );
@@ -132,12 +138,13 @@ export default function UserManagement({ infomarian }) {
   // moderator directory, so no extra round-trip is needed for search.
   const filteredUsers = useMemo(() => {
     const q = searchEmail.trim().toLowerCase();
-    if (!q) return allUsers;
     return allUsers.filter((u) => {
+      if (constituencyFilter !== 'all' && u.franchise_id !== constituencyFilter) return false;
+      if (!q) return true;
       const name = (u.first_name || u.full_name || '').trim().toLowerCase();
       return name.includes(q) || (u.email || '').toLowerCase().includes(q);
     });
-  }, [allUsers, searchEmail]);
+  }, [allUsers, searchEmail, constituencyFilter]);
 
   // Selecting from the assigned list fetches the full record (with the strikes
   // array) so the strike-history detail view keeps working.
@@ -260,7 +267,7 @@ export default function UserManagement({ infomarian }) {
           <CardTitle>{t('userMgmt.title')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex gap-3">
+          <div className="flex flex-col md:flex-row gap-3">
             <div className="flex-1 relative">
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <Input
@@ -270,6 +277,16 @@ export default function UserManagement({ infomarian }) {
                 className="pl-9"
               />
             </div>
+            <select
+              value={constituencyFilter}
+              onChange={(e) => setConstituencyFilter(e.target.value)}
+              className="h-10 px-3 rounded-md border border-slate-200 bg-background text-foreground"
+            >
+              <option value="all">All Constituencies</option>
+              {franchises.map((f) => (
+                <option key={f.id} value={f.id}>{f.franchise_name}</option>
+              ))}
+            </select>
           </div>
 
           <div>

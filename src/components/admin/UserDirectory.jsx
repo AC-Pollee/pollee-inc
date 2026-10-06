@@ -28,6 +28,7 @@ export default function UserDirectory() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
+  const [constituencyFilter, setConstituencyFilter] = useState('all');
   const [editing, setEditing] = useState(null);
 
   const { data: users = [], isLoading } = useQuery({
@@ -52,11 +53,12 @@ export default function UserDirectory() {
     const q = search.trim().toLowerCase();
     return users.filter((u) => {
       if (roleFilter !== 'all' && (u.user_role || 'voter') !== roleFilter) return false;
+      if (constituencyFilter !== 'all' && u.franchise_id !== constituencyFilter) return false;
       if (!q) return true;
       const name = (u.full_name || '').trim().toLowerCase();
       return name.includes(q) || (u.email || '').toLowerCase().includes(q) || (u.phone_number || '').includes(q);
     });
-  }, [users, search, roleFilter]);
+  }, [users, search, roleFilter, constituencyFilter]);
 
   const handleSaved = () => {
     setEditing(null);
@@ -93,6 +95,16 @@ export default function UserDirectory() {
             <option value="infomarian">{t('userDirectory.infomarian')}</option>
             <option value="franchise_manager">{t('userDirectory.franchiseManager')}</option>
             <option value="master_franchiser">{t('userDirectory.masterFranchiser')}</option>
+          </select>
+          <select
+            value={constituencyFilter}
+            onChange={(e) => setConstituencyFilter(e.target.value)}
+            className="h-10 px-3 rounded-md border border-slate-200 bg-background text-foreground"
+          >
+            <option value="all">{t('userDirectory.allConstituencies')}</option>
+            {franchises.map((f) => (
+              <option key={f.id} value={f.id}>{f.franchise_name}</option>
+            ))}
           </select>
         </div>
 
