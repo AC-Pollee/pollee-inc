@@ -92,8 +92,8 @@ export default function ReputationScore({ user }) {
 
               <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-3">
                 <div className="flex items-center gap-2 mb-1">
-                  <Users className="w-4 h-4 text-indigo-600" />
-                  <span className="text-xs text-indigo-700 font-medium">{t('reputation.delegationsGiven')}</span>
+                  <Award className="w-4 h-4 text-indigo-600" />
+                  <span className="text-xs text-indigo-700 font-medium">{t('reputation.infomarianGratuityGiven', { defaultValue: 'Infomarian Gratuity Given' })}</span>
                 </div>
                 <p className="text-2xl font-bold text-indigo-900">{breakdown.successful_delegations || 0}</p>
                 <p className="text-xs text-indigo-600">+10 points each</p>
@@ -101,8 +101,8 @@ export default function ReputationScore({ user }) {
 
               <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
                 <div className="flex items-center gap-2 mb-1">
-                  <Award className="w-4 h-4 text-purple-600" />
-                  <span className="text-xs text-purple-700 font-medium">{t('reputation.delegationsReceived')}</span>
+                  <Users className="w-4 h-4 text-purple-600" />
+                  <span className="text-xs text-purple-700 font-medium">{t('reputation.delegationsDelivered', { defaultValue: 'Delegations Successfully Delivered' })}</span>
                 </div>
                 <p className="text-2xl font-bold text-purple-900">{breakdown.received_delegations || 0}</p>
                 <p className="text-xs text-purple-600">+15 points each</p>

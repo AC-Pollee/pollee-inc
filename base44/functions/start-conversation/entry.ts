@@ -1,18 +1,15 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
-import { canModerate } from '../../shared/moderation.ts';
 
-// Starts (or reuses) a private 1:1 conversation between the moderator caller
-// and a target member. Moderator-only.
+// Starts (or reuses) a private 1:1 conversation between the caller and a
+// target member. Available to all authenticated users.
 //
-// Uses the user-scoped client for conversation read/create — the caller is a
-// participant, so RLS permits it for both admins and regular moderators.
+// Uses the service-role client for conversation read/create — the caller is a
+// participant, so the record is legitimate for both admins and regular members.
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
     const caller = await base44.auth.me();
     if (!caller) return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    const allowed = await canModerate(base44, caller);
-    if (!allowed) return Response.json({ error: 'Moderators only' }, { status: 403 });
 
     const body = await req.json();
     const targetId = body?.target_user_id;

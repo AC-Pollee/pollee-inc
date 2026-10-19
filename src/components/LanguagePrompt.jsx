@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { changeLanguage, LANGUAGES } from '@/i18n';
+import { Globe } from 'lucide-react';
 
 const LANGUAGE_LABELS = {
   en: 'English',
@@ -24,7 +25,8 @@ export default function LanguagePrompt() {
 
   return (
     <div className="mb-6">
-      <label className="block text-xs font-medium text-muted-foreground mb-2 text-center">
+      <label className="flex items-center justify-center gap-1.5 text-xs font-medium text-muted-foreground mb-2 text-center">
+        <Globe className="w-4 h-4" />
         {t('common.language')}
       </label>
       <div className="grid grid-cols-5 gap-2">

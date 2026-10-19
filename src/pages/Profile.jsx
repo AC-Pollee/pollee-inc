@@ -138,7 +138,7 @@ export default function Profile() {
 
   const age = calculateAge(user?.date_of_birth);
   const isSuperAdmin = user?.email === 'ac@acproductiondesign.com';
-  const isProfileComplete = isSuperAdmin || (user?.last_name && user?.infomarian_id && user?.date_of_birth);
+  const isProfileComplete = isSuperAdmin || (user?.last_name && user?.franchise_id && user?.date_of_birth);
   const isAccountValidated = VALIDATION_DEPOSIT_SUSPENDED || isSuperAdmin || user?.account_validated || false;
   const validationInitiatedState = user?.validation_initiated || false;
 
@@ -439,9 +439,14 @@ export default function Profile() {
                   value={formData.infomarian_id}
                   onChange={(e) => setFormData({...formData, infomarian_id: e.target.value})}
                   placeholder={t('profile.infomarianIdPlaceholder')}
-                  className="h-12 rounded-lg"
-                  required
+                  className="h-12 rounded-lg bg-slate-50"
+                  disabled={!!formData.infomarian_id}
                 />
+                <p className="text-xs text-slate-500">
+                  {formData.infomarian_id
+                    ? t('profile.infomarianAutoFilled', { defaultValue: 'Auto-filled from your constituency assignment.' })
+                    : t('profile.infomarianAwaitingAssignment', { defaultValue: 'This field is auto-filled when an Infomarian or Constituency Manager assigns you.' })}
+                </p>
               </div>
 
               <div className="space-y-2">

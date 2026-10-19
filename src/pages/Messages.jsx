@@ -77,11 +77,9 @@ export default function Messages() {
               <h1 className="text-2xl font-bold text-slate-900">{t('messages.title')}</h1>
             </div>
           </div>
-          {canModerate && (
-            <Button onClick={() => setShowNew(true)} className="bg-indigo-600 hover:bg-indigo-700">
-              <Plus className="w-4 h-4 mr-2" /> {t('messages.newConversation')}
-            </Button>
-          )}
+          <Button onClick={() => setShowNew(true)} className="bg-indigo-600 hover:bg-indigo-700">
+            <Plus className="w-4 h-4 mr-2" /> {t('messages.newConversation')}
+          </Button>
         </div>
 
         <ShareConsentRequests currentUser={currentUser} onSelectConversation={handleSelect} />

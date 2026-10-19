@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import { motion } from 'framer-motion';
-import { AlertTriangle, Send, Inbox, FileText, Shield, Users, User } from 'lucide-react';
+import { AlertTriangle, Send, Inbox, FileText, Shield, Users, Building2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const BOARD_EMAIL = 'ac@acproductiondesign.com';
@@ -25,7 +25,7 @@ const BOARD_EMAIL = 'ac@acproductiondesign.com';
 const LEVEL_META = {
   board: { label: 'Board', icon: Shield, color: 'bg-purple-100 text-purple-700 border-purple-300' },
   infomarian: { label: 'Infomarian', icon: Users, color: 'bg-indigo-100 text-indigo-700 border-indigo-300' },
-  user: { label: 'User', icon: User, color: 'bg-blue-100 text-blue-700 border-blue-300' },
+  constituency: { label: 'Constituency', icon: Building2, color: 'bg-blue-100 text-blue-700 border-blue-300' },
 };
 
 const PRIORITY_META = {
@@ -58,9 +58,16 @@ export default function IncidentReport() {
     queryFn: () => base44.entities.Infomarian.filter({ status: 'active' }),
   });
 
+  const { data: franchises = [] } = useQuery({
+    queryKey: ['franchises'],
+    queryFn: () => base44.entities.Franchise.list(),
+  });
+
   const isBoard = currentUser?.email === BOARD_EMAIL || currentUser?.role === 'admin';
   const myInfomarian = infomarians.find(i => i.user_email === currentUser?.email);
   const isInfomarian = !!myInfomarian;
+  const isConstituencyManager = !!franchises.find(f => f.owner_email === currentUser?.email);
+  const myFranchise = franchises.find(f => f.id === currentUser?.franchise_id);
 
   const { data: allReports = [] } = useQuery({
     queryKey: ['incidentReports'],
@@ -73,12 +80,11 @@ export default function IncidentReport() {
     const levels = r.target_levels || [];
     if (isBoard && levels.includes('board')) return true;
     if (isInfomarian && levels.includes('infomarian')) return true;
-    if (levels.includes('user') && r.target_user_email === currentUser?.email) return true;
+    if (levels.includes('constituency') && (r.forwarded_to || []).includes(currentUser?.email)) return true;
     return false;
   });
 
   const [targetLevels, setTargetLevels] = useState([]);
-  const [targetUserEmail, setTargetUserEmail] = useState('');
   const [priority, setPriority] = useState('medium');
   const [description, setDescription] = useState('');
 
@@ -96,13 +102,16 @@ export default function IncidentReport() {
       if (targetLevels.includes('infomarian')) {
         infomarians.forEach(i => { if (i.user_email) forwardedTo.push(i.user_email); });
       }
-      if (targetLevels.includes('user') && targetUserEmail) forwardedTo.push(targetUserEmail.trim());
+      if (targetLevels.includes('constituency')) {
+        const franchise = franchises.find(f => f.id === currentUser.franchise_id) || myFranchise;
+        if (franchise?.owner_email) forwardedTo.push(franchise.owner_email);
+      }
 
       const record = await base44.entities.IncidentReport.create({
         reporter_email: currentUser.email,
         reporter_name: currentUser.full_name || currentUser.email,
         target_levels: targetLevels,
-        target_user_email: targetLevels.includes('user') ? targetUserEmail.trim() : '',
+        target_user_email: '',
         description,
         priority,
         status: 'open',
@@ -130,7 +139,6 @@ export default function IncidentReport() {
       toast({ title: 'Report submitted', description: 'Your incident report has been forwarded.' });
       queryClient.invalidateQueries(['incidentReports']);
       setTargetLevels([]);
-      setTargetUserEmail('');
       setPriority('medium');
       setDescription('');
     },
@@ -158,8 +166,8 @@ export default function IncidentReport() {
       toast({ title: 'Select at least one level', variant: 'destructive' });
       return;
     }
-    if (targetLevels.includes('user') && !targetUserEmail.trim()) {
-      toast({ title: 'Enter the target user email', variant: 'destructive' });
+    if (targetLevels.includes('constituency') && !myFranchise?.owner_email) {
+      toast({ title: 'No constituency manager found', description: 'Your profile does not have a constituency assigned.', variant: 'destructive' });
       return;
     }
     submitReport.mutate();
@@ -218,19 +226,15 @@ export default function IncidentReport() {
               </div>
             </div>
 
-            {/* Target user email (conditional) */}
-            {targetLevels.includes('user') && (
+            {/* Constituency manager info (conditional) */}
+            {targetLevels.includes('constituency') && (
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
-                <div className="space-y-2">
-                  <Label htmlFor="targetUser">Target user email <span className="text-red-500">*</span></Label>
-                  <Input
-                    id="targetUser"
-                    type="email"
-                    placeholder="recipient@example.com"
-                    value={targetUserEmail}
-                    onChange={(e) => setTargetUserEmail(e.target.value)}
-                  />
-                  <p className="text-xs text-slate-500">The report will be forwarded to this user's email.</p>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                  <p className="text-xs text-blue-800">
+                    {myFranchise?.owner_email
+                      ? `The report will be forwarded to your Constituency Manager (${myFranchise.franchise_name}).`
+                      : 'No constituency is assigned to your profile. Please contact an administrator.'}
+                  </p>
                 </div>
               </motion.div>
             )}
@@ -285,7 +289,7 @@ export default function IncidentReport() {
             </CardHeader>
             <CardContent className="space-y-3">
               {inboxReports.map(r => (
-                <ReportRow key={r.id} report={r} canManage={isBoard || isInfomarian} onUpdate={updateStatus.mutate} />
+                <ReportRow key={r.id} report={r} canManage={isBoard || isInfomarian || isConstituencyManager} onUpdate={updateStatus.mutate} />
               ))}
             </CardContent>
           </Card>

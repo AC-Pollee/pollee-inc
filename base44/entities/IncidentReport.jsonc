@@ -17,14 +17,14 @@
         "enum": [
           "board",
           "infomarian",
-          "user"
+          "constituency"
         ]
       },
       "description": "Levels the report is forwarded to"
     },
     "target_user_email": {
       "type": "string",
-      "description": "Specific user email the report is forwarded to (when 'user' level selected)"
+      "description": "Legacy field, kept for backward compatibility with older reports"
     },
     "description": {
       "type": "string",
