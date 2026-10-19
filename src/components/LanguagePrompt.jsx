@@ -25,10 +25,9 @@ export default function LanguagePrompt() {
 
   return (
     <div className="mb-6">
-      <label className="flex items-center justify-center gap-1.5 text-xs font-medium text-muted-foreground mb-2 text-center">
-        <Globe className="w-4 h-4" />
-        {t('common.language')}
-      </label>
+      <div className="flex items-center justify-center mb-2 text-center">
+        <Globe className="w-7 h-7 text-muted-foreground" />
+      </div>
       <div className="grid grid-cols-5 gap-2">
         {LANGUAGES.map((code) => (
           <button
