@@ -14,6 +14,7 @@ import InfomarianCreateDialog from '@/components/infomarian/InfomarianCreateDial
 import FranchiseCreateDialog from '@/components/franchise/FranchiseCreateDialog';
 import FranchiseEditDialog from '@/components/franchise/FranchiseEditDialog';
 import UserManagement from '@/components/infomarian/UserManagement';
+import ReportDialog from '@/components/reports/ReportDialog';
 import { useTranslation } from 'react-i18next';
 
 export default function MasterFranchiserDashboard() {
@@ -89,6 +90,7 @@ export default function MasterFranchiserDashboard() {
           <div className="flex items-center gap-3 mb-2">
             <Shield className="w-8 h-8 text-purple-600" />
             <h1 className="text-3xl font-bold text-slate-900">{t('masterDash.title')}</h1>
+            <div className="ml-auto"><ReportDialog /></div>
           </div>
           <p className="text-slate-500">{t('masterDash.subtitle')}</p>
         </div>

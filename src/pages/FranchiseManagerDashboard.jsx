@@ -11,6 +11,7 @@ import { createPageUrl } from '@/utils';
 import ConstituencyHelp from '@/components/help/ConstituencyHelp';
 import Admin from '@/pages/Admin';
 import UserManagement from '@/components/infomarian/UserManagement';
+import ReportDialog from '@/components/reports/ReportDialog';
 import { useTranslation } from 'react-i18next';
 
 export default function FranchiseManagerDashboard() {
@@ -85,6 +86,7 @@ export default function FranchiseManagerDashboard() {
           <div className="flex items-center gap-3 mb-2">
             <Building2 className="w-8 h-8 text-blue-600" />
             <h1 className="text-3xl font-bold text-slate-900">{t('adminDash.title', { defaultValue: 'Admin Dashboard' })}</h1>
+            <div className="ml-auto"><ReportDialog /></div>
           </div>
           <p className="text-slate-500">{myFranchise.franchise_name} • {myFranchise.postcode}</p>
         </div>
